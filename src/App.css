@@ -1,0 +1,25 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.video-reels {
+  width: 100%;
+  overflow-y: auto;
+  height: 100vh;
+  scroll-snap-type: y mandatory;
+}
+
+.video-item {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: start;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}

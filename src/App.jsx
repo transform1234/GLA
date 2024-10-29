@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Suspense, useState, useEffect } from "react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import { initializeI18n } from "./i18n";
+import guestRoutes from "./routes/guest";
+import authRoutes from "./routes/auth";
+import Loading from "./components/common/Loading";
+import customTheme from "./utils/theme";
 
+const theme = extendTheme(customTheme);
+
+// initializeI18n("local"); // Initialize i18n with default language
 function App() {
-  const [count, setCount] = useState(0)
+  const [routes, setRoutes] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setRoutes(authRoutes);
+    } else {
+      setRoutes(guestRoutes);
+    }
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ChakraProvider theme={theme}>
+      <Suspense fallback={<Loading />}>
+        <Router>
+          <Routes>
+            {routes?.map((item, index) => (
+              <Route
+                key={item?.path + index}
+                path={item?.path}
+                element={<item.component />}
+              />
+            ))}
+          </Routes>
+        </Router>
+      </Suspense>
+    </ChakraProvider>
+  );
 }
 
-export default App
+export default App;

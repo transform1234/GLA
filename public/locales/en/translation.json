@@ -1,0 +1,22 @@
+{
+        "LOGIN_TO_YOUR_ACCOUNT": "LOGIN TO YOUR ACCOUNT",
+        "USERNAME_IS_REQUIRED": "Username is required",
+        "PASSWORD_IS_REQUIRED": "Password is required",
+        "PLEASE_ENTER_VALID_CREDENTIALS": "Please enter valid credentials",
+        "ENTER_PASSWORD" : "Enter Password",
+        "FORGOT_PASSWORD" : "Forgot Password?",
+        "YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW" : "Your password is created in the format as shown below",
+        "IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB" : "If your name is Anish Kumar, and your date of birth is 30-12-1988, then your password will be 'ANKU30121988'",
+        "ENTER_USER_NAME" : "Enter Username",
+        "FORGOT_USERNAME" : "Forgot Username?",
+        "YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW" : "Your username is created in the format as shown below",
+        "USERNAME_EXAMPLE_EXPLANATION" :  "Username example explanation",
+        "USERNAME": "Username",
+        "PASSWORD" : "Password",
+        "LOGIN" : "LOGIN",
+        "FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME" : "First 2 letters of your first name",
+        "FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME" : "First 2 letters of your last name",
+        "DATE" : "Date",
+        "MONTH" : "Month",
+        "YEAR" : "Year"
+}

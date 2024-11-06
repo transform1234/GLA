@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "lib": ["es6"],  // Add this line
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "jsx": "react-jsx"
+    "outDir": "./dist"
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/*.test.ts"]

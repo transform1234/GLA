@@ -1,24 +1,51 @@
-import axios from 'axios'
+import URL from "../../utils/constants/url-constants.json";
 
-export function fetchToken(
-  authUrl: string,
-  username: string,
-  password: string,
-  secret_key:string
-): Promise<any> {
-  const params = new URLSearchParams()
-  params.append('client_id', 'hasura-app')
-  params.append('username', username)
-  params.append('password', password)
-  params.append('grant_type', 'password')
-  params.append('client_secret', secret_key)
+export const fetchToken = async (username: string, password: string) => {
+  const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
 
-  const config = {
+  const response = await fetch(authUrl, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Access-Control-Allow-Origin': '*'
-    }
+    },
+    body: new URLSearchParams({
+      client_id: "hasura-app",
+      username,
+      password,
+      grant_type: "password",
+      client_secret: "9ca6e96d-f72e-4208-91f4-a2d8e681f767",
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch token');
   }
 
-  return axios.post(authUrl, params, config).catch((e) => e)
-}
+  const data = await response.json();
+  return data;
+};
+
+export const getAuthUser = async () => {
+  const token = sessionStorage.getItem('token');
+  
+  if (!token) {
+    throw new Error('Token not available in sessionStorage');
+  }
+
+  const userUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.USER}`;
+
+  const response = await fetch(userUrl, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+
+  const data = await response.json();
+  return data;
+};

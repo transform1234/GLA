@@ -20,8 +20,9 @@ import InfoModal from "../../components/common/InfoModal";
 import logo from '../../assets/logo/TSHeader.png';
 import background from '../../assets/logo/bg.png';
 // import Layout from "../../components/common/layouts/layout";
-import { fetchToken } from "../../services/auth/auth";
+import { fetchToken , getAuthUser } from "../../services/auth/auth";
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from "react-router-dom"; 
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -29,6 +30,7 @@ export default function Login() {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState({});
   const isLoginDisabled = !(username && password);
+  const navigate = useNavigate();
   const [modalContent, setModalContent] = useState({
     title: "",
     message: "",
@@ -125,18 +127,13 @@ export default function Login() {
     // telemetryFactory.interact(telemetryInteract);
     if (validate()) {
       const result = await fetchToken(
-        import.meta.env.VITE_API_AUTH_URL,
         username,
         password,
-        import.meta.env.VITE_APP_SECRET_KEY
       );
 
-      if (result?.data) {
-        console.log("Token Data");
-
-        let token = result.data.access_token;
-        let refreshToken = result.data.refresh_token;
-        console.log(refreshToken);
+      if (result) {
+        let token = result?.access_token;
+        let refreshToken = result?.refresh_token;
         sessionStorage.setItem("refreshToken", refreshToken);
         sessionStorage.setItem("token", token);
 
@@ -145,12 +142,18 @@ export default function Login() {
 
         // } catch (e) {
         //   localStorage.removeItem("token");
-        //   console.log({ e });
         // }
 
         resultTeacher = await getAuthUser();
 
-        if (resultTeacher?.id) {
+        localStorage.setItem('id', resultTeacher?.data[0]?.userId)
+        localStorage.setItem('name', resultTeacher?.data[0]?.name)
+        localStorage.setItem('grade', resultTeacher?.data[0]?.grade)
+        localStorage.setItem('medium', resultTeacher?.data[0]?.medium)
+        localStorage.setItem('board', resultTeacher?.data[0]?.board)
+        localStorage.setItem('section', resultTeacher?.data[0]?.section)
+
+        if (resultTeacher?.data[0]?.userId) {
           // try {
           //   const fcmToken = await getUserToken(swPath);
           //   let id = localStorage.getItem("id");
@@ -158,7 +161,6 @@ export default function Login() {
           //   localStorage.setItem("fcmToken", fcmToken);
           // } catch (e) {
           //   localStorage.setItem("fcmToken", "");
-          //   console.log({ e });
           // }
           // eventBus.publish("AUTH", {
           //   eventType: "LOGIN_SUCCESS",
@@ -166,6 +168,7 @@ export default function Login() {
           //     token: token,
           //   },
           // });
+          navigate("/home");
           window.location.reload();
         } else {
           localStorage.removeItem("token");

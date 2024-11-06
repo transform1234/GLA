@@ -57,21 +57,22 @@ jobs:
          # Add the SSH key to the known_hosts file (replace hostname with your actual hostname)
          ssh-keyscan -H ${{ secrets.HOST_DNS_GLA_DEV }} >> ~/.ssh/known_hosts
 
-      - name: Copy Package
-        run: |
-          sh ./scripts/pack-prod-build.sh
-          rsync shiksha-ui.tar ${{ secrets.USERNAME_GLA_DEV }}@${{ secrets.HOST_DNS_GLA_DEV }}:/var/www/alt-gla-dev.uniteframework.io/shiksha-ui.tar
-      - name: Deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_DNS_GLA_DEV }}
-          username: ${{ secrets.USERNAME_GLA_DEV }}
-          key: ${{ secrets.EC2_SSH_KEY_GLA_DEV }}
-          script: |
-            cd /var/www/alt-gla-dev.uniteframework.io/public
-            rm -rf *
-            cp ../shiksha-ui.tar ./
-            tar -xvf shiksha-ui.tar .
+     # - name: Copy Package
+     #   run: |
+     #     sh ./scripts/pack-prod-build.sh
+     #     rsync shiksha-ui.tar ${{ secrets.USERNAME_GLA_DEV }}@${{ secrets.HOST_DNS_GLA_DEV }}:/var/www/alt-gla-dev.uniteframework.io/shiksha-ui.tar
+    
+     # - name: Deploy
+     #   uses: appleboy/ssh-action@master
+     #   with:
+     #     host: ${{ secrets.HOST_DNS_GLA_DEV }}
+     #     username: ${{ secrets.USERNAME_GLA_DEV }}
+     #     key: ${{ secrets.EC2_SSH_KEY_GLA_DEV }}
+     #     script: |
+     #       cd /var/www/alt-gla-dev.uniteframework.io/public
+     #       rm -rf *
+     #       cp ../shiksha-ui.tar ./
+     #       tar -xvf shiksha-ui.tar .
 
 
              

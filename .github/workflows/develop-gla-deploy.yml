@@ -57,6 +57,11 @@ jobs:
          # Add the SSH key to the known_hosts file (replace hostname with your actual hostname)
          ssh-keyscan -H ${{ secrets.HOST_DNS_GLA_DEV }} >> ~/.ssh/known_hosts
 
+
+      - name: Deploy with rsync
+        run: |
+           rsync -avz -e "ssh -i ~/.ssh/id_rsa" ./dist/ ${{ secrets.USERNAME_GLA_DEV }}@${{ secrets.HOST_DNS_GLA_DEV }}:/var/www/alt-gla-dev.uniteframework.io/public
+
      # - name: Copy Package
      #   run: |
      #     sh ./scripts/pack-prod-build.sh

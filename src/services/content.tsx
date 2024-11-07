@@ -77,7 +77,7 @@ export const getAll = async (prop = {}, header = {}) => {
           },
           {
             courseId: "do_11368734744569330713",
-            contentId: "do_1138907470163394561521",
+            contentId: "do_11389370079255756811114",
             contentType: "lesson",
             order: "3",
             allowedAttempts: "0",

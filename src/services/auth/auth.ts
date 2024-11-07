@@ -1,5 +1,6 @@
 import URL from "../../utils/constants/url-constants.json";
 
+
 export const fetchToken = async (username: string, password: string) => {
   const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
 
@@ -27,7 +28,7 @@ export const fetchToken = async (username: string, password: string) => {
 
 export const getAuthUser = async () => {
   const token = sessionStorage.getItem('token');
-  
+
   if (!token) {
     throw new Error('Token not available in sessionStorage');
   }
@@ -49,3 +50,6 @@ export const getAuthUser = async () => {
   const data = await response.json();
   return data;
 };
+
+
+

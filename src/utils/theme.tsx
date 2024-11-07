@@ -1,5 +1,4 @@
 import { extendTheme } from "@chakra-ui/react";
-import { color } from "framer-motion";
 
 const customTheme = extendTheme({
   styles: {
@@ -12,16 +11,19 @@ const customTheme = extendTheme({
   },
   colors: {
     brand: {
-      100: "#f7fafc",
-      500: "#3182ce",
-      900: "#1a202c",
-      primary: "#03627C",
-      fontColor: "#10162E",
-      greyColor: "#4F4F4F",
-      seaBlue: "#03627C1A",
-      lightGrey: "#F4F4F4",
-      lightBlue: "#39AED8"
+      backgroundLight: "#f7fafc",   // Light background shade for general use
+      backgroundDark: "#1a202c",    // Dark background shade, possibly for dark mode
 
+      primary: "#03627C",           // Primary brand color for prominent UI elements
+      primaryLight: "#39AED8",      // Lighter version of the primary color, for highlights
+
+      textPrimary: "#10162E",       // Primary font color for main text
+      textSecondary: "#4F4F4F",     // Secondary font color for less prominent text
+
+      divider: "#3182ce",           // Color for dividers or lines between elements
+      backgroundHighlight: "#03627C1A", // Semi-transparent blue for subtle highlights
+      backgroundGrey: "#F4F4F4",    // Light grey for background sections
+      white: "#FFFFFF",             // Pure white, useful for text or backgrounds
     },
   },
   components: {
@@ -35,7 +37,6 @@ const customTheme = extendTheme({
     },
     Box: {
       baseStyle: {
-        maxW: "350px",
         w: "100%",
         py: 8,
         px: 4,
@@ -43,11 +44,7 @@ const customTheme = extendTheme({
         boxShadow: "md",
       },
     },
-    ImageBox: {
-      baseStyle: {
-        width: "200px",
-      },
-    },
+
     Text: {
       baseStyle: {
         fontSize: "24px",
@@ -55,7 +52,7 @@ const customTheme = extendTheme({
         lineHeight: "28px",
         textAlign: "center",
         fontFamily: "Bebas Neue",
-        color: "brand.fontColor"
+        color: "brand.textPrimary"
 
       },
     },
@@ -65,7 +62,7 @@ const customTheme = extendTheme({
         fontSize: "12px",
         fontWeight: "600",
         lineHeight: "16px",
-        color: "brand.fontColor",
+        color: "brand.textPrimary",
       },
     },
     Input: {
@@ -74,7 +71,7 @@ const customTheme = extendTheme({
         fontSize: "14px",
         fontWeight: 400,
         lineHeight: "14px",
-        color: "brand.fontColor"
+        color: "brand.textPrimary"
 
       },
     },
@@ -96,7 +93,7 @@ const customTheme = extendTheme({
       },
       variants: {
         solid: {
-          color: "primary",
+          color: "brand.white",
           bg: "brand.primary",
           _hover: { bg: "brand.primary" },
         },

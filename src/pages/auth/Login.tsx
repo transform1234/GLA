@@ -16,13 +16,13 @@ import {
   AlertTitle,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import InfoModal from "../../components/common/InfoModal";
+import PopupModal from "../../components/common/PopupModal";
 import logo from '../../assets/logo/TSHeader.png';
-import background from '../../assets/logo/bg.png';
+import background from '../../assets/images/bg.png';
 // import Layout from "../../components/common/layouts/layout";
-import { fetchToken , getAuthUser } from "../../services/auth/auth";
+import { fetchToken, getAuthUser } from "../../services/auth/auth";
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -169,7 +169,7 @@ export default function Login() {
           //   },
           // });
           navigate("/home");
-          window.location.reload();
+          navigate(0);
         } else {
           localStorage.removeItem("token");
           setErrors({ alert: t("PLEASE_ENTER_VALID_CREDENTIALS") });
@@ -206,7 +206,7 @@ export default function Login() {
             <FormLabel>
               {t("USERNAME")}
               <Link onClick={() => openModal(t("FORGOT_USERNAME"), t("YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"), t("USERNAME_EXAMPLE_EXPLANATION"))}>
-               {t("FORGOT_USERNAME")}
+                {t("FORGOT_USERNAME")}
               </Link>
             </FormLabel>
             <Input
@@ -223,8 +223,8 @@ export default function Login() {
           <FormControl isInvalid={!!errors.password}>
             <FormLabel mt="10px">
               {t("PASSWORD")}
-              <Link onClick={() => openModal( t("FORGOT_PASSWORD"), t("YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"), t("IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB"))}>
-              {t("FORGOT_PASSWORD")}
+              <Link onClick={() => openModal(t("FORGOT_PASSWORD"), t("YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"), t("IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB"))}>
+                {t("FORGOT_PASSWORD")}
               </Link>
             </FormLabel>
             <Input
@@ -234,7 +234,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               pr="2.5rem"
               style={{
-                display: isOpen ? 'none' : 'block', 
+                display: isOpen ? 'none' : 'block',
                 marginBottom: '20px',
               }}
             />
@@ -249,12 +249,14 @@ export default function Login() {
               onClick={() => setShow(!show)}
               height="0"
               minWidth="0"
+              aria-label=""
             />
           </FormControl>
 
           <Button mt={4} width="100%" onClick={handleLogin} isDisabled={isLoginDisabled}>
             {t("LOGIN")}
           </Button>
+
 
           {errors.alert && (
             <Alert status="error" mt={4}>
@@ -263,7 +265,7 @@ export default function Login() {
             </Alert>
           )}
 
-          <InfoModal
+          <PopupModal
             isOpen={isOpen}
             onClose={onClose}
             title={modalContent.title}
@@ -273,6 +275,6 @@ export default function Login() {
         </VStack>
       </Box>
     </Center>
-//  </Layout>
+    //  </Layout>
   );
 }

@@ -18,5 +18,9 @@
         "FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME" : "First 2 letters of your last name",
         "DATE" : "Date",
         "MONTH" : "Month",
-        "YEAR" : "Year"
+        "YEAR" : "Year",
+        "UNDERSTOOD" : "UNDERSTOOD",
+        "EXAMPLE" : "Example",
+        "GOOD_EVENING" : "Good Evening",
+        "LEARN_SOMETHING_TODAY" : "Learn Something Today"
 }

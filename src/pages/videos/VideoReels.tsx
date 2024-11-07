@@ -4,7 +4,7 @@ import Layout from "../../components/common/layout/layout";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
-import { Center, position } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
 
 interface VideoItemProps {
   id: string;
@@ -254,8 +254,8 @@ const VideoReel = ({ videos }) => {
       >
         {({ index, style }) => (
           <VideoItem
-            id={videos?.[index]?.id}
-            qml_id={videos?.[index]?.qml_id}
+            id={videos?.[index]?.contentId}
+            qml_id={videos?.[index]?.lesson_questionset}
             style={style}
             key={"VideoItem" + index}
           />

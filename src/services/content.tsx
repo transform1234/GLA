@@ -35,3 +35,65 @@ export const getOne = async ({ id, adapter, type }, header = {}) => {
     return {};
   }
 };
+
+export const getAll = async (prop = {}, header = {}) => {
+  // let headers = new Headers({
+  //   ...header,
+  //   Authorization: "Bearer " + sessionStorage.getItem("token"),
+  // });
+
+  try {
+    // const response = await fetch(
+    //   `${baseUrl}/course/${adapter}/progress/contentid?courseId=${id}&type=${type}`,
+    //   {
+    //     method: "GET",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+
+    if (true) {
+      // Simulating the response structure based on the provided data
+      const result = {
+        prog: [
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_1138907470163394561521",
+            contentType: "lesson",
+            order: "1",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_11389370198275686412930",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_11389554198553395211183",
+            contentType: "lesson",
+            order: "2",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_11389370198275686412930",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_1138907470163394561521",
+            contentType: "lesson",
+            order: "3",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_11389370198275686412930",
+          },
+        ],
+      };
+
+      return result;
+    } else {
+      console.log("Failed to fetch course progress");
+      return {};
+    }
+  } catch (e) {
+    console.log("course/progress/contentid", e.message);
+    return {};
+  }
+};

@@ -111,8 +111,8 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
 
       <Center>
         <SunbirdPlayer
-          _vstack={{ position: "absolute", bottom: "20px" }}
-          {...{ width: width - 40, height: height / 3 }}
+          _vstack={{ position: "absolute", bottom: "30px" }}
+          {...{ width: width - 20, height: height / 3 }}
           {...lessonQml}
           userData={{
             firstName: localStorage.getItem("name"),

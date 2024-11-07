@@ -10,21 +10,16 @@ const customTheme = extendTheme({
     },
   },
   colors: {
-    brand: {
-      backgroundLight: "#f7fafc",   // Light background shade for general use
-      backgroundDark: "#1a202c",    // Dark background shade, possibly for dark mode
-
-      primary: "#03627C",           // Primary brand color for prominent UI elements
-      primaryLight: "#39AED8",      // Lighter version of the primary color, for highlights
-
-      textPrimary: "#10162E",       // Primary font color for main text
-      textSecondary: "#4F4F4F",     // Secondary font color for less prominent text
-
-      divider: "#3182ce",           // Color for dividers or lines between elements
-      backgroundHighlight: "#03627C1A", // Semi-transparent blue for subtle highlights
-      backgroundGrey: "#F4F4F4",    // Light grey for background sections
-      white: "#FFFFFF",             // Pure white, useful for text or backgrounds
-    },
+      primary: "#03627C",   
+      backgroundLight: "#f7fafc",
+      backgroundDark: "#1a202c",
+      primaryLight: "#39AED8",
+      textPrimary: "#10162E",
+      textSecondary: "#4F4F4F",
+      divider: "#3182ce",
+      backgroundHighlight: "#03627C1A",
+      backgroundGrey: "#F4F4F4",
+      white: "#FFFFFF",
   },
   components: {
     Center: {
@@ -52,7 +47,7 @@ const customTheme = extendTheme({
         lineHeight: "28px",
         textAlign: "center",
         fontFamily: "Bebas Neue",
-        color: "brand.textPrimary"
+        color: "textPrimary"
 
       },
     },
@@ -62,7 +57,7 @@ const customTheme = extendTheme({
         fontSize: "12px",
         fontWeight: "600",
         lineHeight: "16px",
-        color: "brand.textPrimary",
+        color: "textPrimary",
       },
     },
     Input: {
@@ -71,7 +66,7 @@ const customTheme = extendTheme({
         fontSize: "14px",
         fontWeight: 400,
         lineHeight: "14px",
-        color: "brand.textPrimary"
+        color: "textPrimary"
 
       },
     },
@@ -81,23 +76,14 @@ const customTheme = extendTheme({
         fontSize: "12px",
         fontWeight: "500",
         lineHeight: "16px",
-        color: "brand.primary",
+        color: "primary",
         // Verticaltrim : "Cap height",
         float: "right",
         mt: 1,
       },
     },
     Button: {
-      baseStyle: {
-
-      },
-      variants: {
-        solid: {
-          color: "brand.white",
-          bg: "brand.primary",
-          _hover: { bg: "brand.primary" },
-        },
-      },
+     
     },
   },
 });

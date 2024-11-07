@@ -23,6 +23,7 @@ import background from '../../assets/images/bg.png';
 import { fetchToken, getAuthUser } from "../../services/auth/auth";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
+import PrimaryButton from "../../components/common/button/PrimaryButton";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -56,14 +57,14 @@ export default function Login() {
       typeof username === "undefined" ||
       username === ""
     ) {
-      arr = { ...arr, username: t("USERNAME_IS_REQUIRED") };
+      arr = { ...arr, username: t("LOGIN_USERNAME_IS_REQUIRED") };
     }
 
     if (
       typeof password === "undefined" ||
       password === ""
     ) {
-      arr = { ...arr, password: t("PASSWORD_IS_REQUIRED") };
+      arr = { ...arr, password: t("LOGIN_PASSWORD_IS_REQUIRED") };
     }
 
     setErrors(arr);
@@ -138,12 +139,6 @@ export default function Login() {
         sessionStorage.setItem("token", token);
 
         let resultTeacher = {};
-        // try {
-
-        // } catch (e) {
-        //   localStorage.removeItem("token");
-        // }
-
         resultTeacher = await getAuthUser();
 
         localStorage.setItem('id', resultTeacher?.data[0]?.userId)
@@ -154,29 +149,15 @@ export default function Login() {
         localStorage.setItem('section', resultTeacher?.data[0]?.section)
 
         if (resultTeacher?.data[0]?.userId) {
-          // try {
-          //   const fcmToken = await getUserToken(swPath);
-          //   let id = localStorage.getItem("id");
-          //   await userRegistryService.update({ id, fcmToken });
-          //   localStorage.setItem("fcmToken", fcmToken);
-          // } catch (e) {
-          //   localStorage.setItem("fcmToken", "");
-          // }
-          // eventBus.publish("AUTH", {
-          //   eventType: "LOGIN_SUCCESS",
-          //   data: {
-          //     token: token,
-          //   },
-          // });
           navigate("/home");
           navigate(0);
         } else {
           localStorage.removeItem("token");
-          setErrors({ alert: t("PLEASE_ENTER_VALID_CREDENTIALS") });
+          setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
         }
       } else {
         localStorage.removeItem("token");
-        setErrors({ alert: t("PLEASE_ENTER_VALID_CREDENTIALS") });
+        setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
       }
     }
   };
@@ -204,13 +185,13 @@ export default function Login() {
 
           <FormControl isInvalid={!!errors.username}>
             <FormLabel>
-              {t("USERNAME")}
-              <Link onClick={() => openModal(t("FORGOT_USERNAME"), t("YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"), t("USERNAME_EXAMPLE_EXPLANATION"))}>
-                {t("FORGOT_USERNAME")}
+              {t("LOGIN_USERNAME")}
+              <Link onClick={() => openModal(t("LOGIN_FORGOT_USERNAME"), t("LOGIN_YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"), t("LOGIN_USERNAME_EXAMPLE_EXPLANATION"))}>
+                {t("LOGIN_FORGOT_USERNAME")}
               </Link>
             </FormLabel>
             <Input
-              placeholder={t("ENTER_USER_NAME")}
+              placeholder={t("LOGIN_ENTER_USER_NAME")}
               value={username}
               style={{
                 display: isOpen ? 'none' : 'block',
@@ -222,14 +203,14 @@ export default function Login() {
 
           <FormControl isInvalid={!!errors.password}>
             <FormLabel mt="10px">
-              {t("PASSWORD")}
-              <Link onClick={() => openModal(t("FORGOT_PASSWORD"), t("YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"), t("IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB"))}>
-                {t("FORGOT_PASSWORD")}
+              {t("LOGIN_PASSWORD")}
+              <Link onClick={() => openModal(t("LOGIN_FORGOT_PASSWORD"), t("LOGIN_YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"), t("LOGIN_IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB"))}>
+                {t("LOGIN_FORGOT_PASSWORD")}
               </Link>
             </FormLabel>
             <Input
               type={show ? "text" : "password"}
-              placeholder={t("ENTER_PASSWORD")}
+              placeholder={t("LOGIN_ENTER_PASSWORD")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               pr="2.5rem"
@@ -242,7 +223,7 @@ export default function Login() {
               position="absolute"
               right="10px"
               top="60%"
-              color="brand.primary"
+              color="primary"
               background="white"
               transform="translateY(-50%)"
               icon={show ? <ViewOffIcon /> : <ViewIcon />}
@@ -253,9 +234,15 @@ export default function Login() {
             />
           </FormControl>
 
-          <Button mt={4} width="100%" onClick={handleLogin} isDisabled={isLoginDisabled}>
-            {t("LOGIN")}
-          </Button>
+          <PrimaryButton
+            onClick={handleLogin}
+            width="100%"
+            color="white"
+            bg="primary"
+            isDisabled={isLoginDisabled}
+            >
+        {t("LOGIN")}
+      </PrimaryButton>
 
 
           {errors.alert && (

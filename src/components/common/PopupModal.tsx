@@ -1,9 +1,11 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { useTheme, Box } from '@chakra-ui/react';
+import { useTheme, Box, Heading } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { CommonButton, CloseButton } from './button/CommonButton';
+import CloseButton from './button/CloseButton';
 import Typography from './typography/Typography';
+import PrimaryButton from './button/PrimaryButton';
+import CustomHeading from './typography/Heading';
 
 Modal.setAppElement('#root');
 
@@ -47,20 +49,19 @@ const PopupModal: React.FC<InfoModalProps> = ({
           border: 'none',
           inset: 'unset',
           zIndex: 1001,
-          backgroundColor: theme.colors.brand.white,
+          backgroundColor:"white"
         },
       }}
     >
-      <Typography
-        variant="h2"
-        fontSize="1.25rem"
-        fontWeight="bold"
-        marginBottom="1rem"
-        color={theme.colors.brand.primary}
-      >
-        {title}
-      </Typography>
 
+      <CustomHeading
+       variant="h2"
+       fontSize="1.25rem"
+        fontWeight="bold"
+        mb="1rem"
+       title={title} 
+       color="primary"
+        />
 
       <CloseButton
         onClick={onClose}
@@ -71,20 +72,19 @@ const PopupModal: React.FC<InfoModalProps> = ({
           fontSize: '28px',
           cursor: 'pointer',
         }}
-        color={theme.colors.brand.primary}
+        color="primary"
       >
         &times;
       </CloseButton>
 
       {/* Message */}
-      <Typography
-        variant="p"
-        fontSize="14px"
-        marginBottom="10px"
-        color={theme.colors.brand.textSecondary}
-      >
-        {message}
-      </Typography>
+      <CustomHeading
+       variant="p"
+       fontSize="14px"
+       mb="1rem"
+       title={message} 
+       color="textSecondary"
+        />
 
       <Box
 
@@ -94,7 +94,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
             <Box
               key={item}
               p="5px 10px"
-              bg={theme.colors.brand.backgroundGrey}
+              bg="backgroundGrey"
               fontWeight="bold"
               fontSize="14px"
             >
@@ -103,38 +103,28 @@ const PopupModal: React.FC<InfoModalProps> = ({
           ))}
         </Box>
 
-        <Box color={theme.colors.brand.textPrimary} textAlign="left">
-          <Typography variant="h2" color={theme.colors.brand.textSecondary} fontSize="14px" style={{ paddingLeft: '28px' }} ><strong>FF:</strong> {t("FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME")}</Typography>
-          <Typography variant="h2" color={theme.colors.brand.textSecondary} fontSize="14px" style={{ paddingLeft: '28px' }}><strong>LL:</strong>{t("FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME")}</Typography>
-          <Typography variant="h2" color={theme.colors.brand.textSecondary} fontSize="14px" style={{ paddingLeft: '28px' }}><strong>DD:</strong> {t("DATE")} </Typography>
-          <Typography variant="h2" color={theme.colors.brand.textSecondary} fontSize="14px" style={{ paddingLeft: '28px' }}><strong>MM:</strong> {t("MONTH")} </Typography>
-          <Typography variant="h2" color={theme.colors.brand.textSecondary} fontSize="14px" style={{ paddingLeft: '28px' }}><strong>YYYY:</strong> {t("YEAR")} </Typography>
+        <Box color="textPrimary" textAlign="left">
+        <CustomHeading  variant="h2"  paddingLeft="28px"  title={<><strong>FF:</strong> {t("POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME")}</>}  color="textSecondary" />
+        <CustomHeading  variant="h2"  paddingLeft="28px"  title={<><strong>LL:</strong> {t("POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME")}</>}  color="textSecondary" />
+        <CustomHeading  variant="h2"  paddingLeft="28px"  title={<><strong>DD:</strong> {t("POPUP_DATE")}</>}  color="textSecondary" />
+        <CustomHeading  variant="h2"  paddingLeft="28px"  title={<><strong>MM:</strong> {t("POPUP_MONTH")}</>}  color="textSecondary" />
+        <CustomHeading  variant="h2"  paddingLeft="28px"  title={<><strong>YYYY:</strong> {t("POPUP_YEAR")}</>}  color="textSecondary" />
         </Box>
 
       </Box>
 
       {/* Example */}
-      <h2 style={{ color: theme.colors.brand.textSecondary, fontSize: '12px', marginTop: '10px', marginBottom: '10px', backgroundColor: theme.colors.brand.backgroundHighlight, padding: '10px' }}>
-        <strong>{t("EXAMPLE")}:</strong><i>{example}</i> <strong>‘ANKU30121988’</strong>
-      </h2>
+      <CustomHeading  variant="h2" marginBottom="10px" marginTop="10px" fontSize="12px" padding="10px" title={<><strong>{t("POPUP_EXAMPLE")}:</strong><i>{example}</i> <strong>‘ANKU30121988’</strong></>}  color="textSecondary" bg="backgroundHighlight" />
 
 
-      <CommonButton
+      <PrimaryButton
         onClick={onClose}
-        style={{
-          width: '100%',
-          height: '35px',
-          fontWeight: "bold",
-          top: '14px',
-          right: '10px',
-          fontSize: '16px',
-          cursor: 'pointer',
-        }}
-        color={theme.colors.brand.white}
-        backgroundColor={theme.colors.brand.primary}
+        width="100%"
+        color="white"
+        bg="primary"
       >
-        {t("UNDERSTOOD")}
-      </CommonButton>
+        {t("POPUP_UNDERSTOOD")}
+      </PrimaryButton>
     </Modal>
   );
 };

@@ -10,7 +10,6 @@ const App = () => {
     const init = async () => {
       const result = await getAll();
       setVideos(result?.prog || []);
-      console.log(result, result?.prog, "result?.prog");
     };
     init();
   }, []);

@@ -173,7 +173,7 @@ const SunbirdPlayer = ({
         )}
         <iframe
           style={{ border: "none" }}
-          id="preview"
+          // id="preview"
           height={"100%"}
           width="100%"
           name={JSON.stringify({
@@ -181,7 +181,9 @@ const SunbirdPlayer = ({
             questionListUrl: "https://sunbirdsaas.com/api/question/v1/list",
             // questionListUrl: `${process.env.REACT_APP_API_URL}/course/questionset`
           })}
-          src={`${public_url ? public_url : process.env.PUBLIC_URL}${url}`}
+          src={`${
+            public_url ? public_url : process.env.PUBLIC_URL
+          }${url}/index.html`}
         />
       </VStack>
     );

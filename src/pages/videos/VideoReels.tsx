@@ -5,7 +5,7 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import { Center } from "@chakra-ui/react";
-
+const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 interface VideoItemProps {
   id: string;
   qml_id: string;
@@ -47,7 +47,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
     };
     inti();
   }, [id]);
-  console.log(lessonQml, "lessonQml");
+
   return (
     <div
       style={{
@@ -106,8 +106,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
             }
           }
         }}
-        public_url="http://localhost:5000"
-        // public_url={`${process.env.REACT_APP_BASE_URL}`}
+        public_url={`${VITE_PLAYER_URL}`}
       />
 
       <Center>
@@ -165,8 +164,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
               }
             }
           }}
-          public_url="http://localhost:5000"
-          // public_url={`${process.env.REACT_APP_BASE_URL}`}
+          public_url={`${VITE_PLAYER_URL}`}
         />
       </Center>
       {/* {isVisible ? (

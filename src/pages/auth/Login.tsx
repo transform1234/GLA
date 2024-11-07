@@ -18,9 +18,8 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const data = await login(email, password);
-    console.log(data);
-    localStorage.setItem("token", "true");
-    // navigate(0);
+    localStorage.setItem("token", data?.access_token);
+    navigate(0);
   };
 
   return (

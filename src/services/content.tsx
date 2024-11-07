@@ -56,7 +56,34 @@ export const getAll = async (prop = {}, header = {}) => {
     if (true) {
       // Simulating the response structure based on the provided data
       const result = {
-        prog: [
+        data: [
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_114180173374537728144",
+            contentType: "lesson",
+            order: "1",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_11418009890504704015",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_114180174687789056146",
+            contentType: "lesson",
+            order: "2",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_114180110019608576116",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_113748995608870912150",
+            contentType: "lesson",
+            order: "2",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_114180203897585664193",
+          },
           {
             courseId: "do_11368734744569330713",
             contentId: "do_1138907470163394561521",
@@ -90,6 +117,43 @@ export const getAll = async (prop = {}, header = {}) => {
       return result;
     } else {
       console.log("Failed to fetch course progress");
+      return {};
+    }
+  } catch (e) {
+    console.log("course/progress/contentid", e.message);
+    return {};
+  }
+};
+
+export const getAltUserContent = async ({
+  page = 1,
+  limit = 6,
+  programId = "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
+  subject = "Science",
+}: {
+  page?: number;
+  limit?: number;
+  programId?: string;
+  subject?: string;
+}): Promise<any> => {
+  try {
+    const response = await fetch(
+      `${baseUrl}/altprogramassociation/glaUserContent`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ programId, subject, page, limit }),
+      }
+    );
+
+    const result = await response.json();
+    if (response.ok) {
+      return result;
+    } else {
+      console.log("Failed to fetch alt user content");
       return {};
     }
   } catch (e) {

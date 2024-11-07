@@ -1,4 +1,4 @@
-body {
+/* body {
   background: #f7f9fb !important;
 }
 p {
@@ -9,7 +9,13 @@ p {
 }
 .quml-header__container {
   background: transparent !important;
-  justify-content: center !important;
+  justify-content: space-between !important;
+  min-height: 2.5rem !important;
+  padding: 0 1rem !important;
+}
+
+.quml-header__features.pl-64 {
+  padding-left: 5px !important;
 }
 .quml-question {
   margin-top: 10px;
@@ -17,15 +23,6 @@ p {
 }
 .landscape-content {
   padding-top: 55px !important;
-}
-@media only screen and (max-width: 480px) {
-  .landscape-content {
-    padding: 100px 20px !important;
-    padding-bottom: 10px !important;
-  }
-  .quml-option label.container {
-    left: 40% !important;
-  }
 }
 
 .quml-mcq--question.mb-24 {
@@ -36,7 +33,6 @@ p {
   height: 100vh;
   margin: 0 auto;
   display: grid;
-  padding-top: 1rem;
 }
 @media screen and (max-width: 768px) {
   .player-grid {
@@ -136,12 +132,10 @@ p {
 }
 .lanscape-mode-right {
   background: transparent !important;
-  height: 2.5rem !important;
   display: flex !important;
   align-items: center !important;
   overflow-x: auto !important;
   overflow-y: hidden !important;
-  padding-top: 1rem !important;
   width: 90% !important;
   height: 2.5rem !important;
   padding: 1rem 0 0 !important;
@@ -161,7 +155,7 @@ p {
 }
 
 .lanscape-mode-right ul .showFeedBack-progressBar {
-  margin-right: 2.25rem !important;
+  margin-right: 2rem !important;
   z-index: 1 !important;
 }
 
@@ -251,9 +245,9 @@ p {
 
 .landscape-mode {
   grid-template-areas: "right right right" "center center center" "left left left" !important;
-}
+} */
 
-.landscape-center {
+/* .landscape-center {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -261,8 +255,9 @@ p {
 
 .startpage__header {
   text-align: center;
+  margin-top: 1px !important;
+  margin: 1px auto !important;
 }
-
 .landscape-content {
   justify-content: center;
   display: flex;
@@ -272,4 +267,87 @@ p {
 
 .quml-header__metadata.quml-header__metadata--portrait {
   padding: 0 50px;
+} */
+
+@media only screen and (max-width: 480px) {
+  .landscape-content {
+    padding: 35px 20px !important;
+    padding-bottom: 10px !important;
+  }
+  .quml-header__container {
+    justify-content: space-between !important;
+    min-height: 2.5rem !important;
+    padding: 0 1rem !important;
+  }
+  .quml-header__features.pl-64 {
+    padding-left: 0px !important;
+  }
+  .quml-option label.container {
+    left: 40% !important;
+  }
+  .startpage__header {
+    font-size: 14px !important;
+    padding-bottom: 5px !important;
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+  }
+  .quml-question {
+    padding-top: 0px !important;
+  }
+  .quml-question .mcq-title {
+    margin-top: 5px !important;
+  }
+  .quml-question .mcq-title p {
+    margin-bottom: 5px !important;
+  }
+  .attempts.sb-color-primary.fnormal.font-weight-bold {
+    font-size: 12px !important;
+  }
+  .quml-header__features img,
+  .showFeedBack-progressBar.info-page.hover-effect.att-color.progressBar-border {
+    width: 15px !important;
+    height: 15px !important;
+  }
+  .showFeedBack-progressBar.info-page.hover-effect.att-color.progressBar-border::after {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+  }
+  .landscape-center {
+    margin-top: 20px !important;
+  }
+  .lanscape-mode-right {
+    top: 2rem !important;
+    display: none !important;
+  }
+  .startpage__instr-desc {
+    padding: 5px 0 !important;
+  }
+  .startpage__content {
+    margin-bottom: 5px !important;
+    padding-bottom: 5px !important;
+  }
+  .wrapper {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 10px !important;
+    justify-content: space-between;
+    > * {
+      flex-basis: calc(50% - 10px);
+    }
+  }
+  .quml-mcq--question.mb-16 {
+    margin-bottom: 10px !important;
+  }
+  .quml-mcq-option-card {
+    padding: 5px !important;
+    gap: 5px !important;
+  }
+  .quml-mcq-option-card .option p {
+    font-size: 14px !important;
+  }
+  .quml-navigation__previous,
+  .quml-navigation__next {
+    width: 4.75rem !important;
+    height: 1.75rem !important;
+  }
 }

@@ -27,7 +27,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
     { score, attempts, ...props },
     playerType = "quml"
   ) => {
-    console.log("handleTrackData", { score, attempts, ...props });
+    // console.log("handleTrackData", { score, attempts, ...props });
   };
 
   useEffect(() => {
@@ -59,6 +59,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
     >
       <SunbirdPlayer
         {...{ width, height }}
+        _playerStypeHeight={height}
         {...lesson}
         userData={{
           firstName: localStorage.getItem("name"),
@@ -111,7 +112,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
 
       <Center>
         <SunbirdPlayer
-          _vstack={{ position: "absolute", bottom: "30px" }}
+          _vstack={{ position: "absolute", bottom: "20px" }}
           {...{ width: width - 20, height: height / 3 }}
           {...lessonQml}
           userData={{

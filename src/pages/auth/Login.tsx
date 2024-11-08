@@ -9,14 +9,16 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { login } from "../../services/auth";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    localStorage.setItem("token", "true");
+    const data = await login(email, password);
+    localStorage.setItem("token", data?.access_token);
     navigate(0);
   };
 
@@ -40,7 +42,7 @@ const Login = () => {
         <FormControl id="email">
           <FormLabel>Email</FormLabel>
           <Input
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

@@ -1,0 +1,4 @@
+{
+    "AUTH": "/auth/realms/hasura-app/protocol/openid-connect/token",
+    "USER": "/api/v1/user"
+}

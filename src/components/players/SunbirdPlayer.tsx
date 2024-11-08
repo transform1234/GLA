@@ -1,6 +1,22 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { IconButton, Text, VStack } from "@chakra-ui/react";
-import React from "react";
+import React, { ReactElement } from "react";
+
+interface SunbirdPlayerProps {
+  public_url: string;
+  setTrackData: (data: any) => void;
+  width: number;
+  height: number;
+  mimeType: string;
+  userData: {
+    firstName: string | null;
+    lastName: string | null;
+  };
+  children?: React.ReactNode[];
+  _vstack?: object;
+  _playerStypeHeight?: number;
+  handleExitButton?: () => void;
+}
 
 const SunbirdPlayer = ({
   public_url,
@@ -8,14 +24,14 @@ const SunbirdPlayer = ({
   handleExitButton,
   width,
   height,
+  mimeType,
   ...props
-}) => {
-  const { mimeType } = props;
+}: SunbirdPlayerProps) => {
   const typeMatch = mimeType?.match(/\/(.+)$/);
-  const fileType = typeMatch ? typeMatch[1] : null;
+  const fileType = typeMatch ? typeMatch[1] : "";
   localStorage.setItem("contentType", fileType);
-  let trackData = [];
-  const [url, setUrl] = React.useState<string>();
+  let trackData: any[] = [];
+  const [url, setUrl] = React.useState<string>("");
 
   React.useEffect(() => {
     localStorage.removeItem("trackDATA");
@@ -59,12 +75,15 @@ const SunbirdPlayer = ({
     };
   }, [url]);
 
-  const handleEvent = async (event) => {
+  const handleEvent = async (event: any) => {
     const data = event?.data;
     let milliseconds = event?.data?.edata?.duration;
-    let seconds = milliseconds / 1000;
+    const seconds: string = (milliseconds / 1000).toString();
     localStorage.setItem("totalDuration", seconds);
-    let telemetry = {};
+    let telemetry: {
+      eid?: string;
+      edata?: any;
+    } = {};
     if (data && typeof data?.data === "string") {
       telemetry = JSON.parse(data.data);
     } else if (data && typeof data === "string") {
@@ -78,8 +97,11 @@ const SunbirdPlayer = ({
         if (edata?.statement?.result) {
           trackData = [...trackData, edata?.statement];
         }
-      } catch (e) {
-        console.log("telemetry format h5p is wrong", e.message);
+      } catch (e: unknown) {
+        console.log(
+          "telemetry format h5p is wrong",
+          e instanceof Error ? e.message : String(e)
+        );
       }
     }
     if (telemetry?.eid === "ASSESS") {
@@ -92,9 +114,13 @@ const SunbirdPlayer = ({
           ...filterData,
           {
             ...edata,
-            sectionName: props?.children?.find(
-              (e) => e?.identifier === telemetry?.edata?.item?.sectionId
-            )?.name,
+            sectionName: React.Children.toArray(props?.children).find(
+              (
+                child
+              ): child is ReactElement<{ identifier: string; name: string }> =>
+                React.isValidElement(child) &&
+                child.props?.identifier === telemetry?.edata?.item?.sectionId
+            )?.props?.name,
           },
         ];
       } else {
@@ -102,9 +128,13 @@ const SunbirdPlayer = ({
           ...trackData,
           {
             ...edata,
-            sectionName: props?.children?.find(
-              (e) => e?.identifier === telemetry?.edata?.item?.sectionId
-            )?.name,
+            sectionName: React.Children.toArray(props?.children).find(
+              (
+                child
+              ): child is ReactElement<{ identifier: string; name: string }> =>
+                React.isValidElement(child) &&
+                child.props?.identifier === telemetry?.edata?.item?.sectionId
+            )?.props?.name,
           },
         ];
       }
@@ -120,7 +150,7 @@ const SunbirdPlayer = ({
       localStorage.setItem("totalDuration", telemetry?.edata?.duration);
       const summaryData = telemetry?.edata;
       if (summaryData?.summary && Array.isArray(summaryData?.summary)) {
-        const score = summaryData.summary.find((e) => e["score"]);
+        const score = summaryData.summary.find((e: any) => e["score"]);
         if (score?.score) {
           await setTrackData({ score: score?.score, trackData });
         } else {
@@ -134,7 +164,7 @@ const SunbirdPlayer = ({
       telemetry?.edata?.pageid === "summary_stage_id"
     ) {
       setTrackData(trackData);
-    } else if (["INTERACT", "HEARTBEAT"].includes(telemetry?.eid)) {
+    } else if (["INTERACT", "HEARTBEAT"].includes(telemetry?.eid || "")) {
       if (
         telemetry?.edata?.id === "exit" ||
         telemetry?.edata?.type === "EXIT"

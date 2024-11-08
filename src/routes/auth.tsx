@@ -9,7 +9,7 @@ export default [
     component: Videos,
   },
   {
-    path: "/",
+    path: "*",
     component: Home,
   },
 ];

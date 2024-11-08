@@ -1,4 +1,11 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FC,
+} from "react";
 import { FixedSizeList as List } from "react-window";
 import Layout from "../../components/common/layout/layout";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
@@ -6,13 +13,14 @@ import * as content from "../../services/content";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import { Center } from "@chakra-ui/react";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
+
 interface VideoItemProps {
   id: string;
   qml_id: string;
   style: React.CSSProperties;
 }
 
-const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
+const VideoItem: FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
   const { width, height } = useDeviceSize();
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
@@ -24,7 +32,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
   const type = "";
 
   const handleTrackData = async (
-    { score, attempts, ...props },
+    { score, attempts, ...props }: { score: any; attempts: any },
     playerType = "quml"
   ) => {
     // console.log("handleTrackData", { score, attempts, ...props });
@@ -66,7 +74,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
           lastName: "",
           // lastName: localStorage.getItem("lastName"),
         }}
-        setTrackData={(data) => {
+        setTrackData={(data: any) => {
           if (
             [
               "assessment",
@@ -120,7 +128,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
             lastName: "",
             // lastName: localStorage.getItem("lastName"),
           }}
-          setTrackData={(data) => {
+          setTrackData={(data: any) => {
             if (
               [
                 "assessment",
@@ -160,7 +168,7 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
                   // handleTrackData({ ...data, score: `${score}` }, "ecml");
                   setTrackData(data);
                 } else {
-                  handleTrackData({ ...data, score: `0` }, "ecml");
+                  handleTrackData({ ...data, score: 0 }, "ecml");
                 }
               }
             }
@@ -205,13 +213,21 @@ const VideoItem: React.FC<VideoItemProps> = memo(({ id, qml_id, style }) => {
   );
 });
 
-const VideoReel = ({ videos }) => {
+const VideoReel: FC<{ videos: any[] }> = ({ videos }) => {
   const listRef = useRef();
   const [visibleIndex, setVisibleIndex] = useState(0);
   const { height: itemSize, width } = useDeviceSize();
 
   const handleScroll = useCallback(
-    ({ scrollDirection, scrollOffset, scrollUpdateWasRequested }) => {
+    ({
+      scrollDirection,
+      scrollOffset,
+      scrollUpdateWasRequested,
+    }: {
+      scrollDirection: "forward" | "backward";
+      scrollOffset: number;
+      scrollUpdateWasRequested: boolean;
+    }) => {
       if (!scrollUpdateWasRequested) return;
       const itemCount = videos.length;
       if (itemCount === 0) return;
@@ -251,7 +267,7 @@ const VideoReel = ({ videos }) => {
         }}
         className="hide-scrollbar"
       >
-        {({ index, style }) => (
+        {({ index, style }: { index: number; style: React.CSSProperties }) => (
           <VideoItem
             id={videos?.[index]?.contentId}
             qml_id={videos?.[index]?.lesson_questionset}

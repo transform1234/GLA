@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["es6"],  // Add this line
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,

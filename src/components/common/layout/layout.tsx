@@ -20,7 +20,7 @@ const Layout: React.FC<Props> = ({ children, loading = false }) => {
       bg="white"
       boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.05)"
     >
-      {loading ? (
+      {loading || width === 0 ? (
         <Loading message="Loading..." />
       ) : (
         <Box height={height} width={width} bg="white" margin="0 auto">

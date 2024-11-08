@@ -1,6 +1,11 @@
 import { Icon, Circle, Text } from "@chakra-ui/react";
 
-const QuestionIcon = ({ isActive, ...props }) => {
+interface IconProps {
+  isActive: boolean;
+  [key: string]: any;
+}
+
+const QuestionIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
   const color = isActive ? "primary" : "black";
 
   return (
@@ -20,7 +25,8 @@ const QuestionIcon = ({ isActive, ...props }) => {
     </Circle>
   );
 };
-const HomeIcon = ({ isActive, ...props }) => {
+
+const HomeIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
   const color = isActive ? "primary" : "black";
   return (
     <Icon viewBox="0 0 24 24" color={color} {...props}>
@@ -29,7 +35,7 @@ const HomeIcon = ({ isActive, ...props }) => {
   );
 };
 
-const LeaderboardIcon = ({ isActive, ...props }) => {
+const LeaderboardIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
   const color = isActive ? "primary" : "black";
 
   return (
@@ -44,8 +50,8 @@ const LeaderboardIcon = ({ isActive, ...props }) => {
   );
 };
 
-const WatchIcon = ({ isActive, ...props }) => {
-  const color = isActive ? primary : "black";
+const WatchIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
+  const color = isActive ? "primary" : "black";
   return (
     <Icon viewBox="0 0 24 24" color={color} {...props}>
       <path
@@ -56,7 +62,7 @@ const WatchIcon = ({ isActive, ...props }) => {
   );
 };
 
-const ProfileIcon = ({ isActive, ...props }) => {
+const ProfileIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
   const color = isActive ? "primary" : "black";
   return (
     <Icon viewBox="0 0 24 24" color={color} {...props}>

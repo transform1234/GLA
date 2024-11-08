@@ -1,43 +1,33 @@
-import React, { useEffect, useState } from "react";
+import { SearchIcon } from "@chakra-ui/icons";
 import {
   Box,
   Center,
-  Text,
+  Grid,
+  GridItem,
+  HStack,
+  Image,
   Input,
   InputGroup,
   InputLeftElement,
-  VStack,
-  HStack,
-  Image,
-  Grid,
-  GridItem,
   Link,
-  Flex,
-  useTheme,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import english from "../assets/icons/english_icon.png";
+import kannada from "../assets/icons/kannada_icon.png";
+import math from "../assets/icons/maths_icon.png";
+import physics from "../assets/icons/physics_icon.png";
 import background from "../assets/images/home-bg.png";
 import transformSchool from "../assets/logo/SG_Transform Schools_Logo.png";
-import { useTranslation } from "react-i18next";
-import { getProgramId, getSubjectList } from "../services/home";
-import english from "../assets/icons/english_icon.png";
-import physics from "../assets/icons/physics_icon.png";
-import math from "../assets/icons/maths_icon.png";
-import kannada from "../assets/icons/kannada_icon.png";
-import {
-  HomeIcon,
-  LeaderboardIcon,
-  ProfileIcon,
-  QuestionIcon,
-  WatchIcon,
-} from "../components/common/icons/Icon";
-import CustomHeading from "../components/common/typography/Heading";
 import Footer from "../components/common/footer/Footer";
-import Loading from "../components/common/Loading";
 import Layout from "../components/common/layout/layout";
+import CustomHeading from "../components/common/typography/Heading";
+import { getProgramId, getSubjectList } from "../services/home";
 export default function Homepage() {
   const { t } = useTranslation();
-  const [subject, setSubject] = useState();
+  const [subject, setSubject] = useState<Array<any>>([]);
   const subjectIcons = {
     Science: physics,
     Mathematics: math,
@@ -45,8 +35,6 @@ export default function Homepage() {
     Kannada: kannada,
   };
   const [activeIcon, setActiveIcon] = useState("home");
-  const theme = useTheme();
-
   useEffect(() => {
     const fetchProgramId = async () => {
       const programData = await getProgramId();
@@ -135,7 +123,11 @@ export default function Homepage() {
                       {/* Render the specific image for each subject */}
                       <Image
                         boxSize="32px"
-                        src={subjectIcons[sub.subject] || kannada}
+                        src={
+                          subjectIcons[
+                            sub.subject as keyof typeof subjectIcons
+                          ] || kannada
+                        }
                         alt={`${sub.subject} icon`}
                       />
                       <CustomHeading

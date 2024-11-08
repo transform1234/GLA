@@ -29,7 +29,11 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{
+    username?: string;
+    password?: string;
+    alert?: string;
+  }>({});
   const isLoginDisabled = !(username && password);
   const navigate = useNavigate();
   const [modalContent, setModalContent] = useState({
@@ -39,7 +43,7 @@ export default function Login() {
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const openModal = (title, message, example) => {
+  const openModal = (title: string, message: string, example: string) => {
     setModalContent({ title, message, example });
     onOpen();
   };
@@ -52,7 +56,7 @@ export default function Login() {
   const board = localStorage.getItem("board");
 
   const validate = () => {
-    let arr = {};
+    let arr: { username?: string; password?: string } = {};
     if (typeof username === "undefined" || username === "") {
       arr = { ...arr, username: t("LOGIN_USERNAME_IS_REQUIRED") };
     }
@@ -129,7 +133,7 @@ export default function Login() {
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("token", token);
 
-        let resultTeacher = {};
+        let resultTeacher: { data: any[] } = { data: [] };
         resultTeacher = await getAuthUser();
 
         localStorage.setItem("id", resultTeacher?.data[0]?.userId);

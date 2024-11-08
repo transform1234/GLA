@@ -46,7 +46,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
               fontWeight="bold"
               mb="1rem"
               title={title}
-              color="primary"
+              color="primary.500"
             />
             <CloseButton
               onClick={onClose}
@@ -57,7 +57,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
                 fontSize: "28px",
                 cursor: "pointer",
               }}
-              color="primary"
+              color="primary.500"
             >
               &times;
             </CloseButton>
@@ -167,7 +167,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
               onClick={onClose}
               width="100%"
               color="white"
-              bg="primary"
+              bg="primary.500"
             >
               {t("POPUP_UNDERSTOOD")}
             </PrimaryButton>

@@ -6,7 +6,7 @@ interface IconProps {
 }
 
 const QuestionIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
-  const color = isActive ? "primary" : "black";
+  const color = isActive ? "primary.500" : "black";
 
   return (
     <Circle
@@ -27,7 +27,7 @@ const QuestionIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
 };
 
 const HomeIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
-  const color = isActive ? "primary" : "black";
+  const color = isActive ? "primary.500" : "black";
   return (
     <Icon viewBox="0 0 24 24" color={color} {...props}>
       <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor" />
@@ -36,7 +36,7 @@ const HomeIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
 };
 
 const LeaderboardIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
-  const color = isActive ? "primary" : "black";
+  const color = isActive ? "primary.500" : "black";
 
   return (
     <Icon viewBox="0 0 24 24" color="transparent" {...props}>
@@ -51,7 +51,7 @@ const LeaderboardIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
 };
 
 const WatchIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
-  const color = isActive ? "primary" : "black";
+  const color = isActive ? "primary.500" : "black";
   return (
     <Icon viewBox="0 0 24 24" color={color} {...props}>
       <path
@@ -63,7 +63,7 @@ const WatchIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
 };
 
 const ProfileIcon: React.FC<IconProps> = ({ isActive, ...props }) => {
-  const color = isActive ? "primary" : "black";
+  const color = isActive ? "primary.500" : "black";
   return (
     <Icon viewBox="0 0 24 24" color={color} {...props}>
       <path

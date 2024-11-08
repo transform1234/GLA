@@ -112,7 +112,7 @@ export default function Homepage() {
               fontSize="20px"
               fontWeight="400"
               title={t("HOME_LEARN_SOMETHING_TODAY")}
-              color="primary"
+              color="primary.500"
             />
 
             <Grid templateColumns="repeat(4, 1fr)" gap={4}>
@@ -162,7 +162,7 @@ export default function Homepage() {
               <Text fontSize="lg" fontWeight="bold" color="textPrimary">
                 Watch
               </Text>
-              <Link fontSize="sm" color="primary">
+              <Link fontSize="sm" color="primary.500">
                 See all
               </Link>
             </HStack>

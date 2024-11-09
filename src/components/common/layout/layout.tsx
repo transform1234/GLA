@@ -60,8 +60,13 @@ const Layout: React.FC<Props> = ({
         <Box height={height} width={width} bg="white" margin="0 auto">
           {isHeaderVisible && <Header />}
           {children}
-          <Box minH={"96px"} />
-          {isFooterVisible && <Footer menues={menuList} />}
+
+          {isFooterVisible && (
+            <>
+              <Box minH={"96px"} />
+              <Footer menues={menuList} />
+            </>
+          )}
         </Box>
       )}
     </Center>

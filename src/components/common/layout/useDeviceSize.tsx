@@ -11,7 +11,7 @@ interface DeviceSize {
 }
 
 function useDeviceSize({
-  maxWidth = 800,
+  maxWidth = 500,
   maxHeight,
 }: UseDeviceSizeProps = {}): DeviceSize {
   const [size, setSize] = useState<DeviceSize>({

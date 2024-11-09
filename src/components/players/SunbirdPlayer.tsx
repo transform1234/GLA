@@ -209,7 +209,7 @@ const SunbirdPlayer = ({
           name={JSON.stringify({
             ...props,
             questionListUrl: "https://sunbirdsaas.com/api/question/v1/list",
-            // questionListUrl: `${process.env.REACT_APP_API_URL}/course/questionset`
+            // questionListUrl: `https://alt-dev.uniteframework.io/course/questionset`,
           })}
           src={`${
             public_url ? public_url : process.env.PUBLIC_URL

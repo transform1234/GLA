@@ -13,7 +13,7 @@ const App = () => {
     };
     init();
   }, []);
-  console.log(videos, "videos");
+
   return <VideoReel videos={videos} />;
 };
 

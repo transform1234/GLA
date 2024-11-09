@@ -228,6 +228,11 @@ const VideoReel: FC<{ videos: any[] }> = ({ videos }) => {
       scrollOffset: number;
       scrollUpdateWasRequested: boolean;
     }) => {
+      if (listRef.current) {
+        // listRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Alternatively, you can use scrollTo for custom positioning:
+        // window.scrollTo({ top: targetRef.current.offsetTop, behavior: 'smooth' });
+      }
       if (!scrollUpdateWasRequested) return;
       const itemCount = videos.length;
       if (itemCount === 0) return;
@@ -249,7 +254,7 @@ const VideoReel: FC<{ videos: any[] }> = ({ videos }) => {
   );
 
   return (
-    <Layout>
+    <Layout isFooterVisible={false} isHeaderVisible={false}>
       <List
         ref={listRef}
         width={width}

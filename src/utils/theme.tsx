@@ -10,7 +10,18 @@ const customTheme = extendTheme({
     },
   },
   colors: {
-      primary: "#03627C",   
+    primary: {
+      50: "#e3f2f7",
+      100: "#b8dfe8",
+      200: "#8ac9da",
+      300: "#5bb3cb",
+      400: "#2d9cbb",
+      500: "#03627C", // Primary/base color
+      600: "#05536a",
+      700: "#074458",
+      800: "#093646",
+      900: "#0b2835",
+    }, 
       backgroundLight: "#f7fafc",
       backgroundDark: "#1a202c",
       primaryLight: "#39AED8",
@@ -83,7 +94,36 @@ const customTheme = extendTheme({
       },
     },
     Button: {
-     
+      baseStyle: {
+        fontWeight: "bold", // Example style
+      },
+      sizes: {
+        md: {
+          h: "48px",
+          fontSize: "lg",
+          px: "24px",
+        },
+      },
+      variants: {
+        solid: {
+          bg: "primary.500", 
+          color: "white",
+          _hover: {
+            bg: "primary.600", 
+          },
+          _active: {
+            bg: "primary.700",
+          },
+          _disabled: {
+            bg: "primary.300", 
+            color: "primary.500",
+            cursor: "not-allowed",
+          },
+        },
+      },
+      defaultProps: {
+        variant: "solid",
+      },
     },
   },
 });

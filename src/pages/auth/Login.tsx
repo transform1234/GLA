@@ -159,8 +159,8 @@ export default function Login() {
 
   return (
     // need to uncomment this line
-    // Layout
     <Layout>
+    <Center>
       <Box
         minH="100vh"
         display="flex"
@@ -247,7 +247,7 @@ export default function Login() {
                   position="absolute"
                   right="10px"
                   top="60%"
-                  color="primary"
+                  color="primary.500"
                   background="white"
                   transform="translateY(-50%)"
                   icon={show ? <ViewOffIcon /> : <ViewIcon />}
@@ -262,7 +262,7 @@ export default function Login() {
                 onClick={handleLogin}
                 width="100%"
                 color="white"
-                bg="primary"
+                bg="primary.500"
                 isDisabled={isLoginDisabled}
               >
                 {t("LOGIN")}
@@ -286,7 +286,7 @@ export default function Login() {
           </Box>
         </Center>
       </Box>
+    </Center>
     </Layout>
-    //  </Layout>
   );
 }

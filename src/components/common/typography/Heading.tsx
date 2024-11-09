@@ -12,8 +12,8 @@ const CustomHeading: FC<CustomHeadingProps> = ({ title, variant = 'h2', ...props
         <Heading
             as={variant}
             fontSize="14px"
-            color="primary"
-            marginBottom='1rem'
+            color="primary.500"
+            marginBottom='1px'
             {...props}
         >
             {title}

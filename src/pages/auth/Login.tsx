@@ -159,134 +159,133 @@ export default function Login() {
 
   return (
     // need to uncomment this line
-    <Layout>
-    <Center>
-      <Box
-        minH="100vh"
-        display="flex"
-        flexDirection="column"
-        position="relative"
-        w="100%"
-        backgroundImage={`url(${background})`}
-        backgroundSize="cover"
-        backgroundPosition="center"
-      >
-        <Center height="100vh">
-          <Box width="100%" padding="15px">
-            <Center>
-              <Box marginTop="40px" width="250px">
-                <img src={logo} alt="App Logo" />
-              </Box>
-            </Center>
-            <VStack mt="40px">
-              <CustomHeading
-                fontFamily="Bebas Neue"
-                variant="h2"
-                fontSize="24px"
-                fontWeight="400"
-                title={t("LOGIN_TO_YOUR_ACCOUNT")}
-                color="black"
-              />
-              <FormControl isInvalid={!!errors.username}>
-                <FormLabel>
-                  {t("LOGIN_USERNAME")}
-                  <Link
-                    onClick={() =>
-                      openModal(
-                        t("LOGIN_FORGOT_USERNAME"),
-                        t(
-                          "LOGIN_YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
-                        ),
-                        t("LOGIN_USERNAME_EXAMPLE_EXPLANATION")
-                      )
-                    }
-                  >
-                    {t("LOGIN_FORGOT_USERNAME")}
-                  </Link>
-                </FormLabel>
-                <Input
-                  placeholder={t("LOGIN_ENTER_USER_NAME")}
-                  value={username}
-                  style={{
-                    display: isOpen ? "none" : "block",
-                    marginBottom: "20px",
-                  }}
-                  onChange={(e) => setUsername(e.target.value)}
+    <Layout isHeaderVisible={false} isFooterVisible={false}>
+      <Center>
+        <Box
+          minH="100vh"
+          display="flex"
+          flexDirection="column"
+          position="relative"
+          w="100%"
+          backgroundImage={`url(${background})`}
+          backgroundSize="cover"
+          backgroundPosition="center"
+        >
+          <Center height="100vh">
+            <Box width="100%" padding="15px">
+              <Center>
+                <Box marginTop="40px" width="250px">
+                  <img src={logo} alt="App Logo" />
+                </Box>
+              </Center>
+              <VStack mt="40px">
+                <CustomHeading
+                  fontFamily="Bebas Neue"
+                  variant="h2"
+                  fontSize="24px"
+                  fontWeight="400"
+                  title={t("LOGIN_TO_YOUR_ACCOUNT")}
+                  color="black"
                 />
-              </FormControl>
+                <FormControl isInvalid={!!errors.username}>
+                  <FormLabel>
+                    {t("LOGIN_USERNAME")}
+                    <Link
+                      onClick={() =>
+                        openModal(
+                          t("LOGIN_FORGOT_USERNAME"),
+                          t(
+                            "LOGIN_YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
+                          ),
+                          t("LOGIN_USERNAME_EXAMPLE_EXPLANATION")
+                        )
+                      }
+                    >
+                      {t("LOGIN_FORGOT_USERNAME")}
+                    </Link>
+                  </FormLabel>
+                  <Input
+                    placeholder={t("LOGIN_ENTER_USER_NAME")}
+                    value={username}
+                    style={{
+                      display: isOpen ? "none" : "block",
+                      marginBottom: "20px",
+                    }}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </FormControl>
 
-              <FormControl isInvalid={!!errors.password}>
-                <FormLabel mt="10px">
-                  {t("LOGIN_PASSWORD")}
-                  <Link
-                    onClick={() =>
-                      openModal(
-                        t("LOGIN_FORGOT_PASSWORD"),
-                        t(
-                          "LOGIN_YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
-                        ),
-                        t("LOGIN_IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB")
-                      )
-                    }
-                  >
-                    {t("LOGIN_FORGOT_PASSWORD")}
-                  </Link>
-                </FormLabel>
-                <Input
-                  type={show ? "text" : "password"}
-                  placeholder={t("LOGIN_ENTER_PASSWORD")}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  pr="2.5rem"
-                  style={{
-                    display: isOpen ? "none" : "block",
-                    marginBottom: "20px",
-                  }}
+                <FormControl isInvalid={!!errors.password}>
+                  <FormLabel mt="10px">
+                    {t("LOGIN_PASSWORD")}
+                    <Link
+                      onClick={() =>
+                        openModal(
+                          t("LOGIN_FORGOT_PASSWORD"),
+                          t(
+                            "LOGIN_YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
+                          ),
+                          t("LOGIN_IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB")
+                        )
+                      }
+                    >
+                      {t("LOGIN_FORGOT_PASSWORD")}
+                    </Link>
+                  </FormLabel>
+                  <Input
+                    type={show ? "text" : "password"}
+                    placeholder={t("LOGIN_ENTER_PASSWORD")}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    pr="2.5rem"
+                    style={{
+                      display: isOpen ? "none" : "block",
+                      marginBottom: "20px",
+                    }}
+                  />
+                  <IconButton
+                    position="absolute"
+                    right="10px"
+                    top="60%"
+                    color="primary.500"
+                    background="white"
+                    transform="translateY(-50%)"
+                    icon={show ? <ViewOffIcon /> : <ViewIcon />}
+                    onClick={() => setShow(!show)}
+                    height="0"
+                    minWidth="0"
+                    aria-label=""
+                  />
+                </FormControl>
+
+                <PrimaryButton
+                  onClick={handleLogin}
+                  width="100%"
+                  color="white"
+                  isDisabled={isLoginDisabled}
+                >
+                  {t("LOGIN")}
+                </PrimaryButton>
+
+                {errors.alert && (
+                  <Alert status="error" mt={4}>
+                    <AlertIcon />
+                    <AlertTitle>{errors.alert}</AlertTitle>
+                  </Alert>
+                )}
+
+                <PopupModal
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  title={modalContent.title}
+                  message={modalContent.message}
+                  example={modalContent.example}
                 />
-                <IconButton
-                  position="absolute"
-                  right="10px"
-                  top="60%"
-                  color="primary.500"
-                  background="white"
-                  transform="translateY(-50%)"
-                  icon={show ? <ViewOffIcon /> : <ViewIcon />}
-                  onClick={() => setShow(!show)}
-                  height="0"
-                  minWidth="0"
-                  aria-label=""
-                />
-              </FormControl>
-
-              <PrimaryButton
-                onClick={handleLogin}
-                width="100%"
-                color="white"
-                bg="primary.500"
-                isDisabled={isLoginDisabled}
-              >
-                {t("LOGIN")}
-              </PrimaryButton>
-
-              {errors.alert && (
-                <Alert status="error" mt={4}>
-                  <AlertIcon />
-                  <AlertTitle>{errors.alert}</AlertTitle>
-                </Alert>
-              )}
-
-              <PopupModal
-                isOpen={isOpen}
-                onClose={onClose}
-                title={modalContent.title}
-                message={modalContent.message}
-                example={modalContent.example}
-              />
-            </VStack>
-          </Box>
-        </Center>
-      </Box>
-    </Center>
+              </VStack>
+            </Box>
+          </Center>
+        </Box>
+      </Center>
     </Layout>
   );
 }

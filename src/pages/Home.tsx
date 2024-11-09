@@ -1,15 +1,10 @@
-import { SearchIcon } from "@chakra-ui/icons";
 import {
+  Badge,
   Box,
-  Center,
-  Grid,
-  GridItem,
   HStack,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Link,
+  StackDivider,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -19,12 +14,40 @@ import english from "../assets/icons/english_icon.png";
 import kannada from "../assets/icons/kannada_icon.png";
 import math from "../assets/icons/maths_icon.png";
 import physics from "../assets/icons/physics_icon.png";
-import background from "../assets/images/home-bg.png";
-import transformSchool from "../assets/logo/SG_Transform Schools_Logo.png";
-import Footer from "../components/common/footer/Footer";
 import Layout from "../components/common/layout/layout";
 import CustomHeading from "../components/common/typography/Heading";
 import { getProgramId, getSubjectList } from "../services/home";
+import reelImg from "../assets/images/reel.png";
+import reelImg2 from "../assets/images/reel2.png";
+import { chunkArray } from "../utils/helper";
+
+const watchSectionData: Array<any> = [
+  {
+    category: ["Math", "Mixed Fraction"],
+    src: reelImg,
+    alt: "Lesson",
+    title: "Learn easy mixed fraction",
+  },
+  {
+    category: ["Science", "Human Evolution"],
+    src: reelImg2,
+    alt: "Lesson",
+    title: "Evolution of human species",
+  },
+  {
+    category: ["Science", "Human Evolution"],
+    src: reelImg,
+    alt: "Lesson",
+    title: "Evolution of human species",
+  },
+  {
+    category: ["Science", "Human Evolution"],
+    src: reelImg2,
+    alt: "Lesson",
+    title: "Evolution of human species",
+  },
+];
+
 export default function Homepage() {
   const { t } = useTranslation();
   const [subject, setSubject] = useState<Array<any>>([]);
@@ -49,178 +72,111 @@ export default function Homepage() {
 
   return (
     <Layout>
-      <Center bg="gray.50" pb="80px">
-        <Box w="100%">
-          {/* Header Section */}
-          <Box backgroundImage={`url(${background})`} paddingX="4">
-            <VStack align="flex-start" spacing={2}>
-              {/* Logo Section */}
-              <Box
-                backgroundImage={`url(${transformSchool})`}
-                backgroundRepeat="no-repeat"
-                backgroundSize="contain"
-                mt="52px"
-                width="50%"
-                height="50px"
-              />
+      <VStack spacing={4} align={"stretch"} px="4">
+        {/* Learn Something Today Section */}
+        <VStack pt="6" spacing={4}>
+          <CustomHeading
+            textAlign="center"
+            lineHeight="20px"
+            fontFamily="Inter"
+            variant="h2"
+            fontSize="20px"
+            fontWeight="400"
+            title={t("HOME_LEARN_SOMETHING_TODAY")}
+            color="primary.500"
+          />
 
-              {/* Greeting Text */}
-              <VStack align="flex-start" spacing={1}>
-                <CustomHeading
-                  lineHeight="21px"
-                  fontFamily="Inter"
-                  variant="h2"
-                  fontSize="12px"
-                  fontWeight="400"
-                  title={t("HOME_GOOD_EVENING")}
-                  color="white"
-                />
-                <CustomHeading
-                  lineHeight="21px"
-                  fontFamily="Inter"
-                  variant="h2"
-                  fontSize="20px"
-                  fontWeight="600"
-                  title={localStorage.getItem("name")}
-                  color="white"
-                />
-              </VStack>
-
-              {/* Search Input */}
-              <InputGroup mb="4" height="28px">
-                <InputLeftElement
-                  pointerEvents="none"
-                  children={<SearchIcon color="textSecondary" />}
-                />
-                <Input
-                  placeholder="Search..."
-                  bg="white"
-                  borderColor="backgroundGrey"
-                />
-              </InputGroup>
-            </VStack>
-          </Box>
-
-          {/* Learn Something Today Section */}
-          <Box mt={6}>
-            <CustomHeading
-              marginBottom="16px"
-              textAlign="center"
-              lineHeight="20px"
-              fontFamily="Inter"
-              variant="h2"
-              fontSize="20px"
-              fontWeight="400"
-              title={t("HOME_LEARN_SOMETHING_TODAY")}
-              color="primary.500"
-            />
-
-            <Grid templateColumns="repeat(4, 1fr)" gap={4}>
-              {subject &&
-                subject.map((sub, index) => (
-                  <GridItem key={sub.subject} position="relative">
-                    <VStack spacing={1}>
-                      {/* Render the specific image for each subject */}
-                      <Image
-                        boxSize="32px"
-                        src={
-                          subjectIcons[
-                            sub.subject as keyof typeof subjectIcons
-                          ] || kannada
-                        }
-                        alt={`${sub.subject} icon`}
-                      />
-                      <CustomHeading
-                        textAlign="center"
-                        lineHeight="20px"
-                        fontFamily="Inter"
-                        variant="h2"
-                        fontSize="20px"
-                        fontWeight="700"
-                        title={sub.subject}
-                        color="textPrimary"
-                      />
-                    </VStack>
-                    {/* Vertical divider */}
-                    {index < subject.length - 1 && (
+          <HStack
+            w="100%"
+            divider={<StackDivider borderColor="gray.200" margin="0" />}
+            justifyContent={"space-around"}
+          >
+            {subject &&
+              subject.map((sub, index) => (
+                <VStack key={sub.subject} spacing={4} p="3" maxW={"120px"}>
+                  {/* Render the specific image for each subject */}
+                  <Image
+                    boxSize="32px"
+                    src={
+                      subjectIcons[sub.subject as keyof typeof subjectIcons] ||
+                      kannada
+                    }
+                    alt={`${sub.subject} icon`}
+                  />
+                  <CustomHeading
+                    textAlign="center"
+                    lineHeight="20px"
+                    fontSize="20px"
+                    fontWeight="700"
+                    title={sub.subject}
+                    color="textPrimary"
+                  />
+                </VStack>
+              ))}
+          </HStack>
+        </VStack>
+        {/* Watch Section */}
+        <Box mt={6}>
+          <HStack justifyContent="space-between" mb={2}>
+            <Text fontSize="lg" fontWeight="bold" color="textPrimary">
+              Watch
+            </Text>
+            <Link fontSize="sm" color="primary.500">
+              See all
+            </Link>
+          </HStack>
+          <HStack spacing={4}>
+            <VStack spacing={4}>
+              {chunkArray(watchSectionData, 2).map((chunk, rowIndex) => (
+                <HStack key={rowIndex} spacing={5}>
+                  {chunk.map((item, index) => (
+                    <Box
+                      key={index}
+                      position="relative"
+                      borderRadius="md"
+                      overflow="hidden"
+                    >
+                      <Image src={item.src} alt={item.alt} borderRadius="md" />
                       <Box
+                        padding={3}
                         position="absolute"
-                        top="0"
-                        right="-2"
-                        height="100%"
-                        width="1px"
-                        bgColor="textSecondary"
-                      />
-                    )}
-                  </GridItem>
-                ))}
-            </Grid>
-          </Box>
-          {/* Watch Section */}
-          <Box mt={6}>
-            <HStack justifyContent="space-between" mb={2}>
-              <Text fontSize="lg" fontWeight="bold" color="textPrimary">
-                Watch
-              </Text>
-              <Link fontSize="sm" color="primary.500">
-                See all
-              </Link>
-            </HStack>
-            <HStack spacing={4}>
-              <Box w="100px" h="150px" bg="backgroundGrey" borderRadius="md">
-                <Image
-                  src="/path-to-image-1.jpg"
-                  alt="Lesson"
-                  borderRadius="md"
-                />
-                <Text
-                  fontSize="sm"
-                  textAlign="center"
-                  mt={2}
-                  color="textSecondary"
-                >
-                  Learn easy mixed fraction
-                </Text>
-              </Box>
-              <Box w="100px" h="150px" bg="backgroundGrey" borderRadius="md">
-                <Image
-                  src="/path-to-image-2.jpg"
-                  alt="Lesson"
-                  borderRadius="md"
-                />
-                <Text
-                  fontSize="sm"
-                  textAlign="center"
-                  mt={2}
-                  color="textSecondary"
-                >
-                  Evolution of human species
-                </Text>
-              </Box>
-
-              <Box w="100px" h="150px" bg="backgroundGrey" borderRadius="md">
-                <Image
-                  src="/path-to-image-2.jpg"
-                  alt="Lesson"
-                  borderRadius="md"
-                />
-                <Text
-                  fontSize="sm"
-                  textAlign="center"
-                  mt={2}
-                  color="textSecondary"
-                >
-                  Evolution of human species
-                </Text>
-              </Box>
-            </HStack>
-          </Box>
-
-          {/* Footer Navigation */}
-
-          <Footer activeIcon={activeIcon} />
+                        bottom={0}
+                        width="100%"
+                        bg="linear-gradient(to top, rgba(0, 0, 0, 1), transparent)"
+                      >
+                        <Text
+                          color="white"
+                          fontSize="sm"
+                          py={1}
+                          textAlign="left"
+                        >
+                          {item.title}
+                        </Text>
+                        {Array.isArray(item.category) &&
+                          item.category.map((cat: any, catIndex: number) => (
+                            <Badge
+                              key={catIndex}
+                              colorScheme="whiteAlpha"
+                              bg="whiteAlpha.300"
+                              borderColor="white"
+                              borderWidth="0"
+                              mx="1"
+                              fontSize="12px"
+                              fontWeight="400"
+                              color="white"
+                            >
+                              {cat}
+                            </Badge>
+                          ))}
+                      </Box>
+                    </Box>
+                  ))}
+                </HStack>
+              ))}
+            </VStack>
+          </HStack>
         </Box>
-      </Center>
+      </VStack>
     </Layout>
   );
 }

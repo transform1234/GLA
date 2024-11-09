@@ -65,12 +65,12 @@
       videoElement.setAttribute("player-config", JSON.stringify(playerConfig));
 
       videoElement.addEventListener("playerEvent", (event) => {
-        console.log("On playerEvent", event);
+        // console.log("On playerEvent", event);
         window?.parent?.postMessage(event?.detail, "*");
       });
 
       videoElement.addEventListener("telemetryEvent", (event) => {
-        console.log("On telemetryEvent", event);
+        // console.log("On telemetryEvent", event);
       });
 
       const myPlayer = document.getElementById("my-player");

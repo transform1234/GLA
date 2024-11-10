@@ -44,17 +44,25 @@ const SunbirdPlayer = ({
     if (iframeRef.current) {
       // Go to first question directly instead of showing the question set introduction
       setTimeout(() => {
-        if (iframeRef.current && iframeRef.current.contentWindow && iframeRef.current.contentWindow.location.href.endsWith("quml/index.html"))
-          {
-            const playButton:any = iframeRef.current.contentWindow.document.querySelector(".quml-navigation__next");
-            if (playButton) {
-              playButton.click();
-              playButton.click();
-            } 
+        if (
+          iframeRef.current &&
+          iframeRef.current.contentWindow &&
+          iframeRef.current.contentWindow.location.href.endsWith(
+            "quml/index.html"
+          )
+        ) {
+          const playButton: any =
+            iframeRef.current.contentWindow.document.querySelector(
+              ".quml-navigation__next"
+            );
+          if (playButton) {
+            playButton.click();
+            playButton.click();
           }
+        }
       }, 700);
     }
-  }, [iframeRef.current]); 
+  }, [iframeRef.current]);
 
   React.useEffect(() => {
     if (mimeType === "application/pdf") {
@@ -236,7 +244,7 @@ const SunbirdPlayer = ({
           })}
           src={`${
             public_url ? public_url : process.env.PUBLIC_URL
-          }${url}/index.html`}
+          }${url}/index.html?version=1.0.0`}
         />
       </VStack>
     );

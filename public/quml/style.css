@@ -60,11 +60,14 @@
     width: 12px !important;
     height: 12px !important;
   }
-  .progressBar-border,
+
+  .scoreboard-sections .progressBar-border {
+    display: none !important;
+  }
   .showFeedBack-progressBar {
     width: 15px !important;
     height: 15px !important;
-    margin: 0 2.25rem 0 0 !important;
+    margin: 0 1rem 0 0 !important;
   }
   .nonFeedback {
     top: -1.45rem !important;
@@ -80,6 +83,7 @@
   .lanscape-mode-right > ul {
     height: 1rem !important;
     margin: 0 !important;
+    align-items: center !important;
   }
   ul.scoreboard-sections {
     height: auto !important;
@@ -94,10 +98,10 @@
   .wrapper {
     display: flex !important;
     flex-wrap: wrap;
-    gap: 6px !important;
+    grid-gap: 6px !important;
     justify-content: space-between;
     > * {
-      flex-basis: calc(50% - 10px);
+      flex-basis: calc(50% - 5px);
     }
   }
   .quml-mcq--question.mb-16 {
@@ -138,6 +142,12 @@
   }
   .scoreboard-sections li.section.relative ul {
     align-items: center !important;
+    padding: 0 !important;
+  }
+
+  li > ul.scoreboard-sections li.section.relative ul {
+    margin: 0px !important;
+    top: 0px !important;
   }
   .scoreboard-sections li.section.relative ul li.showFeedBack-progressBar {
     padding-top: 5px !important;

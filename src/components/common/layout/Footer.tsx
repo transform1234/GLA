@@ -14,7 +14,7 @@ import useDeviceSize from "./useDeviceSize";
 import IconByName from "../icons/Icon";
 
 interface FooterProps {
-  menues: Array<{ title: string; route: string; icon?: string; id?: string }>;
+  menues: Array<{ title: string; route?: string; icon?: string; id?: string }>;
   routeDynamics?: boolean;
   setRef?: (ref: HTMLDivElement | null) => void;
 }
@@ -83,14 +83,17 @@ const Footer: React.FC<FooterProps> = ({
         borderBottomColor={"footerBorderGray"}
         shadow={"FooterShadow"}
       >
-        {footerMenus?.map((item, index) => (
+        {footerMenus?.map((item: any, index) => (
           <PressableNew
             item={item}
             key={`${item}-${index}`}
             cursor="pointer"
             opacity={selected === index ? 1 : 0.5}
             flex={1}
-            onClick={() => setSelected(0)}
+            onClick={() => {
+              setSelected(0);
+              item?.onClick && item?.onClick();
+            }}
           >
             <Text color={selected === index ? "primary.500" : "gray.900"}>
               <Center>

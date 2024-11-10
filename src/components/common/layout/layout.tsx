@@ -34,9 +34,12 @@ const menuList = [
     title: "Guide",
   },
   {
-    route: "/profile",
-    icon: "ProfileIcon",
-    title: "Profile",
+    icon: "LogoutIcon",
+    title: "Logout",
+    onClick: () => {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    },
   },
 ];
 const Layout: React.FC<Props> = ({

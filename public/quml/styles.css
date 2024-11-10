@@ -66,20 +66,6 @@
 .sb-lock-icon {
   cursor: pointer;
 }
-/*[class*="sb-icon-"] {
-    -webkit-mask-size: contain;
-    -webkit-mask-position: 50% 50%;
-    -webkit-mask-repeat: no-repeat;
-    mask-size: contain;
-    mask-position: 50% 50%;
-    mask-repeat: no-repeat;
-    background-color: $primary-color;
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    cursor: pointer;
-  }
-  */
 [class*="sb-icon-primary"] {
   background-color: #024f9d;
   background-color: var(--primary-color);
@@ -5843,11 +5829,23 @@ html[dir="rtl"] .sb-left-icon-btn i.icon {
   display: none !important;
 }
 
-.lanscape-mode-right {
-  display: none !important;
+.quml-mcq {
+  word-break: break-all !important;
 }
-@media only screen and (max-width: 480px) {
-  .lanscape-mode-right[_ngcontent-pnu-c69] {
-    display: none !important;
-  }
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

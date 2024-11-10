@@ -21,69 +21,124 @@ import {
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 import { debounce } from "lodash";
 
-interface VideoItemProps {
+const VideoItem: React.FC<{
   id: string;
   qml_id: string;
   isVisible: boolean;
   style: React.CSSProperties;
-}
+}> = memo(({ id, qml_id, isVisible, style }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { width, height } = useDeviceSize();
+  const [lesson, setLesson] = React.useState<{ mimeType: string }>({
+    mimeType: "",
+  });
+  const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
+    mimeType: "",
+  });
+  const [trackData, setTrackData] = React.useState<any[]>([]);
+  const type = "";
 
-const VideoItem: FC<VideoItemProps> = memo(
-  ({ id, qml_id, isVisible, style }) => {
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { width, height } = useDeviceSize();
-    const [lesson, setLesson] = React.useState<{ mimeType: string }>({
-      mimeType: "",
-    });
-    const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
-      mimeType: "",
-    });
-    const [trackData, setTrackData] = React.useState<any[]>([]);
-    const type = "";
+  const handleTrackData = async (
+    { score, attempts, ...props }: { score: any; attempts: any },
+    playerType = "quml"
+  ) => {
+    // console.log("handleTrackData", { score, attempts, ...props });
+  };
 
-    const handleTrackData = async (
-      { score, attempts, ...props }: { score: any; attempts: any },
-      playerType = "quml"
-    ) => {
-      // console.log("handleTrackData", { score, attempts, ...props });
+  useEffect(() => {
+    if (!isVisible) return;
+    const inti = async () => {
+      setIsLoading(true);
+      let resultData = await content.getOne({
+        id,
+        adapter: "diksha",
+        type: "course",
+      });
+      let qmlResult = await content.getOne({
+        id: qml_id,
+        adapter: "diksha",
+        type: "assessment",
+      });
+      setLessonQml(qmlResult);
+      setLesson(resultData);
+      setIsLoading(false);
     };
+    inti();
+  }, [id, isVisible]);
 
-    useEffect(() => {
-      if (!isVisible) return;
-      const inti = async () => {
-        setIsLoading(true);
-        let resultData = await content.getOne({
-          id,
-          adapter: "diksha",
-          type: "course",
-        });
-        let qmlResult = await content.getOne({
-          id: qml_id,
-          adapter: "diksha",
-          type: "assessment",
-        });
-        setLessonQml(qmlResult);
-        setLesson(resultData);
-        setIsLoading(false);
-      };
-      inti();
-    }, [id, isVisible]);
+  return (
+    <div
+      style={{
+        ...style,
+        width: "100%",
+        height: "100%",
+        scrollSnapAlign: "start",
+      }}
+    >
+      {isVisible && !isLoading ? (
+        <div>
+          <SunbirdPlayer
+            {...{ width, height }}
+            _playerStypeHeight={height}
+            {...lesson}
+            userData={{
+              firstName: localStorage.getItem("name"),
+              lastName: "",
+              // lastName: localStorage.getItem("lastName"),
+            }}
+            setTrackData={(data: any) => {
+              if (
+                [
+                  "assessment",
+                  "SelfAssess",
+                  "QuestionSet",
+                  "QuestionSetImage",
+                ].includes(type)
+              ) {
+                handleTrackData(data);
+              } else if (
+                ["application/vnd.sunbird.questionset"].includes(
+                  lesson?.mimeType
+                )
+              ) {
+                handleTrackData(data, "application/vnd.sunbird.questionset");
+              } else if (
+                [
+                  "application/pdf",
+                  "video/mp4",
+                  "video/webm",
+                  "video/x-youtube",
+                  "application/vnd.ekstep.h5p-archive",
+                ].includes(lesson?.mimeType)
+              ) {
+                handleTrackData(data, "pdf-video");
+              } else {
+                if (
+                  ["application/vnd.ekstep.ecml-archive"].includes(
+                    lesson?.mimeType
+                  )
+                ) {
+                  if (Array.isArray(data)) {
+                    const score = data.reduce(
+                      (old, newData) => old + newData?.score,
+                      0
+                    );
+                    // handleTrackData({ ...data, score: `${score}` }, "ecml");
+                    setTrackData(data);
+                  } else {
+                    handleTrackData({ ...data, score: 0 }, "ecml");
+                  }
+                }
+              }
+            }}
+            public_url={`${VITE_PLAYER_URL}`}
+          />
 
-    return (
-      <div
-        style={{
-          ...style,
-          width: "100%",
-          height: "100%",
-          scrollSnapAlign: "start",
-        }}
-      >
-        {isVisible && !isLoading ? (
-          <div>
+          <Center>
             <SunbirdPlayer
-              {...{ width, height }}
-              _playerStypeHeight={height}
-              {...lesson}
+              _vstack={{ position: "absolute", bottom: "20px" }}
+              {...{ width: width - 20, height: height / 3 }}
+              {...lessonQml}
               userData={{
                 firstName: localStorage.getItem("name"),
                 lastName: "",
@@ -101,7 +156,7 @@ const VideoItem: FC<VideoItemProps> = memo(
                   handleTrackData(data);
                 } else if (
                   ["application/vnd.sunbird.questionset"].includes(
-                    lesson?.mimeType
+                    lessonQml?.mimeType
                   )
                 ) {
                   handleTrackData(data, "application/vnd.sunbird.questionset");
@@ -112,13 +167,13 @@ const VideoItem: FC<VideoItemProps> = memo(
                     "video/webm",
                     "video/x-youtube",
                     "application/vnd.ekstep.h5p-archive",
-                  ].includes(lesson?.mimeType)
+                  ].includes(lessonQml?.mimeType)
                 ) {
                   handleTrackData(data, "pdf-video");
                 } else {
                   if (
                     ["application/vnd.ekstep.ecml-archive"].includes(
-                      lesson?.mimeType
+                      lessonQml?.mimeType
                     )
                   ) {
                     if (Array.isArray(data)) {
@@ -136,96 +191,34 @@ const VideoItem: FC<VideoItemProps> = memo(
               }}
               public_url={`${VITE_PLAYER_URL}`}
             />
+          </Center>
+        </div>
+      ) : (
+        <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
+          <HStack gap="5" padding={5}>
+            <SkeletonCircle size="8" />
+            <Stack flex="1" gap="2">
+              <Skeleton height="3" />
+              <Skeleton height="3" width="80%" />
+            </Stack>
+          </HStack>
+          <HStack
+            width="full"
+            position="absolute"
+            justifyContent="center"
+            alignItems="center"
+            top="50%"
+            transform="translateY(-50%)"
+          >
+            <SkeletonCircle size="20" />
+          </HStack>
+        </Stack>
+      )}
+    </div>
+  );
+});
 
-            <Center>
-              <SunbirdPlayer
-                _vstack={{ position: "absolute", bottom: "20px" }}
-                {...{ width: width - 20, height: height / 3 }}
-                {...lessonQml}
-                userData={{
-                  firstName: localStorage.getItem("name"),
-                  lastName: "",
-                  // lastName: localStorage.getItem("lastName"),
-                }}
-                setTrackData={(data: any) => {
-                  if (
-                    [
-                      "assessment",
-                      "SelfAssess",
-                      "QuestionSet",
-                      "QuestionSetImage",
-                    ].includes(type)
-                  ) {
-                    handleTrackData(data);
-                  } else if (
-                    ["application/vnd.sunbird.questionset"].includes(
-                      lessonQml?.mimeType
-                    )
-                  ) {
-                    handleTrackData(
-                      data,
-                      "application/vnd.sunbird.questionset"
-                    );
-                  } else if (
-                    [
-                      "application/pdf",
-                      "video/mp4",
-                      "video/webm",
-                      "video/x-youtube",
-                      "application/vnd.ekstep.h5p-archive",
-                    ].includes(lessonQml?.mimeType)
-                  ) {
-                    handleTrackData(data, "pdf-video");
-                  } else {
-                    if (
-                      ["application/vnd.ekstep.ecml-archive"].includes(
-                        lessonQml?.mimeType
-                      )
-                    ) {
-                      if (Array.isArray(data)) {
-                        const score = data.reduce(
-                          (old, newData) => old + newData?.score,
-                          0
-                        );
-                        // handleTrackData({ ...data, score: `${score}` }, "ecml");
-                        setTrackData(data);
-                      } else {
-                        handleTrackData({ ...data, score: 0 }, "ecml");
-                      }
-                    }
-                  }
-                }}
-                public_url={`${VITE_PLAYER_URL}`}
-              />
-            </Center>
-          </div>
-        ) : (
-          <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
-            <HStack gap="5" padding={5}>
-              <SkeletonCircle size="8" />
-              <Stack flex="1" gap="2">
-                <Skeleton height="3" />
-                <Skeleton height="3" width="80%" />
-              </Stack>
-            </HStack>
-            <HStack
-              width="full"
-              position="absolute"
-              justifyContent="center"
-              alignItems="center"
-              top="50%"
-              transform="translateY(-50%)"
-            >
-              <SkeletonCircle size="20" />
-            </HStack>
-          </Stack>
-        )}
-      </div>
-    );
-  }
-);
-
-const VideoReel: FC<{ videos: any[] }> = ({ videos }) => {
+const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
   const listRef = useRef();
   const [visibleIndex, setVisibleIndex] = useState(0);
   const { height: itemSize, width } = useDeviceSize();
@@ -234,7 +227,7 @@ const VideoReel: FC<{ videos: any[] }> = ({ videos }) => {
     debounce(({ scrollOffset }: { scrollOffset: number }) => {
       const itemCount = videos.length;
       if (itemCount === 0) return;
-      let newVisibleIndex = scrollOffset / itemSize;
+      let newVisibleIndex = Math.round(scrollOffset / itemSize);
       if (newVisibleIndex >= 0) {
         setVisibleIndex(newVisibleIndex);
       }

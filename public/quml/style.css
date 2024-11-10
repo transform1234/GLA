@@ -61,7 +61,7 @@
     height: 12px !important;
   }
 
-  .scoreboard-sections .progressBar-border {
+  .scoreboard-sections label.progressBar-border {
     display: none !important;
   }
   .showFeedBack-progressBar {
@@ -81,9 +81,16 @@
     padding-top: 7px !important;
   }
   .lanscape-mode-right > ul {
+    flex: auto !important;
     height: 1rem !important;
     margin: 0 !important;
     align-items: center !important;
+  }
+  .lanscape-mode-right ul li:not(.showFeedBack-progressBar) {
+    flex: auto !important;
+  }
+  .lanscape-mode-right ul li ul li ul {
+    justify-content: space-between !important;
   }
   ul.scoreboard-sections {
     height: auto !important;
@@ -161,5 +168,32 @@
   .progress-indicators__popup {
     height: 90% !important;
     overflow-y: scroll !important;
+  }
+  .scoreboard {
+    padding: 3rem 1rem 0 1rem !important;
+  }
+  .scoreboard__header,
+  .sections-score-card,
+  .scoreboard__btn-container {
+    height: auto !important ;
+  }
+  .scoreboard__btn-container {
+    padding: 8px 0 !important;
+  }
+  .scoreboard__header .scoreboard__title,
+  .sections-score-count-info {
+    font-size: 14px !important;
+  }
+  .sections-score-count-info {
+    position: initial !important;
+  }
+  .scoreboard__header .scoreboard__subtitle {
+    font-size: 12px !important;
+  }
+  .sb-btn-normal {
+    height: 1.75rem !important;
+  }
+  .sections-score-count-info {
+    position: initial;
   }
 }

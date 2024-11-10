@@ -244,7 +244,7 @@ const SunbirdPlayer = ({
           })}
           src={`${
             public_url ? public_url : process.env.PUBLIC_URL
-          }${url}/index.html?version=1.0.0`}
+          }${url}/index.html`}
         />
       </VStack>
     );

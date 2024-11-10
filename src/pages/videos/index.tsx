@@ -22,7 +22,7 @@ const App = () => {
     <Box>
       <IconButton
         aria-label="Go back"
-        icon={<ChevronLeftIcon boxSize="2rem" color="white" />}
+        icon={<ChevronLeftIcon boxSize="2rem" color="primary.500" />}
         onClick={() => navigate(-1)}
         size="mg"
         variant="ghost"
@@ -30,7 +30,7 @@ const App = () => {
         top="10px"
         left="10px"
         zIndex="10"
-        bg="whiteAlpha.300"
+        bg="primary.50"
         p="1"
         rounded={"full"}
       />

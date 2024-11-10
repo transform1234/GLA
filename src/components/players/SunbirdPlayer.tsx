@@ -16,6 +16,7 @@ interface SunbirdPlayerProps {
   _vstack?: object;
   _playerStypeHeight?: number;
   handleExitButton?: () => void;
+  style?: React.CSSProperties;
 }
 
 const SunbirdPlayer = ({
@@ -77,6 +78,9 @@ const SunbirdPlayer = ({
 
   const handleEvent = async (event: any) => {
     const data = event?.data;
+    if (["iconUp", "iconDown"].includes(data)) {
+      setTrackData(data);
+    }
     let milliseconds = event?.data?.edata?.duration;
     const seconds: string = (milliseconds / 1000).toString();
     localStorage.setItem("totalDuration", seconds);
@@ -202,7 +206,7 @@ const SunbirdPlayer = ({
           />
         )}
         <iframe
-          style={{ border: "none" }}
+          style={{ border: "none", ...(props?.style || {}) }}
           // id="preview"
           height={"100%"}
           width="100%"

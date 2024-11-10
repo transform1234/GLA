@@ -19,7 +19,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
-import { debounce } from "lodash";
+import { debounce, round } from "lodash";
 
 const VideoItem: React.FC<{
   id: string;
@@ -29,6 +29,11 @@ const VideoItem: React.FC<{
 }> = memo(({ id, qml_id, isVisible, style }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { width, height } = useDeviceSize();
+  const [heightPerItem, setHeightPerItem] = useState<number>(0);
+  useEffect(() => {
+    setHeightPerItem(height / 3);
+  }, [height]);
+
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });
@@ -136,8 +141,14 @@ const VideoItem: React.FC<{
 
           <Center>
             <SunbirdPlayer
-              _vstack={{ position: "absolute", bottom: "20px" }}
-              {...{ width: width - 20, height: height / 3 }}
+              style={{ border: "none", borderRadius: "16px" }}
+              _vstack={{
+                position: "absolute",
+                bottom: "20px",
+                rounded: "full",
+                transition: "height 0.5s",
+              }}
+              {...{ width: width - 20, height: heightPerItem }}
               {...lessonQml}
               userData={{
                 firstName: localStorage.getItem("name"),
@@ -145,7 +156,13 @@ const VideoItem: React.FC<{
                 // lastName: localStorage.getItem("lastName"),
               }}
               setTrackData={(data: any) => {
-                if (
+                if (["iconUp", "iconDown"].includes(data)) {
+                  if (data === "iconUp") {
+                    setHeightPerItem(height / 8);
+                  } else {
+                    setHeightPerItem(height / 3);
+                  }
+                } else if (
                   [
                     "assessment",
                     "SelfAssess",
@@ -219,7 +236,7 @@ const VideoItem: React.FC<{
 });
 
 const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
-  const listRef = useRef();
+  const listRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
   const { height: itemSize, width } = useDeviceSize();
 

@@ -1,6 +1,6 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { IconButton, Text, VStack } from "@chakra-ui/react";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useRef, useEffect } from "react";
 
 interface SunbirdPlayerProps {
   public_url: string;
@@ -28,6 +28,7 @@ const SunbirdPlayer = ({
   mimeType,
   ...props
 }: SunbirdPlayerProps) => {
+  const iframeRef = useRef(null);
   const typeMatch = mimeType?.match(/\/(.+)$/);
   const fileType = typeMatch ? typeMatch[1] : "";
   localStorage.setItem("contentType", fileType);
@@ -37,6 +38,22 @@ const SunbirdPlayer = ({
   React.useEffect(() => {
     localStorage.removeItem("trackDATA");
   }, []);
+
+  useEffect(() => {
+    if (iframeRef.current) {
+      // Go to first question directly instead of showing the question set introduction
+      setTimeout(() => {
+        if (iframeRef.current.contentWindow.location.href.endsWith("quml/index.html"))
+          {
+            const playButton = iframeRef.current.contentWindow.document.querySelector(".quml-navigation__next");
+            if (playButton) {
+              playButton.click();
+              playButton.click();
+            } 
+          }
+      }, 700);
+    }
+  }, [iframeRef.current]); 
 
   React.useEffect(() => {
     if (mimeType === "application/pdf") {
@@ -210,6 +227,7 @@ const SunbirdPlayer = ({
           // id="preview"
           height={"100%"}
           width="100%"
+          ref={iframeRef}
           name={JSON.stringify({
             ...props,
             questionListUrl: "https://sunbirdsaas.com/api/question/v1/list",

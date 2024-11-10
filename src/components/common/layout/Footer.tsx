@@ -14,7 +14,7 @@ import useDeviceSize from "./useDeviceSize";
 import IconByName from "../icons/Icon";
 
 interface FooterProps {
-  menues: Array<{ title: string; route: string; icon?: string; id?: string }>;
+  menues: Array<{ title: string; route?: string; icon?: string; id?: string }>;
   routeDynamics?: boolean;
   setRef?: (ref: HTMLDivElement | null) => void;
 }

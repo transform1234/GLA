@@ -1,6 +1,7 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { IconButton, Text, VStack } from "@chakra-ui/react";
 import React, { ReactElement, useRef, useEffect } from "react";
+import { Any } from "react-spring";
 
 interface SunbirdPlayerProps {
   public_url: string;
@@ -28,7 +29,7 @@ const SunbirdPlayer = ({
   mimeType,
   ...props
 }: SunbirdPlayerProps) => {
-  const iframeRef = useRef(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const typeMatch = mimeType?.match(/\/(.+)$/);
   const fileType = typeMatch ? typeMatch[1] : "";
   localStorage.setItem("contentType", fileType);
@@ -43,9 +44,9 @@ const SunbirdPlayer = ({
     if (iframeRef.current) {
       // Go to first question directly instead of showing the question set introduction
       setTimeout(() => {
-        if (iframeRef.current.contentWindow.location.href.endsWith("quml/index.html"))
+        if (iframeRef.current && iframeRef.current.contentWindow && iframeRef.current.contentWindow.location.href.endsWith("quml/index.html"))
           {
-            const playButton = iframeRef.current.contentWindow.document.querySelector(".quml-navigation__next");
+            const playButton:any = iframeRef.current.contentWindow.document.querySelector(".quml-navigation__next");
             if (playButton) {
               playButton.click();
               playButton.click();

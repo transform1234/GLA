@@ -12,9 +12,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "robots.txt", "apple-touch-icon.png"],
       manifest: {
-        name: "My PWA App",
-        short_name: "PWAApp",
-        description: "A React PWA built with Vite",
+        name: "Gamified Learning App",
+        short_name: "GLA",
+        description: "Gamified Learning App",
         theme_color: "#ffffff",
         icons: [
           {

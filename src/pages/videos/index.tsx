@@ -1,10 +1,14 @@
 // src/App.tsx
 import React, { useEffect, useState } from "react";
+import { Box, IconButton, Flex } from "@chakra-ui/react";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import VideoReel from "./VideoReels";
 import { getAltUserContent } from "../../services/content";
 
 const App = () => {
   const [videos, setVideos] = useState<Array<any>>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
@@ -14,7 +18,25 @@ const App = () => {
     init();
   }, []);
 
-  return <VideoReel videos={videos} />;
+  return (
+    <Box>
+      <IconButton
+        aria-label="Go back"
+        icon={<ChevronLeftIcon boxSize="2rem" color="primary.500" />}
+        onClick={() => navigate(-1)}
+        size="mg"
+        variant="ghost"
+        position="absolute"
+        top="10px"
+        left="10px"
+        zIndex="10"
+        bg="primary.50"
+        p="1"
+        rounded={"full"}
+      />
+      <VideoReel videos={videos} />
+    </Box>
+  );
 };
 
 export default App;

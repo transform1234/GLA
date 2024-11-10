@@ -145,7 +145,6 @@ const VideoItem: React.FC<{
               _vstack={{
                 position: "absolute",
                 bottom: "20px",
-                rounded: "full",
                 transition: "height 0.5s",
               }}
               {...{ width: width - 20, height: heightPerItem }}

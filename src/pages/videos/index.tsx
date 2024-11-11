@@ -37,7 +37,7 @@ const App = () => {
           programId: "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
           subject: await getSubject(),
         });
-        console.log(result);
+
         if (result?.data?.length === 0) {
           setError(
             `No content available for the subject: ${localStorage.getItem(

@@ -48,10 +48,11 @@ const watchSectionData: Array<any> = [
   },
 ];
 const subjectIcons = {
-  Science: { icon: physics, label: "Science" },
-  Mathematics: { icon: math, label: "Math" },
-  English: { icon: english, label: "English" },
-  Kannada: { icon: kannada, label: "Kannada" },
+  science: { icon: physics, label: "Science" },
+  mathematics: { icon: math, label: "Math" },
+  math: { icon: math, label: "Math" },
+  english: { icon: english, label: "English" },
+  kannada: { icon: kannada, label: "Kannada" },
 };
 export default function Homepage() {
   const { t } = useTranslation();
@@ -111,8 +112,9 @@ export default function Homepage() {
                       <Image
                         boxSize="32px"
                         src={
-                          subjectIcons[sub.subject as keyof typeof subjectIcons]
-                            ?.icon || kannada
+                          subjectIcons[
+                            sub.subject?.toLowerCase() as keyof typeof subjectIcons
+                          ]?.icon || kannada
                         }
                         alt={`${sub.subject} icon`}
                       />
@@ -123,8 +125,9 @@ export default function Homepage() {
                         fontWeight="700"
                         textTransform="uppercase"
                         title={
-                          subjectIcons[sub.subject as keyof typeof subjectIcons]
-                            ?.label || sub.subject
+                          subjectIcons[
+                            sub.subject?.toLowerCase() as keyof typeof subjectIcons
+                          ]?.label || sub.subject
                         }
                         color={
                           sub.subject === selectedSubject

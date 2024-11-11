@@ -1,25 +1,22 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type FC,
-} from "react";
-import { FixedSizeList as List, ListOnScrollProps } from "react-window";
-import Layout from "../../components/common/layout/layout";
-import SunbirdPlayer from "../../components/players/SunbirdPlayer";
-import * as content from "../../services/content";
-import useDeviceSize from "../../components/common/layout/useDeviceSize";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Center,
   HStack,
+  IconButton,
   Skeleton,
   SkeletonCircle,
   Stack,
 } from "@chakra-ui/react";
+import { debounce } from "lodash";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FixedSizeList as List } from "react-window";
+import Layout from "../../components/common/layout/layout";
+import useDeviceSize from "../../components/common/layout/useDeviceSize";
+import SunbirdPlayer from "../../components/players/SunbirdPlayer";
+import * as content from "../../services/content";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
-import { debounce, round } from "lodash";
 
 const VideoItem: React.FC<{
   id: string;
@@ -53,6 +50,8 @@ const VideoItem: React.FC<{
   useEffect(() => {
     if (!isVisible) return;
     const inti = async () => {
+      // alert(JSON.stringify({ width, height }));
+
       setIsLoading(true);
       let resultData = await content.getOne({
         id,
@@ -136,7 +135,7 @@ const VideoItem: React.FC<{
                 }
               }
             }}
-            public_url={`${VITE_PLAYER_URL}`}
+            public_url={VITE_PLAYER_URL}
           />
 
           <Center>
@@ -205,7 +204,7 @@ const VideoItem: React.FC<{
                   }
                 }
               }}
-              public_url={`${VITE_PLAYER_URL}`}
+              public_url={VITE_PLAYER_URL}
             />
           </Center>
         </div>
@@ -238,6 +237,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
   const listRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
   const { height: itemSize, width } = useDeviceSize();
+  const navigate = useNavigate();
 
   const handleScroll = useCallback(
     debounce(({ scrollOffset }: { scrollOffset: number }) => {
@@ -253,33 +253,55 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
 
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
-      <List
-        ref={listRef}
-        width={width}
-        height={itemSize}
-        itemCount={videos.length}
-        itemSize={itemSize}
-        scrollToIndex={visibleIndex}
-        onScroll={handleScroll}
-        style={{
-          scrollSnapType: "y mandatory",
-          overflowY: "scroll",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-          touchAction: "none",
-        }}
-        className="hide-scrollbar"
-      >
-        {({ index, style }: { index: number; style: React.CSSProperties }) => (
-          <VideoItem
-            id={videos?.[index]?.contentId}
-            qml_id={videos?.[index]?.lesson_questionset}
-            isVisible={index === visibleIndex}
-            style={style}
-            key={"VideoItem" + index}
-          />
-        )}
-      </List>
+      <Box position={"relative"}>
+        <IconButton
+          aria-label="Go back"
+          icon={<ChevronLeftIcon boxSize="2rem" color="primary.500" />}
+          onClick={() => navigate(-1)}
+          size="mg"
+          variant="ghost"
+          position="absolute"
+          top="10px"
+          left="10px"
+          zIndex="10"
+          bg="primary.50"
+          p="1"
+          rounded={"full"}
+        />
+        <List
+          ref={listRef}
+          width={width}
+          height={itemSize}
+          itemCount={videos.length}
+          itemSize={itemSize}
+          scrollToIndex={visibleIndex}
+          onScroll={handleScroll}
+          style={{
+            scrollSnapType: "y mandatory",
+            overflowY: "scroll",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            touchAction: "none",
+          }}
+          className="hide-scrollbar"
+        >
+          {({
+            index,
+            style,
+          }: {
+            index: number;
+            style: React.CSSProperties;
+          }) => (
+            <VideoItem
+              id={videos?.[index]?.contentId}
+              qml_id={videos?.[index]?.lesson_questionset}
+              isVisible={index === visibleIndex}
+              style={style}
+              key={"VideoItem" + index}
+            />
+          )}
+        </List>
+      </Box>
     </Layout>
   );
 };

@@ -54,13 +54,17 @@ const Layout: React.FC<Props> = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      bg="white"
-      boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.05)"
+      bg="transparent"
     >
       {loading || width === 0 ? (
         <Loading message="Loading..." />
       ) : (
-        <Box height={height} width={width} bg="white" margin="0 auto">
+        <Box
+          height={height}
+          width={width}
+          bg="white"
+          boxShadow="0px 0px 15px 0px #e1e1e1"
+        >
           {isHeaderVisible && <Header />}
           {children}
 

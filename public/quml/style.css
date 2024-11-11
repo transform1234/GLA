@@ -1,6 +1,6 @@
 @media only screen and (max-width: 480px) {
   .landscape-content {
-    padding: 4rem 1rem !important;
+    padding: 4.5rem 1rem !important;
     padding-bottom: 0px !important;
   }
   .quml-header__container {
@@ -75,10 +75,9 @@
   }
   .lanscape-mode-right {
     margin: 0 auto !important;
-    padding: 0 !important;
+    padding: 0 0 !important;
     top: 40px !important;
-    height: 1.6rem !important;
-    padding-top: 7px !important;
+    height: 2rem !important;
   }
   .lanscape-mode-right > ul {
     flex: auto !important;
@@ -184,16 +183,31 @@
   .sections-score-count-info {
     font-size: 14px !important;
   }
-  .sections-score-count-info {
+  .sections-score-count-info,
+  .sections-score-count-sections {
     position: initial !important;
+    flex: 1 !important;
+    width: auto !important;
+    padding: 0 !important;
   }
   .scoreboard__header .scoreboard__subtitle {
     font-size: 12px !important;
   }
+  .scoreboard__header {
+    padding-bottom: 0.5rem !important;
+  }
   .sb-btn-normal {
     height: 1.75rem !important;
   }
-  .sections-score-count-info {
-    position: initial;
+  .sa-button-container,
+  .question-container,
+  .sa-title {
+    margin: 0 !important;
+  }
+  .question-container .question p {
+    margin-bottom: 0.5rem !important;
+  }
+  .sections-score-card .sections-score-count-info .mb-15 {
+    margin-bottom: 0.1rem !important;
   }
 }

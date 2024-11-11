@@ -12,10 +12,12 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Image,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import PopupModal from "../../components/common/PopupModal";
-import logo from "../../assets/logo/TSHeader.png";
+import transformLogo from "../../assets/logo/TSHeader.png";
+import logo from "../../assets/logo/Logo-Large.png";
 import background from "../../assets/images/bg.png";
 // import Layout from "../../components/common/layouts/layout";
 import { fetchToken, getAuthUser } from "../../services/auth/auth";
@@ -173,11 +175,28 @@ export default function Login() {
         >
           <Center height="100vh">
             <Box width="100%" padding="15px">
-              <Center>
-                <Box marginTop="40px" width="250px">
-                  <img src={logo} alt="App Logo" />
-                </Box>
+              <Box position="absolute" top="20px" left="20px">
+                <Image
+                  src={transformLogo}
+                  alt="Transform Schools Logo"
+                  width="115px"
+                  marginTop="68px"
+                />
+              </Box>
+
+              {/* Centered content */}
+              <Center height="100%">
+                <VStack spacing={6}>
+                  <Box marginTop="100px" marginBottom="50px">
+                    <Image
+                      src={logo}
+                      alt="App Logo"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  </Box>
+                </VStack>
               </Center>
+              {/* </Box> */}
               <VStack mt="40px">
                 <CustomHeading
                   fontFamily="Bebas Neue"

@@ -7,7 +7,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import background from "../../../assets/images/home-bg.png";
-import transformSchool from "../../../assets/logo/SG_Transform Schools_Logo.png";
+import palooza_logo from "../../../assets/logo/Logo-Large.png";
 import CustomHeading from "../typography/Heading";
 import { useTranslation } from "react-i18next";
 
@@ -23,10 +23,11 @@ const Header: React.FC<HeaderProps> = () => {
       <VStack align="flex-start" spacing={3}>
         {/* Logo Section */}
         <Box
-          backgroundImage={`url(${transformSchool})`}
+          backgroundImage={`url(${palooza_logo})`}
           backgroundRepeat="no-repeat"
           backgroundSize="contain"
-          width="50%"
+          marginTop="20px"
+          width="40%"
           height="50px"
         />
         {/* Greeting Text */}
@@ -37,7 +38,7 @@ const Header: React.FC<HeaderProps> = () => {
             variant="h2"
             fontSize="12px"
             fontWeight="400"
-            title={t("HOME_GOOD_EVENING")}
+            title={t("HOME_HELLO")}
             color="white"
           />
           <CustomHeading

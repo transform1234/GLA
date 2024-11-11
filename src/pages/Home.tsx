@@ -10,16 +10,16 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import english from "../assets/icons/english_icon.png";
-import kannada from "../assets/icons/kannada_icon.png";
-import math from "../assets/icons/maths_icon.png";
-import physics from "../assets/icons/physics_icon.png";
+import english from "../assets/icons/english_icon.svg";
+import kannada from "../assets/icons/kannada_icon.svg";
+import math from "../assets/icons/maths_icon.svg";
+import physics from "../assets/icons/physics_icon.svg";
 import Layout from "../components/common/layout/layout";
 import CustomHeading from "../components/common/typography/Heading";
 import { getProgramId, getSubjectList } from "../services/home";
 import reelImg from "../assets/images/reel.png";
 import reelImg2 from "../assets/images/reel2.png";
-import { chunkArray } from "../utils/helper";
+import { chunk } from "lodash";
 
 const watchSectionData: Array<any> = [
   {
@@ -47,28 +47,34 @@ const watchSectionData: Array<any> = [
     title: "Evolution of human species",
   },
 ];
-
+const subjectIcons = {
+  Science: { icon: physics, label: "Science" },
+  Mathematics: { icon: math, label: "Math" },
+  English: { icon: english, label: "English" },
+  Kannada: { icon: kannada, label: "Kannada" },
+};
 export default function Homepage() {
   const { t } = useTranslation();
-  const [subject, setSubject] = useState<Array<any>>([]);
-  const subjectIcons = {
-    Science: physics,
-    Mathematics: math,
-    English: english,
-    Kannada: kannada,
-  };
-  const [activeIcon, setActiveIcon] = useState("home");
+  const [subjects, setSubjects] = useState<Array<any>>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+
   useEffect(() => {
     const fetchProgramId = async () => {
+      setSelectedSubject(localStorage.getItem("subject") || "");
       const programData = await getProgramId();
       if (programData) {
         const res: any = await getSubjectList();
-        setSubject(res);
+        const subjectR = chunk(res, 4);
+        setSubjects(subjectR);
       }
     };
 
     fetchProgramId();
   }, []);
+  const handelSelectSubject = (subject: string) => {
+    setSelectedSubject(subject);
+    localStorage.setItem("subject", subject);
+  };
 
   return (
     <Layout>
@@ -85,35 +91,51 @@ export default function Homepage() {
             title={t("HOME_LEARN_SOMETHING_TODAY")}
             color="primary.500"
           />
-
-          <HStack
-            w="100%"
-            divider={<StackDivider borderColor="gray.200" margin="0" />}
-            justifyContent={"space-around"}
-          >
-            {subject &&
-              subject.map((sub, index) => (
-                <VStack key={sub.subject} spacing={4} p="3" maxW={"120px"}>
-                  {/* Render the specific image for each subject */}
-                  <Image
-                    boxSize="32px"
-                    src={
-                      subjectIcons[sub.subject as keyof typeof subjectIcons] ||
-                      kannada
-                    }
-                    alt={`${sub.subject} icon`}
-                  />
-                  <CustomHeading
-                    textAlign="center"
-                    lineHeight="20px"
-                    fontSize="20px"
-                    fontWeight="700"
-                    title={sub.subject}
-                    color="textPrimary"
-                  />
-                </VStack>
-              ))}
-          </HStack>
+          {subjects &&
+            subjects.map((subject, index) => (
+              <HStack
+                key={`subject-${index}`}
+                w="100%"
+                divider={<StackDivider borderColor="gray.200" margin="0" />}
+                justifyContent={"space-around"}
+              >
+                {subject &&
+                  subject.map((sub: any) => (
+                    <VStack
+                      key={sub.subject}
+                      spacing={4}
+                      p="3"
+                      onClick={() => handelSelectSubject(sub.subject)}
+                    >
+                      {/* Render the specific image for each subject */}
+                      <Image
+                        boxSize="32px"
+                        src={
+                          subjectIcons[sub.subject as keyof typeof subjectIcons]
+                            ?.icon || kannada
+                        }
+                        alt={`${sub.subject} icon`}
+                      />
+                      <CustomHeading
+                        textAlign="center"
+                        lineHeight="20px"
+                        fontSize="12px"
+                        fontWeight="700"
+                        textTransform="uppercase"
+                        title={
+                          subjectIcons[sub.subject as keyof typeof subjectIcons]
+                            ?.label || sub.subject
+                        }
+                        color={
+                          sub.subject === selectedSubject
+                            ? "primary.500"
+                            : "gray.800"
+                        }
+                      />
+                    </VStack>
+                  ))}
+              </HStack>
+            ))}
         </VStack>
         {/* Watch Section */}
         <Box mt={6}>
@@ -127,7 +149,7 @@ export default function Homepage() {
           </HStack>
           <HStack spacing={4}>
             <VStack spacing={4}>
-              {chunkArray(watchSectionData, 2).map((chunk, rowIndex) => (
+              {chunk(watchSectionData, 2).map((chunk, rowIndex) => (
                 <HStack key={rowIndex} spacing={5}>
                   {chunk.map((item, index) => (
                     <Box

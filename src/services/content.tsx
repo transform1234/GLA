@@ -165,7 +165,7 @@ export const getAltUserContent = async ({
       return result;
     } else {
       console.log("Failed to fetch alt user content");
-      return {};
+      return { data: [] };
     }
   } catch (e: unknown) {
     if (e instanceof Error) {
@@ -173,6 +173,6 @@ export const getAltUserContent = async ({
     } else {
       console.log("course/progress/contentid", String(e));
     }
-    return {};
+    return { data: [] };
   }
 };

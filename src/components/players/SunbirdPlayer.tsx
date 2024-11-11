@@ -233,7 +233,6 @@ const SunbirdPlayer = ({
         )}
         <iframe
           style={{ border: "none", ...(props?.style || {}) }}
-          // id="preview"
           height={"100%"}
           width="100%"
           ref={iframeRef}
@@ -242,9 +241,7 @@ const SunbirdPlayer = ({
             questionListUrl: "https://sunbirdsaas.com/api/question/v1/list",
             // questionListUrl: `https://alt-dev.uniteframework.io/course/questionset`,
           })}
-          src={`${
-            public_url ? public_url : process.env.PUBLIC_URL
-          }${url}/index.html`}
+          src={`${public_url || process.env.PUBLIC_URL || ""}${url}/index.html`}
         />
       </VStack>
     );

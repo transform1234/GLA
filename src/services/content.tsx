@@ -149,7 +149,7 @@ export const getAltUserContent = async ({
 }): Promise<any> => {
   try {
     const response = await fetch(
-      `${baseUrl}/altprogramassociation/glaUserContent`,
+      `${baseUrl}/altprogramassociation/glaUserContent?page=${page}&limit=${limit}`,
       {
         method: "POST",
         headers: {

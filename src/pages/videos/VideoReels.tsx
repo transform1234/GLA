@@ -58,12 +58,14 @@ const VideoItem: React.FC<{
         adapter: "diksha",
         type: "course",
       });
-      let qmlResult = await content.getOne({
-        id: qml_id,
-        adapter: "diksha",
-        type: "assessment",
-      });
-      setLessonQml(qmlResult);
+      if (qml_id) {
+        let qmlResult = await content.getOne({
+          id: qml_id,
+          adapter: "diksha",
+          type: "assessment",
+        });
+        setLessonQml(qmlResult);
+      }
       setLesson(resultData);
       setIsLoading(false);
     };
@@ -137,76 +139,80 @@ const VideoItem: React.FC<{
             }}
             public_url={VITE_PLAYER_URL}
           />
-
-          <Center>
-            <SunbirdPlayer
-              style={{ border: "none", borderRadius: "16px" }}
-              _vstack={{
-                position: "absolute",
-                bottom: "20px",
-                transition: "height 0.5s",
-              }}
-              {...{ width: width - 20, height: heightPerItem }}
-              {...lessonQml}
-              userData={{
-                firstName: localStorage.getItem("name"),
-                lastName: "",
-                // lastName: localStorage.getItem("lastName"),
-              }}
-              setTrackData={(data: any) => {
-                if (["iconUp", "iconDown"].includes(data)) {
-                  if (data === "iconUp") {
-                    setHeightPerItem(height / 8);
-                  } else {
-                    setHeightPerItem(height / 3);
-                  }
-                } else if (
-                  [
-                    "assessment",
-                    "SelfAssess",
-                    "QuestionSet",
-                    "QuestionSetImage",
-                  ].includes(type)
-                ) {
-                  handleTrackData(data);
-                } else if (
-                  ["application/vnd.sunbird.questionset"].includes(
-                    lessonQml?.mimeType
-                  )
-                ) {
-                  handleTrackData(data, "application/vnd.sunbird.questionset");
-                } else if (
-                  [
-                    "application/pdf",
-                    "video/mp4",
-                    "video/webm",
-                    "video/x-youtube",
-                    "application/vnd.ekstep.h5p-archive",
-                  ].includes(lessonQml?.mimeType)
-                ) {
-                  handleTrackData(data, "pdf-video");
-                } else {
-                  if (
-                    ["application/vnd.ekstep.ecml-archive"].includes(
+          {qml_id && (
+            <Center>
+              <SunbirdPlayer
+                style={{ border: "none", borderRadius: "16px" }}
+                _vstack={{
+                  position: "absolute",
+                  bottom: "20px",
+                  transition: "height 0.5s",
+                }}
+                {...{ width: width - 20, height: heightPerItem }}
+                {...lessonQml}
+                userData={{
+                  firstName: localStorage.getItem("name"),
+                  lastName: "",
+                  // lastName: localStorage.getItem("lastName"),
+                }}
+                setTrackData={(data: any) => {
+                  if (["iconUp", "iconDown"].includes(data)) {
+                    if (data === "iconUp") {
+                      setHeightPerItem(height / 8);
+                    } else {
+                      setHeightPerItem(height / 3);
+                    }
+                  } else if (
+                    [
+                      "assessment",
+                      "SelfAssess",
+                      "QuestionSet",
+                      "QuestionSetImage",
+                    ].includes(type)
+                  ) {
+                    handleTrackData(data);
+                  } else if (
+                    ["application/vnd.sunbird.questionset"].includes(
                       lessonQml?.mimeType
                     )
                   ) {
-                    if (Array.isArray(data)) {
-                      const score = data.reduce(
-                        (old, newData) => old + newData?.score,
-                        0
-                      );
-                      // handleTrackData({ ...data, score: `${score}` }, "ecml");
-                      setTrackData(data);
-                    } else {
-                      handleTrackData({ ...data, score: 0 }, "ecml");
+                    handleTrackData(
+                      data,
+                      "application/vnd.sunbird.questionset"
+                    );
+                  } else if (
+                    [
+                      "application/pdf",
+                      "video/mp4",
+                      "video/webm",
+                      "video/x-youtube",
+                      "application/vnd.ekstep.h5p-archive",
+                    ].includes(lessonQml?.mimeType)
+                  ) {
+                    handleTrackData(data, "pdf-video");
+                  } else {
+                    if (
+                      ["application/vnd.ekstep.ecml-archive"].includes(
+                        lessonQml?.mimeType
+                      )
+                    ) {
+                      if (Array.isArray(data)) {
+                        const score = data.reduce(
+                          (old, newData) => old + newData?.score,
+                          0
+                        );
+                        // handleTrackData({ ...data, score: `${score}` }, "ecml");
+                        setTrackData(data);
+                      } else {
+                        handleTrackData({ ...data, score: 0 }, "ecml");
+                      }
                     }
                   }
-                }
-              }}
-              public_url={VITE_PLAYER_URL}
-            />
-          </Center>
+                }}
+                public_url={VITE_PLAYER_URL}
+              />
+            </Center>
+          )}
         </div>
       ) : (
         <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>

@@ -1,16 +1,4 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type FC,
-} from "react";
-import { FixedSizeList as List, ListOnScrollProps } from "react-window";
-import Layout from "../../components/common/layout/layout";
-import SunbirdPlayer from "../../components/players/SunbirdPlayer";
-import * as content from "../../services/content";
-import useDeviceSize from "../../components/common/layout/useDeviceSize";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
   Box,
   Center,
@@ -20,10 +8,15 @@ import {
   SkeletonCircle,
   Stack,
 } from "@chakra-ui/react";
-const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
-import { debounce, round } from "lodash";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { debounce } from "lodash";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FixedSizeList as List } from "react-window";
+import Layout from "../../components/common/layout/layout";
+import useDeviceSize from "../../components/common/layout/useDeviceSize";
+import SunbirdPlayer from "../../components/players/SunbirdPlayer";
+import * as content from "../../services/content";
+const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 
 const VideoItem: React.FC<{
   id: string;

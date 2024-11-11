@@ -1,12 +1,10 @@
 // src/App.tsx
-import React, { useEffect, useState } from "react";
-import { Box, IconButton, Flex, Text } from "@chakra-ui/react";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import VideoReel from "./VideoReels";
+import Loading from "../../components/common/Loading";
 import { getAltUserContent } from "../../services/content";
 import { getProgramId, getSubjectList } from "../../services/home";
-import Loading from "../../components/common/Loading";
+import VideoReel from "./VideoReels";
 
 const getSubject = async () => {
   if (!localStorage.getItem("subject")) {
@@ -26,6 +24,7 @@ const getSubject = async () => {
 };
 
 const App = () => {
+  const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,9 +57,12 @@ const App = () => {
     };
     init();
   }, []);
-  console.log(error);
+  const onBackClick = () => {
+    navigate(-1);
+  };
+
   return error ? (
-    <Loading showSpinner={false} showBackButton={true} message={error} />
+    <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
     <VideoReel videos={videos} />
   );

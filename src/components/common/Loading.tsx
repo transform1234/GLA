@@ -1,21 +1,18 @@
 import React from "react";
 import { Box, Spinner, Text, Center, Button, Icon } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
 
 interface LoadingComponentProps {
   message?: string; // Optional prop for custom loading message
   showSpinner?: boolean; // Optional prop to handle spinner visibility
-  showBackButton?: boolean; // Optional prop to handle back button visibility
+  onBackClick?: () => void; // Optional prop to handle back button click
 }
 
 const Loading: React.FC<LoadingComponentProps> = ({
   message = "Loading...",
   showSpinner = true,
-  showBackButton = false,
+  onBackClick,
 }) => {
-  const navigate = useNavigate();
-
   return (
     <Center height="100vh" width="100vw">
       <Box display="flex" flexDirection="column" alignItems="center" gap="16px">
@@ -31,10 +28,10 @@ const Loading: React.FC<LoadingComponentProps> = ({
         <Text fontSize="18px" color="gray.600">
           {message}
         </Text>
-        {showBackButton && (
+        {onBackClick && (
           <Button
             variant="link"
-            onClick={() => navigate(-1)}
+            onClick={onBackClick}
             colorScheme="primary"
             leftIcon={<Icon as={ChevronLeftIcon} />}
           >

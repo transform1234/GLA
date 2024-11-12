@@ -146,10 +146,10 @@ const VideoItem: React.FC<{
                 style={{ border: "none", borderRadius: "16px" }}
                 _vstack={{
                   position: "absolute",
-                  bottom: "20px",
+                  bottom: "16px",
                   transition: "height 0.5s",
                 }}
-                {...{ width: width - 20, height: heightPerItem }}
+                {...{ width: width - 32, height: heightPerItem }}
                 {...lessonQml}
                 userData={{
                   firstName: localStorage.getItem("name"),
@@ -217,22 +217,22 @@ const VideoItem: React.FC<{
         </div>
       ) : (
         <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
-          <HStack gap="5" padding={5}>
-            <SkeletonCircle size="8" />
-            <Stack flex="1" gap="2">
-              <Skeleton height="3" />
-              <Skeleton height="3" width="80%" />
-            </Stack>
+          <HStack gap="5" padding={4} justifyContent={"space-between"}>
+            <HStack gap="5">
+              <SkeletonCircle size="9" />
+              <SkeletonCircle size="9" />
+              <SkeletonCircle size="9" />
+            </HStack>
+            <SkeletonCircle size="9" />
           </HStack>
           <HStack
             width="full"
             position="absolute"
             justifyContent="center"
             alignItems="center"
-            top="50%"
-            transform="translateY(-50%)"
+            bottom="16px"
           >
-            <SkeletonCircle size="20" />
+            <Skeleton height="20" rounded={"16px"} width={width - 32} />
           </HStack>
         </Stack>
       )}

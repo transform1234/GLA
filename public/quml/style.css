@@ -2,6 +2,7 @@
   .landscape-content {
     padding: 4.5rem 1rem !important;
     padding-bottom: 0px !important;
+    display: none !important;
   }
   .quml-header__container {
     justify-content: space-between !important;
@@ -131,16 +132,15 @@
     right: 1rem !important;
     z-index: 70 !important;
     border: none !important;
-    background: transparent !important;
-    padding: 6px 12px !important;
     position: absolute;
     background: #03627c1a !important;
     border-radius: 50% !important;
     line-height: 0 !important;
     padding: 10px !important;
   }
-  .close {
-    display: none !important ;
+  .collapse-close {
+    background: transparent !important;
+    padding: 6px 12px !important;
   }
   .duration.mr-16 {
     margin-right: 3rem !important;
@@ -163,6 +163,13 @@
   }
   .quml-header__metadata.quml-header__metadata--portrait {
     padding-top: 5px !important;
+    display: none !important;
+  }
+  .displayblock {
+    display: block !important ;
+  }
+  .quml-header__metadata.quml-header__metadata--portrait.displayblock {
+    display: flex !important ;
   }
   .progress-indicators__popup {
     height: 90% !important;
@@ -209,5 +216,8 @@
   }
   .sections-score-card .sections-score-count-info .mb-15 {
     margin-bottom: 0.1rem !important;
+  }
+  .main-container {
+    transition: height 0.2s !important;
   }
 }

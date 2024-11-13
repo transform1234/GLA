@@ -16,6 +16,7 @@ import Layout from "../../components/common/layout/layout";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
+import IconByName from "../../components/common/icons/Icon";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 
 const VideoItem: React.FC<{
@@ -28,7 +29,7 @@ const VideoItem: React.FC<{
   const { width, height } = useDeviceSize();
   const [heightPerItem, setHeightPerItem] = useState<number>(0);
   useEffect(() => {
-    setHeightPerItem(height / 3);
+    setHeightPerItem(height / 8);
   }, [height]);
 
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
@@ -145,10 +146,10 @@ const VideoItem: React.FC<{
                 style={{ border: "none", borderRadius: "16px" }}
                 _vstack={{
                   position: "absolute",
-                  bottom: "20px",
+                  bottom: "16px",
                   transition: "height 0.5s",
                 }}
-                {...{ width: width - 20, height: heightPerItem }}
+                {...{ width: width - 32, height: heightPerItem }}
                 {...lessonQml}
                 userData={{
                   firstName: localStorage.getItem("name"),
@@ -157,7 +158,7 @@ const VideoItem: React.FC<{
                 }}
                 setTrackData={(data: any) => {
                   if (["iconUp", "iconDown"].includes(data)) {
-                    if (data === "iconUp") {
+                    if (data === "iconDown") {
                       setHeightPerItem(height / 8);
                     } else {
                       setHeightPerItem(height / 3);
@@ -216,22 +217,22 @@ const VideoItem: React.FC<{
         </div>
       ) : (
         <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
-          <HStack gap="5" padding={5}>
-            <SkeletonCircle size="8" />
-            <Stack flex="1" gap="2">
-              <Skeleton height="3" />
-              <Skeleton height="3" width="80%" />
-            </Stack>
+          <HStack gap="5" padding={4} justifyContent={"space-between"}>
+            <HStack gap="5">
+              <SkeletonCircle size="9" />
+              <SkeletonCircle size="9" />
+              <SkeletonCircle size="9" />
+            </HStack>
+            <SkeletonCircle size="9" />
           </HStack>
           <HStack
             width="full"
             position="absolute"
             justifyContent="center"
             alignItems="center"
-            top="50%"
-            transform="translateY(-50%)"
+            bottom="16px"
           >
-            <SkeletonCircle size="20" />
+            <Skeleton height="20" rounded={"16px"} width={width - 32} />
           </HStack>
         </Stack>
       )}
@@ -260,19 +261,15 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
-        <IconButton
-          aria-label="Go back"
-          icon={<ChevronLeftIcon boxSize="2rem" color="primary.500" />}
+        <TopIcon
           onClick={() => navigate(-1)}
-          size="mg"
-          variant="ghost"
-          position="absolute"
-          top="10px"
-          left="10px"
-          zIndex="10"
-          bg="primary.50"
-          p="1"
-          rounded={"full"}
+          icon={"ChevronLeftIcon"}
+          left="16px"
+        />
+        <TopIcon
+          onClick={() => console.log("TopIcon")}
+          icon={"ThumbsUpIcon"}
+          right="16px"
         />
         <List
           ref={listRef}
@@ -313,3 +310,27 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
 };
 
 export default VideoReel;
+
+const TopIcon: React.FC<{
+  onClick: () => void;
+  icon: any;
+  right?: string;
+  left?: string;
+}> = ({ onClick, left, icon, ...props }) => {
+  return (
+    <IconButton
+      aria-label="Go back"
+      icon={<IconByName name={icon} boxSize="2rem" color="primary.500" />}
+      size="mg"
+      variant="ghost"
+      position="absolute"
+      top="16px"
+      left={left}
+      zIndex="10"
+      bg="primary.50"
+      rounded={"full"}
+      onClick={onClick}
+      {...props}
+    />
+  );
+};

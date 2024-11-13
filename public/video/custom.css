@@ -8,3 +8,48 @@
 #overlay-button {
   display: none !important;
 }
+
+.pause-play {
+  position: absolute !important;
+  top: 16px !important;
+  left: 68px !important;
+  margin: 0 !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  background-color: #03627c !important;
+}
+.pause-play svg {
+  width: 34px !important;
+  height: 34px !important;
+}
+.pause-play svg g {
+  fill: #e3f2f7 !important;
+}
+.forward,
+.back-ward,
+.vjs-control-bar button,
+.vjs-control-bar .vjs-duration.vjs-time-control.vjs-control,
+.vjs-control-bar .vjs-progress-control.vjs-control,
+.vjs-control-bar .vjs-remaining-time.vjs-time-control.vjs-control,
+.vjs-control-bar
+  .vjs-playback-rate.vjs-menu-button.vjs-menu-button-popup.vjs-control.vjs-button {
+  display: none !important;
+}
+.vjs-mute-control.vjs-control.vjs-button.vjs-vol-3 {
+  background: #e3f2f7 !important;
+  border-radius: 50% !important;
+  width: 34px !important;
+  height: 34px !important;
+  display: block !important;
+}
+
+.vjs-control-bar {
+  top: 16px !important;
+  width: 34px !important;
+  left: 120px !important;
+  background: transparent !important;
+}
+.video-js .vjs-mute-control .vjs-icon-placeholder:before {
+  color: #03627c !important;
+}

@@ -26,10 +26,10 @@ const SunbirdPlayer = ({
   handleExitButton,
   width,
   height,
-  mimeType,
   ...props
 }: SunbirdPlayerProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { mimeType } = props;
   const typeMatch = mimeType?.match(/\/(.+)$/);
   const fileType = typeMatch ? typeMatch[1] : "";
   localStorage.setItem("contentType", fileType);

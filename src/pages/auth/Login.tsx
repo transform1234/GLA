@@ -14,28 +14,27 @@ import {
   AlertTitle,
   Image,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import PopupModal from "../../components/common/PopupModal";
 import transformLogo from "../../assets/logo/TSHeader.png";
 import logo from "../../assets/logo/Logo-Large.png";
 import background from "../../assets/images/bg.png";
-// import Layout from "../../components/common/layouts/layout";
 import { fetchToken, getAuthUser } from "../../services/auth/auth";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import PrimaryButton from "../../components/common/button/PrimaryButton";
 import CustomHeading from "../../components/common/typography/Heading";
 import Layout from "../../components/common/layout/layout";
+import CustomInput from "../../components/common/input/CustomInput";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [show, setShow] = useState(false);
   const [errors, setErrors] = useState<{
     username?: string;
     password?: string;
     alert?: string;
   }>({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const isLoginDisabled = !(username && password);
   const navigate = useNavigate();
   const [modalContent, setModalContent] = useState({
@@ -75,6 +74,7 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
+    setIsSubmitted(true); 
     const telemetryImpression = {
       context: {
         env: "log-in",
@@ -127,6 +127,7 @@ export default function Login() {
     };
     // telemetryFactory.interact(telemetryInteract);
     if (validate()) {
+      try {
       const result = await fetchToken(username, password);
 
       if (result) {
@@ -135,8 +136,7 @@ export default function Login() {
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("token", token);
 
-        let resultTeacher: { data: any[] } = { data: [] };
-        resultTeacher = await getAuthUser();
+          const resultTeacher = await getAuthUser();
 
         localStorage.setItem("id", resultTeacher?.data[0]?.userId);
         localStorage.setItem("name", resultTeacher?.data[0]?.name);
@@ -155,12 +155,25 @@ export default function Login() {
       } else {
         localStorage.removeItem("token");
         setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
+        }
+      } catch (error) {
+        setErrors({
+          username: t("LOGIN_INVALID_USER_NAME"),
+          password: t("LOGIN_INVALID_USER_NAME"),
+        });
       }
     }
   };
+  const handleInputChange = (field : any, value: any) => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [field]: value ? "" : t("LOGIN_REQUIRED_FIELD"),
+    }));
+    if (field === "username") setUsername(value);
+    if (field === "password") setPassword(value);
+  };
 
   return (
-    // need to uncomment this line
     <Layout isHeaderVisible={false} isFooterVisible={false}>
       <Center>
         <Box
@@ -175,12 +188,16 @@ export default function Login() {
         >
           <Center height="100vh">
             <Box width="100%" padding="15px">
-              <Box position="absolute" top="20px" left="20px">
+              <Box
+                position="absolute"
+                top={["2vh", "3vh"]}
+                left={["2vw", "1vw"]}
+              >
                 <Image
                   src={transformLogo}
                   alt="Transform Schools Logo"
-                  width="115px"
-                  marginTop="68px"
+                  width={["28vw", "16vw", "8vw"]}
+                  marginTop={["3vh", "5vh"]}
                 />
               </Box>
 
@@ -223,14 +240,12 @@ export default function Login() {
                       {t("LOGIN_FORGOT_USERNAME")}
                     </Link>
                   </FormLabel>
-                  <Input
-                    placeholder={t("LOGIN_ENTER_USER_NAME")}
-                    value={username}
-                    style={{
-                      display: isOpen ? "none" : "block",
-                      marginBottom: "20px",
-                    }}
-                    onChange={(e) => setUsername(e.target.value)}
+                  <CustomInput
+                  placeholder={t("LOGIN_ENTER_USER_NAME")}
+                  value={username}
+                  onChange={(value) => handleInputChange("username", value)}
+                  error={!!errors.username && isSubmitted} // Show only after first submit
+                  errorMessage={errors.username}
                   />
                 </FormControl>
 
@@ -251,29 +266,12 @@ export default function Login() {
                       {t("LOGIN_FORGOT_PASSWORD")}
                     </Link>
                   </FormLabel>
-                  <Input
-                    type={show ? "text" : "password"}
-                    placeholder={t("LOGIN_ENTER_PASSWORD")}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    pr="2.5rem"
-                    style={{
-                      display: isOpen ? "none" : "block",
-                      marginBottom: "20px",
-                    }}
-                  />
-                  <IconButton
-                    position="absolute"
-                    right="10px"
-                    top="60%"
-                    color="primary.500"
-                    background="white"
-                    transform="translateY(-50%)"
-                    icon={show ? <ViewOffIcon /> : <ViewIcon />}
-                    onClick={() => setShow(!show)}
-                    height="0"
-                    minWidth="0"
-                    aria-label=""
+                  <CustomInput
+                  placeholder={t("LOGIN_ENTER_PASSWORD")}
+                  value={password}
+                  onChange={(value) => handleInputChange("password", value)}
+                  error={!!errors.password && isSubmitted}
+                  errorMessage={errors.password}
                   />
                 </FormControl>
 
@@ -282,6 +280,7 @@ export default function Login() {
                   width="100%"
                   color="white"
                   isDisabled={isLoginDisabled}
+                  marginTop="20px"
                 >
                   {t("LOGIN")}
                 </PrimaryButton>

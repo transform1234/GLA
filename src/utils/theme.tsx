@@ -16,12 +16,24 @@ const customTheme = extendTheme({
       200: "#8ac9da",
       300: "#5bb3cb",
       400: "#2d9cbb",
-      500: "#03627C", // Primary/base color
+      500: "#03627C",
       600: "#05536a",
       700: "#074458",
       800: "#093646",
       900: "#0b2835",
     }, 
+    red: {
+      50: "#fff0f0",
+      100: "#ffb8b8",   
+      200: "#ff8a8a", 
+      300: "#ff5b5b",
+      400: "#ff2d2d", 
+      500: "#db0000", 
+      600: "#a80017", 
+      700: "#7f0013", 
+      800: "#56000e", 
+      900: "#2d0007",  
+    },
       backgroundLight: "#f7fafc",
       backgroundDark: "#1a202c",
       primaryLight: "#39AED8",
@@ -31,6 +43,7 @@ const customTheme = extendTheme({
       backgroundHighlight: "#03627C1A",
       backgroundGrey: "#F4F4F4",
       white: "#FFFFFF",
+      borderColor: "#00A745" 
   },
   components: {
     Center: {
@@ -87,15 +100,14 @@ const customTheme = extendTheme({
         fontSize: "12px",
         fontWeight: "500",
         lineHeight: "16px",
-        color: "primary",
-        // Verticaltrim : "Cap height",
+        color: "primary.500",
         float: "right",
         mt: 1,
       },
     },
     Button: {
       baseStyle: {
-        fontWeight: "bold", // Example style
+        fontWeight: "bold",
       },
       sizes: {
         md: {
@@ -116,7 +128,7 @@ const customTheme = extendTheme({
           },
           _disabled: {
             bg: "primary.300", 
-            color: "primary.500",
+            color: "white",
             cursor: "not-allowed",
           },
         },

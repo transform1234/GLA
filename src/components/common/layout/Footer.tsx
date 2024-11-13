@@ -91,7 +91,7 @@ const Footer: React.FC<FooterProps> = ({
             opacity={selected === index ? 1 : 0.5}
             flex={1}
             onClick={() => {
-              setSelected(0);
+              setSelected(index);
               item?.onClick && item?.onClick();
             }}
           >

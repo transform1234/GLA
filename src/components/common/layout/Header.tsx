@@ -10,6 +10,8 @@ import background from "../../../assets/images/home-bg.png";
 import palooza_logo from "../../../assets/logo/Logo-Large.png";
 import CustomHeading from "../typography/Heading";
 import { useTranslation } from "react-i18next";
+import CustomInput from "../input/CustomInput";
+import { useState } from "react";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -17,6 +19,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = () => {
   const { t } = useTranslation();
+  const [search, setSearch] = useState("");
 
   return (
     <Box backgroundImage={`url(${background})`} p="4" roundedBottom={"16px"}>
@@ -52,17 +55,13 @@ const Header: React.FC<HeaderProps> = () => {
           />
         </VStack>
         {/* Search Input */}
-        <InputGroup mb="4" height="28px">
-          <InputLeftElement
-            pointerEvents="none"
-            children={<SearchIcon color="textSecondary" />}
-          />
-          <Input
-            placeholder="Search..."
-            bg="white"
-            borderColor="backgroundGrey"
-          />
-        </InputGroup>
+        <CustomInput
+          placeholder={t("HOME_SEARCH")}
+          value={search}
+          onChange={setSearch}
+          iconType="search"
+          showClearIcon={true}
+        />
       </VStack>
     </Box>
   );

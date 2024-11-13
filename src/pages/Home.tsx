@@ -20,7 +20,7 @@ import { getProgramId, getSubjectList } from "../services/home";
 import reelImg from "../assets/images/reel.png";
 import reelImg2 from "../assets/images/reel2.png";
 import { chunk } from "lodash";
-
+import arrow from "../assets/icons/chevron_forward.svg";
 const watchSectionData: Array<any> = [
   {
     category: ["Math", "Mixed Fraction"],
@@ -89,8 +89,8 @@ export default function Homepage() {
             variant="h2"
             fontSize="20px"
             fontWeight="400"
-            title={t("HOME_LEARN_SOMETHING_TODAY")}
-            color="primary.500"
+            title={t("HOME_LEARN_SOMETHING_NOW")}
+            color="textPrimary"
           />
           {subjects &&
             subjects.map((subject, index) => (
@@ -141,26 +141,30 @@ export default function Homepage() {
             ))}
         </VStack>
         {/* Watch Section */}
-        <Box mt={6}>
-          <HStack justifyContent="space-between" mb={2}>
-            <Text fontSize="lg" fontWeight="bold" color="textPrimary">
-              Watch
+        <Box>
+          <HStack mb={2}>
+            <Text fontSize="20px" fontWeight="bold" color="primary.500">
+              {t("HOME_WATCH")}
             </Text>
-            <Link fontSize="sm" color="primary.500">
-              See all
-            </Link>
+            <Image
+              src={arrow}
+              alt="Arrow"
+              boxSize="12px"
+            />
           </HStack>
           <HStack spacing={4}>
             <VStack spacing={4}>
               {chunk(watchSectionData, 2).map((chunk, rowIndex) => (
                 <HStack key={rowIndex} spacing={5}>
                   {chunk.map((item, index) => (
-                    <Box
-                      key={index}
-                      position="relative"
-                      borderRadius="md"
-                      overflow="hidden"
-                    >
+                 <Box
+                 key={index}
+                 position="relative"
+                 borderRadius="9px"
+                 overflow="hidden"
+                 borderWidth="4px"
+                 borderColor="borderColor"
+               >
                       <Image src={item.src} alt={item.alt} borderRadius="md" />
                       <Box
                         padding={3}

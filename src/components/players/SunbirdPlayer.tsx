@@ -1,11 +1,12 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { IconButton, Text, VStack } from "@chakra-ui/react";
 import React, { ReactElement, useRef, useEffect } from "react";
-import { Any } from "react-spring";
+import { handleEvent } from "../../pages/videos/utils";
 
 interface SunbirdPlayerProps {
   public_url: string;
-  setTrackData: (data: any) => void;
+  forwardedRef?: any;
+  setTrackData?: (data: any) => void;
   width: number;
   height: number;
   mimeType: string;
@@ -26,19 +27,15 @@ const SunbirdPlayer = ({
   handleExitButton,
   width,
   height,
+  forwardedRef,
   ...props
 }: SunbirdPlayerProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { mimeType } = props;
   const typeMatch = mimeType?.match(/\/(.+)$/);
   const fileType = typeMatch ? typeMatch[1] : "";
-  localStorage.setItem("contentType", fileType);
   let trackData: any[] = [];
   const [url, setUrl] = React.useState<string>("");
-
-  React.useEffect(() => {
-    localStorage.removeItem("trackDATA");
-  }, []);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -85,7 +82,10 @@ const SunbirdPlayer = ({
   }, [mimeType]);
 
   React.useEffect(() => {
-    if ([`/content-player`, `/quml`, `/pdf`, `/video`].includes(url)) {
+    if (
+      [`/content-player`, `/quml`, `/pdf`, `/video`].includes(url) &&
+      setTrackData
+    ) {
       window.addEventListener(
         "message",
         (event) => {
@@ -96,122 +96,37 @@ const SunbirdPlayer = ({
     }
 
     return () => {
-      if ([`/content-player`, `/quml`, `/pdf`, `/video`].includes(url)) {
+      if (
+        [`/content-player`, `/quml`, `/pdf`, `/video`].includes(url) &&
+        setTrackData
+      ) {
         window.removeEventListener("message", (val) => {});
       }
     };
   }, [url]);
 
-  const handleEvent = async (event: any) => {
-    const data = event?.data;
-    if (["iconUp", "iconDown"].includes(data)) {
-      setTrackData(data);
-    }
-    let milliseconds = event?.data?.edata?.duration;
-    const seconds: string = (milliseconds / 1000).toString();
-    localStorage.setItem("totalDuration", seconds);
-    let telemetry: {
-      eid?: string;
-      edata?: any;
-    } = {};
-    if (data && typeof data?.data === "string") {
-      telemetry = JSON.parse(data.data);
-    } else if (data && typeof data === "string") {
-      telemetry = JSON.parse(data);
-    } else if (data?.eid) {
-      telemetry = data;
-    }
-    if (telemetry?.eid === "EXDATA") {
-      try {
-        const edata = JSON.parse(telemetry.edata?.data);
-        if (edata?.statement?.result) {
-          trackData = [...trackData, edata?.statement];
-        }
-      } catch (e: unknown) {
-        console.log(
-          "telemetry format h5p is wrong",
-          e instanceof Error ? e.message : String(e)
-        );
-      }
-    }
-    if (telemetry?.eid === "ASSESS") {
-      const edata = telemetry?.edata;
-      if (trackData.find((e) => e?.item?.id === edata?.item?.id)) {
-        const filterData = trackData.filter(
-          (e) => e?.item?.id !== edata?.item?.id
-        );
-        trackData = [
-          ...filterData,
-          {
-            ...edata,
-            sectionName: React.Children.toArray(props?.children).find(
-              (
-                child
-              ): child is ReactElement<{ identifier: string; name: string }> =>
-                React.isValidElement(child) &&
-                child.props?.identifier === telemetry?.edata?.item?.sectionId
-            )?.props?.name,
-          },
-        ];
+  const setRefs = (ref: HTMLIFrameElement | null) => {
+    if (forwardedRef) {
+      if (typeof forwardedRef === "function") {
+        forwardedRef(ref); // If forwardedRef is a function
       } else {
-        trackData = [
-          ...trackData,
-          {
-            ...edata,
-            sectionName: React.Children.toArray(props?.children).find(
-              (
-                child
-              ): child is ReactElement<{ identifier: string; name: string }> =>
-                React.isValidElement(child) &&
-                child.props?.identifier === telemetry?.edata?.item?.sectionId
-            )?.props?.name,
-          },
-        ];
-      }
-      // console.log(telemetry, trackData)
-      localStorage.setItem("trackDATA", JSON.stringify(trackData));
-    } else if (
-      telemetry?.eid === "INTERACT" &&
-      mimeType === "video/x-youtube"
-    ) {
-      // const edata = telemetry?.edata
-      // trackData = [...trackData, edata]
-    } else if (telemetry?.eid === "END") {
-      localStorage.setItem("totalDuration", telemetry?.edata?.duration);
-      const summaryData = telemetry?.edata;
-      if (summaryData?.summary && Array.isArray(summaryData?.summary)) {
-        const score = summaryData.summary.find((e: any) => e["score"]);
-        if (score?.score) {
-          await setTrackData({ score: score?.score, trackData });
-        } else {
-          setTrackData(telemetry?.edata);
-        }
-      } else {
-        setTrackData(telemetry?.edata);
-      }
-    } else if (
-      telemetry?.eid === "IMPRESSION" &&
-      telemetry?.edata?.pageid === "summary_stage_id"
-    ) {
-      setTrackData(trackData);
-    } else if (["INTERACT", "HEARTBEAT"].includes(telemetry?.eid || "")) {
-      if (
-        telemetry?.edata?.id === "exit" ||
-        telemetry?.edata?.type === "EXIT"
-      ) {
+        forwardedRef.current = ref; // If forwardedRef is an object ref
       }
     }
   };
 
   if (url) {
     return (
-      <VStack {...{ width, height }} {...(props?._vstack || {})}>
+      <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>
         {handleExitButton && (
           <IconButton
             aria-label="Close"
             icon={<CloseIcon />}
             onClick={() => {
-              if (mimeType === "application/vnd.ekstep.h5p-archive") {
+              if (
+                mimeType === "application/vnd.ekstep.h5p-archive" &&
+                setTrackData
+              ) {
                 handleEvent({
                   data: {
                     eid: "IMPRESSION",

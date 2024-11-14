@@ -144,13 +144,15 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
       let newVisibleIndex = Math.round(scrollOffset / itemSize);
       if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
-        // call traking API
-        console.log({
-          id: videos?.[newVisibleIndex]?.contentId,
-          adapter: "diksha",
-          type: "course",
-          data: trackDataRef.current || [],
-        });
+        // call tracking API
+        if (Object.keys(trackDataRef.current)?.length > 0) {
+          console.log("tracking", {
+            id: videos?.[newVisibleIndex]?.contentId,
+            adapter: "diksha",
+            type: "course",
+            data: trackDataRef.current || {},
+          });
+        }
       }
     }, 500),
     [videos, itemSize]
@@ -177,7 +179,10 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
         qmlRef.current.style.height = `${he}px`;
       }
     } else {
-      trackDataRef.current = [...trackDataRef.current, result];
+      trackDataRef.current = {
+        ...trackDataRef.current,
+        [result.type]: result?.data,
+      };
     }
   };
 

@@ -1,7 +1,9 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { IconButton, Text, VStack } from "@chakra-ui/react";
-import React, { ReactElement, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { handleEvent } from "../../pages/videos/utils";
+const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
+const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
 
 interface SunbirdPlayerProps {
   public_url: string;
@@ -155,6 +157,8 @@ const SunbirdPlayer = ({
             ...props,
             questionListUrl: "https://sunbirdsaas.com/api/question/v1/list",
             // questionListUrl: `https://alt-dev.uniteframework.io/course/questionset`,
+            telemetryBaseUrl: VITE_TELEMETRY_BASE_URL || null,
+            telemetryEndpoint: VITE_TELEMETRY_END_POINT || null,
           })}
           src={`${public_url || process.env.PUBLIC_URL || ""}${url}/index.html`}
         />

@@ -18,7 +18,11 @@
     <div class="player-grid" id="my-player"></div>
     <script type="text/javascript" src="sunbird-video-player.js"></script>
     <script type="text/javascript">
+      // Parse metadata from window.name, which includes iframeId set in parent
       const metadata = window.name ? JSON.parse(window.name) : {};
+      const iframeId = metadata?.iframeId || "default_iframe";
+      const mimeType = metadata?.mimeType || "";
+
       const playerConfig = {
         context: {
           mode: "play",
@@ -56,30 +60,34 @@
         data: {},
       };
 
-      // Need to pass the API URL to fetch the question set
+      // Set API URLs for question set
       window.questionListUrl =
         "https://staging.sunbirded.org/api/question/v1/list";
       window.questionSetBaseUrl =
         "https://staging.sunbirded.org/api/questionset";
+
+      // Create video player element
       const videoElement = document.createElement("sunbird-video-player");
       videoElement.setAttribute("player-config", JSON.stringify(playerConfig));
 
-      videoElement.addEventListener("playerEvent", (event) => {
-        // console.log("On playerEvent", event);
-        window?.parent?.postMessage(event?.detail, "*");
-      });
-
+      // Send postMessage with iframeId in each event
       videoElement.addEventListener("telemetryEvent", (event) => {
-        // console.log("On telemetryEvent", event);
+        try {
+          const messageData = {
+            iframeId, // Include unique iframeId here
+            mimeType,
+            ...JSON.parse(JSON.stringify(event?.detail)),
+          };
+          window?.parent?.postMessage(messageData, "*");
+        } catch (error) {
+          console.error("Failed to post message:", error);
+        }
       });
 
+      // Append video element to player container
       const myPlayer = document.getElementById("my-player");
       myPlayer.style.height = "100vh";
       myPlayer.appendChild(videoElement);
-      // console.log(
-      //   "video tag of myplayer",
-      //   myPlayer.getElementsByTagName("video")[0]
-      // );
     </script>
   </body>
 </html>

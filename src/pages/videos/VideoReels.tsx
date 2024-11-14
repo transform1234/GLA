@@ -1,4 +1,3 @@
-import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
   Box,
   Center,
@@ -17,6 +16,7 @@ import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import IconByName from "../../components/common/icons/Icon";
+import { handleEvent } from "./utils";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 
 const VideoItem: React.FC<{
@@ -24,35 +24,24 @@ const VideoItem: React.FC<{
   qml_id: string;
   isVisible: boolean;
   style: React.CSSProperties;
-}> = memo(({ id, qml_id, isVisible, style }) => {
+  refQml?: any;
+}> = memo(({ id, qml_id, isVisible, refQml, style }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { width, height } = useDeviceSize();
-  const [heightPerItem, setHeightPerItem] = useState<number>(0);
-  useEffect(() => {
-    setHeightPerItem(height / 8);
-  }, [height]);
-
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });
   const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });
-  const [trackData, setTrackData] = React.useState<any[]>([]);
-  const type = "";
-
-  const handleTrackData = async (
-    { score, attempts, ...props }: { score: any; attempts: any },
-    playerType = "quml"
-  ) => {
-    // console.log("handleTrackData", { score, attempts, ...props });
-  };
+  const [heightPerItem, setHeightPerItem] = useState<number>(0);
+  useEffect(() => {
+    setHeightPerItem(height / 8);
+  }, [height]);
 
   useEffect(() => {
     if (!isVisible) return;
     const inti = async () => {
-      // alert(JSON.stringify({ width, height }));
-
       setIsLoading(true);
       let resultData = await content.getOne({
         id,
@@ -87,62 +76,17 @@ const VideoItem: React.FC<{
           <SunbirdPlayer
             {...{ width, height }}
             _playerStypeHeight={height}
-            {...lesson}
+            {...{ ...lesson, iframeId: "course" }}
             userData={{
               firstName: localStorage.getItem("name"),
               lastName: "",
-              // lastName: localStorage.getItem("lastName"),
-            }}
-            setTrackData={(data: any) => {
-              if (
-                [
-                  "assessment",
-                  "SelfAssess",
-                  "QuestionSet",
-                  "QuestionSetImage",
-                ].includes(type)
-              ) {
-                handleTrackData(data);
-              } else if (
-                ["application/vnd.sunbird.questionset"].includes(
-                  lesson?.mimeType
-                )
-              ) {
-                handleTrackData(data, "application/vnd.sunbird.questionset");
-              } else if (
-                [
-                  "application/pdf",
-                  "video/mp4",
-                  "video/webm",
-                  "video/x-youtube",
-                  "application/vnd.ekstep.h5p-archive",
-                ].includes(lesson?.mimeType)
-              ) {
-                handleTrackData(data, "pdf-video");
-              } else {
-                if (
-                  ["application/vnd.ekstep.ecml-archive"].includes(
-                    lesson?.mimeType
-                  )
-                ) {
-                  if (Array.isArray(data)) {
-                    const score = data.reduce(
-                      (old, newData) => old + newData?.score,
-                      0
-                    );
-                    // handleTrackData({ ...data, score: `${score}` }, "ecml");
-                    setTrackData(data);
-                  } else {
-                    handleTrackData({ ...data, score: 0 }, "ecml");
-                  }
-                }
-              }
             }}
             public_url={VITE_PLAYER_URL}
           />
           {qml_id && (
             <Center>
               <SunbirdPlayer
+                forwardedRef={isVisible ? refQml : false}
                 style={{ border: "none", borderRadius: "16px" }}
                 _vstack={{
                   position: "absolute",
@@ -150,65 +94,10 @@ const VideoItem: React.FC<{
                   transition: "height 0.5s",
                 }}
                 {...{ width: width - 32, height: heightPerItem }}
-                {...lessonQml}
+                {...{ ...lessonQml, iframeId: "assessment" }}
                 userData={{
                   firstName: localStorage.getItem("name"),
                   lastName: "",
-                  // lastName: localStorage.getItem("lastName"),
-                }}
-                setTrackData={(data: any) => {
-                  if (["iconUp", "iconDown"].includes(data)) {
-                    if (data === "iconDown") {
-                      setHeightPerItem(height / 8);
-                    } else {
-                      setHeightPerItem(height / 3);
-                    }
-                  } else if (
-                    [
-                      "assessment",
-                      "SelfAssess",
-                      "QuestionSet",
-                      "QuestionSetImage",
-                    ].includes(type)
-                  ) {
-                    handleTrackData(data);
-                  } else if (
-                    ["application/vnd.sunbird.questionset"].includes(
-                      lessonQml?.mimeType
-                    )
-                  ) {
-                    handleTrackData(
-                      data,
-                      "application/vnd.sunbird.questionset"
-                    );
-                  } else if (
-                    [
-                      "application/pdf",
-                      "video/mp4",
-                      "video/webm",
-                      "video/x-youtube",
-                      "application/vnd.ekstep.h5p-archive",
-                    ].includes(lessonQml?.mimeType)
-                  ) {
-                    handleTrackData(data, "pdf-video");
-                  } else {
-                    if (
-                      ["application/vnd.ekstep.ecml-archive"].includes(
-                        lessonQml?.mimeType
-                      )
-                    ) {
-                      if (Array.isArray(data)) {
-                        const score = data.reduce(
-                          (old, newData) => old + newData?.score,
-                          0
-                        );
-                        // handleTrackData({ ...data, score: `${score}` }, "ecml");
-                        setTrackData(data);
-                      } else {
-                        handleTrackData({ ...data, score: 0 }, "ecml");
-                      }
-                    }
-                  }
                 }}
                 public_url={VITE_PLAYER_URL}
               />
@@ -242,21 +131,55 @@ const VideoItem: React.FC<{
 
 const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
   const listRef = useRef<HTMLDivElement>(null);
+  const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
   const { height: itemSize, width } = useDeviceSize();
   const navigate = useNavigate();
+  const trackDataRef = useRef<any[]>([]);
 
   const handleScroll = useCallback(
-    debounce(({ scrollOffset }: { scrollOffset: number }) => {
+    debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
       const itemCount = videos.length;
       if (itemCount === 0) return;
       let newVisibleIndex = Math.round(scrollOffset / itemSize);
-      if (newVisibleIndex >= 0) {
+      if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
+        // call traking API
+        console.log({
+          id: videos?.[newVisibleIndex]?.contentId,
+          adapter: "diksha",
+          type: "course",
+          data: trackDataRef.current || [],
+        });
       }
     }, 500),
-    [videos, itemSize, visibleIndex]
+    [videos, itemSize]
   );
+
+  React.useEffect(() => {
+    const handleEventNew = (event: any) => {
+      newHandleEvent(event);
+    };
+
+    window.addEventListener("message", handleEventNew, false);
+
+    return () => {
+      window.removeEventListener("message", handleEventNew);
+    };
+  }, [itemSize]);
+
+  const newHandleEvent = (data: any) => {
+    const result = handleEvent(data);
+    if (!result || !result?.type) return;
+    if (result?.type === "height") {
+      const he = itemSize / result?.data;
+      if (qmlRef?.current) {
+        qmlRef.current.style.height = `${he}px`;
+      }
+    } else {
+      trackDataRef.current = [...trackDataRef.current, result];
+    }
+  };
 
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
@@ -299,6 +222,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
               id={videos?.[index]?.contentId}
               qml_id={videos?.[index]?.lesson_questionset}
               isVisible={index === visibleIndex}
+              refQml={qmlRef}
               style={style}
               key={"VideoItem" + index}
             />

@@ -38,17 +38,40 @@ export default function Login() {
   const isLoginDisabled = !(username && password);
   const navigate = useNavigate();
   const [modalContent, setModalContent] = useState({
+    type : "username",
     title: "",
     message: "",
     example: "",
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const openModal = (title: string, message: string, example: string) => {
-    setModalContent({ title, message, example });
+  const { t } = useTranslation();
+
+  const state = import.meta.env.VITE_APP_STATE;
+
+  const getModalExample = (type: "username" | "password") => {
+    if (state === "KA") {
+      return type === "username"
+        ? t("LOGIN_USERNAME_EXAMPLE_EXPLANATION_KA")
+        : t("LOGIN_PASSWORD_EXAMPLE_EXPLANATION_KA");
+    } else {
+      return type === "username"
+        ? t("LOGIN_USERNAME_EXAMPLE_EXPLANATION_OD")
+        : t("LOGIN_PASSWORD_EXAMPLE_EXPLANATION_OD");
+    }
+  };
+  
+  const openModal = (title: string, message: string, type: "username" | "password") => {
+    const modalExample = getModalExample(type);
+  
+    setModalContent({
+      type : type,
+      title: title,
+      message: message,
+      example: modalExample,
+    });
     onOpen();
   };
-  const { t } = useTranslation();
 
   const userName = localStorage.getItem("name");
   const grade = localStorage.getItem("grade");
@@ -233,7 +256,7 @@ export default function Login() {
                           t(
                             "LOGIN_YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
                           ),
-                          t("LOGIN_USERNAME_EXAMPLE_EXPLANATION")
+                           "username"
                         )
                       }
                     >
@@ -259,7 +282,7 @@ export default function Login() {
                           t(
                             "LOGIN_YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
                           ),
-                          t("LOGIN_IF_YOUR_NAME_IS_ANISH_KUMAR_AND_YOUR_DOB")
+                           "password"
                         )
                       }
                     >
@@ -293,6 +316,7 @@ export default function Login() {
                 )}
 
                 <PopupModal
+                  type={modalContent.type}
                   isOpen={isOpen}
                   onClose={onClose}
                   title={modalContent.title}

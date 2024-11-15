@@ -10,11 +10,24 @@ const CloseButton: React.FC<CommonButtonProps> = ({
   ...props
 }) => {
   return (
-    <Button {...props}>
+    <Button
+      {...props}
+      fontWeight="normal"
+      padding="0"
+      height="28px"
+      width="28px"
+      color="primary.500"
+      bg="white"
+      border="none"          
+      outline="none"     
+      boxShadow="none" 
+      _hover={{ background: "transparent" }}
+      _active={{ background: "transparent" }}
+      _focus={{ outline: "none", boxShadow: "none" }}
+    >
       {children}
     </Button>
   );
 };
 
 export default CloseButton;
-

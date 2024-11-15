@@ -19,6 +19,7 @@ interface InfoModalProps {
   title: string;
   message: string;
   example: string;
+  type : string;
 }
 
 const PopupModal: React.FC<InfoModalProps> = ({
@@ -27,8 +28,79 @@ const PopupModal: React.FC<InfoModalProps> = ({
   title,
   message,
   example,
+  type = "username",
 }) => {
   const { t } = useTranslation();
+
+  const fieldConfig: any = {
+    username: {
+      KA: {
+        labels: [
+          {
+            code: "FF",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME",
+          },
+          {
+            code: "LL",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME",
+          },
+          { code: "DD", translationKey: "POPUP_DATE" },
+          { code: "MM", translationKey: "POPUP_MONTH" },
+          { code: "YYYY", translationKey: "POPUP_YEAR" },
+        ],
+      },
+      OD: {
+        labels: [
+          {
+            code: "AA",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME_OD",
+          },
+          {
+            code: "BB",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME_OD",
+          },
+          { code: "CC", translationKey: "POPUP_DATE_OD" },
+          { code: "DD", translationKey: "POPUP_MONTH_OD" },
+          { code: "EEEE", translationKey: "POPUP_YEAR_OD" },
+        ],
+      },
+    },
+    password: {
+      KA: {
+        labels: [
+          {
+            code: "FF",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME",
+          },
+          {
+            code: "LL",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME",
+          },
+          { code: "DD", translationKey: "POPUP_DATE" },
+          { code: "MM", translationKey: "POPUP_MONTH" },
+          { code: "YYYY", translationKey: "POPUP_YEAR" },
+        ],
+      },
+      OD: {
+        labels: [
+          {
+            code: "AA",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME_OD",
+          },
+          {
+            code: "BB",
+            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME_OD",
+          },
+          { code: "CC", translationKey: "POPUP_DATE_OD" },
+          { code: "DD", translationKey: "POPUP_MONTH_OD" },
+          { code: "EEEE", translationKey: "POPUP_YEAR_OD" },
+        ],
+      },
+    },
+  };
+
+  const state = import.meta.env.VITE_APP_STATE;
+  const config = fieldConfig[type][state];
 
   return (
     <AlertDialog
@@ -73,7 +145,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
             />
 
             <Box display="flex" justifyContent="center" mt={4}>
-              {["FF", "LL", "DD", "MM", "YYYY"].map((item) => (
+              {config?.labels.map((item: any) => (
                 <Box
                   key={item}
                   p="5px 10px"
@@ -81,66 +153,29 @@ const PopupModal: React.FC<InfoModalProps> = ({
                   fontWeight="bold"
                   fontSize="14px"
                 >
-                  {item}
+                  {item.code}
                 </Box>
               ))}
             </Box>
 
             <Box color="textPrimary" textAlign="left" mt={4}>
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>FF:</strong>{" "}
-                    {t("POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>LL:</strong>{" "}
-                    {t("POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>DD:</strong> {t("POPUP_DATE")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>MM:</strong> {t("POPUP_MONTH")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>YYYY:</strong> {t("POPUP_YEAR")}
-                  </>
-                }
-                color="textSecondary"
-              />
+              {config?.labels?.map((labelItem:any) => (
+                <CustomHeading
+                  key={labelItem.code}
+                  variant="h2"
+                  paddingLeft="28px"
+                  title={
+                    <>
+                      <strong>{labelItem.code}:</strong>{" "}
+                      {t(labelItem.translationKey)}
+                    </>
+                  }
+                  color="textSecondary"
+                />
+              ))}
             </Box>
 
+            {example && (
             <Box mt={4}>
               <CustomHeading
                 variant="h2"
@@ -160,6 +195,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
                 bg="backgroundHighlight"
               />
             </Box>
+          )}
           </AlertDialogBody>
 
           <AlertDialogFooter>

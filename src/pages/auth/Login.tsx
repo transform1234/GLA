@@ -182,7 +182,7 @@ export default function Login() {
       } catch (error) {
         setErrors({
           username: t("LOGIN_INVALID_USER_NAME"),
-          password: t("LOGIN_INVALID_USER_NAME"),
+          password: t("LOGIN_INVALID_PASSWORD"),
         });
       }
     }

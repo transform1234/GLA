@@ -12,14 +12,13 @@ import { useTranslation } from "react-i18next";
 import IconButton from "./button/IconButton";
 import PrimaryButton from "./button/PrimaryButton";
 import CustomHeading from "./typography/Heading";
-import fieldConfig from '../../utils/constants/fieldConfig';
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   message: string;
   example: string;
-  type?: string;
+  labels: { code: string; translationKey: string }[];
 }
 
 const PopupModal: React.FC<InfoModalProps> = ({
@@ -28,14 +27,9 @@ const PopupModal: React.FC<InfoModalProps> = ({
   title,
   message,
   example,
-  type = "username",
+  labels,
 }) => {
   const { t } = useTranslation();
-
-  
-
-  const state = import.meta.env.VITE_APP_STATE;
-  const config = fieldConfig[type][state];
 
   return (
     <AlertDialog
@@ -80,9 +74,9 @@ const PopupModal: React.FC<InfoModalProps> = ({
             />
 
             <Box display="flex" justifyContent="center" mt={4}>
-              {config?.labels.map((item: any) => (
+              {labels?.map((item: any) => (
                 <Box
-                  key={item}
+                  key={item.code}
                   p="5px 10px"
                   bg="backgroundGrey"
                   fontWeight="bold"
@@ -94,7 +88,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
             </Box>
 
             <Box color="textPrimary" textAlign="left" mt={4}>
-              {config?.labels?.map((labelItem:any) => (
+              {labels?.map((labelItem: any) => (
                 <CustomHeading
                   key={labelItem.code}
                   variant="h2"

@@ -25,7 +25,7 @@ import PrimaryButton from "../../components/common/button/PrimaryButton";
 import CustomHeading from "../../components/common/typography/Heading";
 import Layout from "../../components/common/layout/layout";
 import CustomInput from "../../components/common/input/CustomInput";
-
+import fieldConfig from '../../utils/constants/fieldConfig';
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -38,10 +38,10 @@ export default function Login() {
   const isLoginDisabled = !(username && password);
   const navigate = useNavigate();
   const [modalContent, setModalContent] = useState({
-    type : "username",
     title: "",
     message: "",
     example: "",
+    labels: [] as { code: string; translationKey: string }[],
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -59,10 +59,10 @@ export default function Login() {
     const modalExample = getModalExample(type);
   
     setModalContent({
-      type : type,
       title: title,
       message: message,
       example: modalExample,
+      labels: fieldConfig[type][state || "KA"].labels, 
     });
     onOpen();
   };
@@ -310,12 +310,12 @@ export default function Login() {
                 )}
 
                 <PopupModal
-                  type={modalContent.type}
                   isOpen={isOpen}
                   onClose={onClose}
                   title={modalContent.title}
                   message={modalContent.message}
                   example={modalContent.example}
+                  labels={modalContent.labels}
                 />
               </VStack>
             </Box>

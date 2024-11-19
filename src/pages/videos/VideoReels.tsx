@@ -6,6 +6,7 @@ import {
   Skeleton,
   SkeletonCircle,
   Stack,
+  VStack,
 } from "@chakra-ui/react";
 import { debounce } from "lodash";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
@@ -34,9 +35,12 @@ const VideoItem: React.FC<{
   const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });
-  const [heightPerItem, setHeightPerItem] = useState<number>(0);
+  const [heightPerItem, setHeightPerItem] = useState<{
+    width: number;
+    height: number;
+  }>({ width: 0, height: 0 });
   useEffect(() => {
-    setHeightPerItem(height / 8);
+    setHeightPerItem({ height: 0, width: 0 });
   }, [height]);
 
   useEffect(() => {
@@ -84,16 +88,40 @@ const VideoItem: React.FC<{
             public_url={VITE_PLAYER_URL}
           />
           {qml_id && (
-            <Center>
+            <VStack>
+              <TopIcon
+                onClick={() => {
+                  if (heightPerItem?.height === 0) {
+                    setHeightPerItem({ height: height / 3, width: width - 31 });
+                  } else {
+                    setHeightPerItem({ height: 0, width: 0 });
+                  }
+                }}
+                icon={
+                  heightPerItem?.height === 0
+                    ? "ChevronUpIcon"
+                    : "ChevronDownIcon"
+                }
+                right="16px"
+                bottom={
+                  heightPerItem?.height === 0
+                    ? "16px"
+                    : `${heightPerItem?.height - 16}`
+                }
+                transition="bottom 0.5s"
+                top="auto"
+              />
               <SunbirdPlayer
                 forwardedRef={isVisible ? refQml : false}
                 style={{ border: "none", borderRadius: "16px" }}
                 _vstack={{
                   position: "absolute",
                   bottom: "16px",
-                  transition: "height 0.5s",
+                  transition: "right 0.5s,width 0.5s, height 0.5s",
+                  right: heightPerItem?.height === 0 ? "auto" : `16px`,
+                  // left: heightPerItem?.height === 0 ? "16px" : `auto`,
                 }}
-                {...{ width: width - 32, height: heightPerItem }}
+                {...heightPerItem}
                 {...{ ...lessonQml, iframeId: "assessment" }}
                 userData={{
                   firstName: localStorage.getItem("name"),
@@ -101,7 +129,7 @@ const VideoItem: React.FC<{
                 }}
                 public_url={VITE_PLAYER_URL}
               />
-            </Center>
+            </VStack>
           )}
         </div>
       ) : (
@@ -245,6 +273,10 @@ const TopIcon: React.FC<{
   icon: any;
   right?: string;
   left?: string;
+  zIndex?: string;
+  top?: string;
+  bottom?: string;
+  transition?: string;
 }> = ({ onClick, left, icon, ...props }) => {
   return (
     <IconButton

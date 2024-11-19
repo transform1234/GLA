@@ -2,7 +2,7 @@
   .landscape-content {
     padding: 4.5rem 1rem !important;
     padding-bottom: 0px !important;
-    display: none !important;
+    /* display: none !important; */
   }
   .quml-header__container {
     justify-content: space-between !important;
@@ -163,7 +163,7 @@
   }
   .quml-header__metadata.quml-header__metadata--portrait {
     padding-top: 5px !important;
-    display: none !important;
+    /* display: none !important; */
   }
   .displayblock {
     display: block !important ;

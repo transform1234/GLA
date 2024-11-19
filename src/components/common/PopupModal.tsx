@@ -16,18 +16,19 @@ interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  message: string;
-  example: string;
-  labels: { code: string; translationKey: string }[];
+  showIcon: boolean;
+  children: React.ReactNode[];
+  footerContent?: React.ReactNode;
 }
 
 const PopupModal: React.FC<InfoModalProps> = ({
   isOpen,
   onClose,
   title,
-  message,
-  example,
-  labels,
+  showIcon,
+  children,
+  footerContent,
+  ...props
 }) => {
   const { t } = useTranslation();
 
@@ -49,6 +50,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
               title={title}
               color="primary.500"
             />
+            {showIcon && (
             <IconButton
               onClick={onClose}
               style={{
@@ -62,80 +64,15 @@ const PopupModal: React.FC<InfoModalProps> = ({
             >
               &times;
             </IconButton>
+            )}
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            <CustomHeading
-              variant="p"
-              fontSize="14px"
-              mb="1rem"
-              title={message}
-              color="textSecondary"
-            />
-
-            <Box display="flex" justifyContent="center" mt={4}>
-              {labels?.map((item: any) => (
-                <Box
-                  key={item.code}
-                  p="5px 10px"
-                  bg="backgroundGrey"
-                  fontWeight="bold"
-                  fontSize="14px"
-                >
-                  {item.code}
-                </Box>
-              ))}
-            </Box>
-
-            <Box color="textPrimary" textAlign="left" mt={4}>
-              {labels?.map((labelItem: any) => (
-                <CustomHeading
-                  key={labelItem.code}
-                  variant="h2"
-                  paddingLeft="28px"
-                  title={
-                    <>
-                      <strong>{labelItem.code}:</strong>{" "}
-                      {t(labelItem.translationKey)}
-                    </>
-                  }
-                  color="textSecondary"
-                />
-              ))}
-            </Box>
-
-            {example && (
-            <Box mt={4}>
-              <CustomHeading
-                variant="h2"
-                marginBottom="10px"
-                marginTop="10px"
-                fontSize="12px"
-                padding="10px"
-                title={
-                  <>
-                    <strong>{t("POPUP_EXAMPLE")}:</strong>
-                    <strong>
-                      <i>{example}</i>
-                    </strong>
-                  </>
-                }
-                color="textSecondary"
-                bg="backgroundHighlight"
-              />
-            </Box>
-          )}
+          {children} 
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <PrimaryButton
-              onClick={onClose}
-              width="100%"
-              color="white"
-              bg="primary.500"
-            >
-              {t("POPUP_UNDERSTOOD")}
-            </PrimaryButton>
+            {footerContent}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>

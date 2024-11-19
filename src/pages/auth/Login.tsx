@@ -250,7 +250,7 @@ export default function Login() {
                           t(
                             "LOGIN_YOUR_USERNAME_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
                           ),
-                           "username"
+                          "username"
                         )
                       }
                     >
@@ -258,11 +258,11 @@ export default function Login() {
                     </Link>
                   </FormLabel>
                   <CustomInput
-                  placeholder={t("LOGIN_ENTER_USER_NAME")}
-                  value={username}
-                  onChange={(value) => handleInputChange("username", value)}
-                  error={!!errors.username && isSubmitted} // Show only after first submit
-                  errorMessage={errors.username}
+                    placeholder={t("LOGIN_ENTER_USER_NAME")}
+                    value={username}
+                    onChange={(value) => handleInputChange("username", value)}
+                    error={!!errors.username && isSubmitted} // Show only after first submit
+                    errorMessage={errors.username}
                   />
                 </FormControl>
 
@@ -276,7 +276,7 @@ export default function Login() {
                           t(
                             "LOGIN_YOUR_PASSWORD_IS_CREATED_IN_THE_FORMAT_AS_SHOWN_BELOW"
                           ),
-                           "password"
+                          "password"
                         )
                       }
                     >
@@ -284,11 +284,11 @@ export default function Login() {
                     </Link>
                   </FormLabel>
                   <CustomInput
-                  placeholder={t("LOGIN_ENTER_PASSWORD")}
-                  value={password}
-                  onChange={(value) => handleInputChange("password", value)}
-                  error={!!errors.password && isSubmitted}
-                  errorMessage={errors.password}
+                    placeholder={t("LOGIN_ENTER_PASSWORD")}
+                    value={password}
+                    onChange={(value) => handleInputChange("password", value)}
+                    error={!!errors.password && isSubmitted}
+                    errorMessage={errors.password}
                   />
                 </FormControl>
 
@@ -313,10 +313,80 @@ export default function Login() {
                   isOpen={isOpen}
                   onClose={onClose}
                   title={modalContent.title}
-                  message={modalContent.message}
-                  example={modalContent.example}
-                  labels={modalContent.labels}
-                />
+                  showIcon={true}
+                  footerContent={
+                    <PrimaryButton
+                      onClick={onClose}
+                      width="100%"
+                      color="white"
+                      bg="primary.500"
+                    >
+                      {t("POPUP_UNDERSTOOD")}
+                    </PrimaryButton>
+                  }
+                >
+                  <CustomHeading
+                    variant="p"
+                    fontSize="14px"
+                    mb="1rem"
+                    title={modalContent.message}
+                    color="textSecondary"
+                  />
+
+                  <Box display="flex" justifyContent="center" mt={4}>
+                    {modalContent.labels?.map((item: any) => (
+                      <Box
+                        key={item}
+                        p="5px 10px"
+                        bg="backgroundGrey"
+                        fontWeight="bold"
+                        fontSize="14px"
+                      >
+                        {item.code}
+                      </Box>
+                    ))}
+                  </Box>
+
+                  <Box color="textPrimary" textAlign="left" mt={4}>
+                    {modalContent.labels?.map((labelItem: any) => (
+                      <CustomHeading
+                        key={labelItem.code}
+                        variant="h2"
+                        paddingLeft="28px"
+                        title={
+                          <>
+                            <strong>{labelItem.code}:</strong>{" "}
+                            {t(labelItem.translationKey)}
+                          </>
+                        }
+                        color="textSecondary"
+                      />
+                    ))}
+                  </Box>
+
+                  {modalContent.example && (
+                    <Box mt={4}>
+                      <CustomHeading
+                        variant="h2"
+                        marginBottom="10px"
+                        marginTop="10px"
+                        fontSize="12px"
+                        padding="10px"
+                        title={
+                          <>
+                            <strong>{t("POPUP_EXAMPLE")}:</strong>
+                            <strong>
+                              <i>{modalContent.example}</i>
+                            </strong>
+                          </>
+                        }
+                        color="textSecondary"
+                        bg="backgroundHighlight"
+                      />
+                    </Box>
+                  )}
+
+                </PopupModal>
               </VStack>
             </Box>
           </Center>

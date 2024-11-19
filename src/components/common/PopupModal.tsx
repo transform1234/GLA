@@ -19,7 +19,7 @@ interface InfoModalProps {
   title: string;
   message: string;
   example: string;
-  type : string;
+  type?: string;
 }
 
 const PopupModal: React.FC<InfoModalProps> = ({

@@ -50,15 +50,9 @@ export default function Login() {
   const state = import.meta.env.VITE_APP_STATE;
 
   const getModalExample = (type: "username" | "password") => {
-    if (state === "KA") {
-      return type === "username"
-        ? t("LOGIN_USERNAME_EXAMPLE_EXPLANATION_KA")
-        : t("LOGIN_PASSWORD_EXAMPLE_EXPLANATION_KA");
-    } else {
-      return type === "username"
-        ? t("LOGIN_USERNAME_EXAMPLE_EXPLANATION_OD")
-        : t("LOGIN_PASSWORD_EXAMPLE_EXPLANATION_OD");
-    }
+    const currentState = state || "KA";
+    const translationKey = `LOGIN_${type.toUpperCase()}_EXAMPLE_EXPLANATION_${currentState}`;
+    return t(translationKey);
   };
   
   const openModal = (title: string, message: string, type: "username" | "password") => {

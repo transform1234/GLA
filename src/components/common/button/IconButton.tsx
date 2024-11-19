@@ -5,7 +5,7 @@ interface CommonButtonProps extends ButtonProps {
   children: React.ReactNode;
 }
 
-const CloseButton: React.FC<CommonButtonProps> = ({
+const IconButton: React.FC<CommonButtonProps> = ({
   children,
   ...props
 }) => {
@@ -30,4 +30,4 @@ const CloseButton: React.FC<CommonButtonProps> = ({
   );
 };
 
-export default CloseButton;
+export default IconButton;

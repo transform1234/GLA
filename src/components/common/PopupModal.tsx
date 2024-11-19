@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  useDisclosure,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -10,9 +9,10 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import CloseButton from "./button/CloseButton";
+import IconButton from "./button/IconButton";
 import PrimaryButton from "./button/PrimaryButton";
 import CustomHeading from "./typography/Heading";
+import fieldConfig from '../../utils/constants/fieldConfig';
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,72 +32,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const fieldConfig: any = {
-    username: {
-      KA: {
-        labels: [
-          {
-            code: "FF",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME",
-          },
-          {
-            code: "LL",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME",
-          },
-          { code: "DD", translationKey: "POPUP_DATE" },
-          { code: "MM", translationKey: "POPUP_MONTH" },
-          { code: "YYYY", translationKey: "POPUP_YEAR" },
-        ],
-      },
-      OD: {
-        labels: [
-          {
-            code: "AA",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME_OD",
-          },
-          {
-            code: "BB",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME_OD",
-          },
-          { code: "CC", translationKey: "POPUP_DATE_OD" },
-          { code: "DD", translationKey: "POPUP_MONTH_OD" },
-          { code: "EEEE", translationKey: "POPUP_YEAR_OD" },
-        ],
-      },
-    },
-    password: {
-      KA: {
-        labels: [
-          {
-            code: "FF",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME",
-          },
-          {
-            code: "LL",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME",
-          },
-          { code: "DD", translationKey: "POPUP_DATE" },
-          { code: "MM", translationKey: "POPUP_MONTH" },
-          { code: "YYYY", translationKey: "POPUP_YEAR" },
-        ],
-      },
-      OD: {
-        labels: [
-          {
-            code: "AA",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME_OD",
-          },
-          {
-            code: "BB",
-            translationKey: "POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME_OD",
-          },
-          { code: "CC", translationKey: "POPUP_DATE_OD" },
-          { code: "DD", translationKey: "POPUP_MONTH_OD" },
-          { code: "EEEE", translationKey: "POPUP_YEAR_OD" },
-        ],
-      },
-    },
-  };
+  
 
   const state = import.meta.env.VITE_APP_STATE;
   const config = fieldConfig[type][state];
@@ -120,7 +55,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
               title={title}
               color="primary.500"
             />
-            <CloseButton
+            <IconButton
               onClick={onClose}
               style={{
                 position: "absolute",
@@ -132,7 +67,7 @@ const PopupModal: React.FC<InfoModalProps> = ({
               color="primary.500"
             >
               &times;
-            </CloseButton>
+            </IconButton>
           </AlertDialogHeader>
 
           <AlertDialogBody>

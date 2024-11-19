@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  useDisclosure,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -10,23 +9,26 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import CloseButton from "./button/CloseButton";
+import IconButton from "./button/IconButton";
 import PrimaryButton from "./button/PrimaryButton";
 import CustomHeading from "./typography/Heading";
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  message: string;
-  example: string;
+  showIcon: boolean;
+  children: React.ReactNode[];
+  footerContent?: React.ReactNode;
 }
 
 const PopupModal: React.FC<InfoModalProps> = ({
   isOpen,
   onClose,
   title,
-  message,
-  example,
+  showIcon,
+  children,
+  footerContent,
+  ...props
 }) => {
   const { t } = useTranslation();
 
@@ -48,7 +50,8 @@ const PopupModal: React.FC<InfoModalProps> = ({
               title={title}
               color="primary.500"
             />
-            <CloseButton
+            {showIcon && (
+            <IconButton
               onClick={onClose}
               style={{
                 position: "absolute",
@@ -60,117 +63,16 @@ const PopupModal: React.FC<InfoModalProps> = ({
               color="primary.500"
             >
               &times;
-            </CloseButton>
+            </IconButton>
+            )}
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            <CustomHeading
-              variant="p"
-              fontSize="14px"
-              mb="1rem"
-              title={message}
-              color="textSecondary"
-            />
-
-            <Box display="flex" justifyContent="center" mt={4}>
-              {["FF", "LL", "DD", "MM", "YYYY"].map((item) => (
-                <Box
-                  key={item}
-                  p="5px 10px"
-                  bg="backgroundGrey"
-                  fontWeight="bold"
-                  fontSize="14px"
-                >
-                  {item}
-                </Box>
-              ))}
-            </Box>
-
-            <Box color="textPrimary" textAlign="left" mt={4}>
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>FF:</strong>{" "}
-                    {t("POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>LL:</strong>{" "}
-                    {t("POPUP_FIRST_TWO_LETTERS_OF_YOUR_LAST_NAME")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>DD:</strong> {t("POPUP_DATE")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>MM:</strong> {t("POPUP_MONTH")}
-                  </>
-                }
-                color="textSecondary"
-              />
-              <CustomHeading
-                variant="h2"
-                paddingLeft="28px"
-                title={
-                  <>
-                    <strong>YYYY:</strong> {t("POPUP_YEAR")}
-                  </>
-                }
-                color="textSecondary"
-              />
-            </Box>
-
-            <Box mt={4}>
-              <CustomHeading
-                variant="h2"
-                marginBottom="10px"
-                marginTop="10px"
-                fontSize="12px"
-                padding="10px"
-                title={
-                  <>
-                    <strong>{t("POPUP_EXAMPLE")}:</strong>
-                    <strong>
-                      <i>{example}</i>
-                    </strong>
-                  </>
-                }
-                color="textSecondary"
-                bg="backgroundHighlight"
-              />
-            </Box>
+          {children} 
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <PrimaryButton
-              onClick={onClose}
-              width="100%"
-              color="white"
-              bg="primary.500"
-            >
-              {t("POPUP_UNDERSTOOD")}
-            </PrimaryButton>
+            {footerContent}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>

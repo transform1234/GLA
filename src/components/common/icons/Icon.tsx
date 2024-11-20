@@ -1,4 +1,9 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "@chakra-ui/icons";
 import { Icon, Circle, Text } from "@chakra-ui/react";
 
 interface IconProps {
@@ -80,13 +85,8 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  ChevronLeftIcon: ({ color, ...props }) => {
-    return (
-      <Icon viewBox="-5 -5 24 24" fill="currentColor" color={color} {...props}>
-        <path d="M3.52075 7.83325L8.18742 12.4999L6.99992 13.6666L0.333252 6.99992L6.99992 0.333252L8.18742 1.49992L3.52075 6.16658H13.6666V7.83325H3.52075Z" />
-      </Icon>
-    );
-  },
+  ChevronRightIcon,
+  ChevronLeftIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 };

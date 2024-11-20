@@ -97,18 +97,26 @@ const VideoItem: React.FC<{
                     setHeightPerItem({ height: 0, width: 0 });
                   }
                 }}
+                rounded="none"
+                roundedLeft="full"
+                size="lg"
                 icon={
                   heightPerItem?.height === 0
-                    ? "ChevronUpIcon"
-                    : "ChevronDownIcon"
+                    ? "ChevronLeftIcon"
+                    : "ChevronRightIcon"
                 }
-                right="16px"
+                bg={heightPerItem?.width === 0 ? "white" : "transparent"}
+                right={
+                  heightPerItem?.width === 0
+                    ? "0px"
+                    : `${heightPerItem?.width - 32}`
+                }
                 bottom={
                   heightPerItem?.height === 0
                     ? "16px"
-                    : `${heightPerItem?.height - 16}`
+                    : `${heightPerItem?.height - 32}`
                 }
-                transition="bottom 0.5s"
+                transition="right 0.5s,bottom 0.5s"
                 top="auto"
               />
               <SunbirdPlayer
@@ -118,8 +126,7 @@ const VideoItem: React.FC<{
                   position: "absolute",
                   bottom: "16px",
                   transition: "right 0.5s,width 0.5s, height 0.5s",
-                  right: heightPerItem?.height === 0 ? "auto" : `16px`,
-                  // left: heightPerItem?.height === 0 ? "16px" : `auto`,
+                  right: "16px",
                 }}
                 {...heightPerItem}
                 {...{ ...lessonQml, iframeId: "assessment" }}
@@ -136,20 +143,41 @@ const VideoItem: React.FC<{
         <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
           <HStack gap="5" padding={4} justifyContent={"space-between"}>
             <HStack gap="5">
-              <SkeletonCircle size="9" />
-              <SkeletonCircle size="9" />
-              <SkeletonCircle size="9" />
+              <SkeletonCircle
+                size="8"
+                startColor="primary.500"
+                endColor="primary.50"
+              />
+              <SkeletonCircle
+                size="8"
+                startColor="primary.500"
+                endColor="primary.50"
+              />
+              <SkeletonCircle
+                size="8"
+                startColor="primary.500"
+                endColor="primary.50"
+              />
             </HStack>
-            <SkeletonCircle size="9" />
+            <SkeletonCircle
+              size="8"
+              startColor="primary.500"
+              endColor="primary.50"
+            />
           </HStack>
           <HStack
             width="full"
             position="absolute"
-            justifyContent="center"
-            alignItems="center"
+            justifyContent="end"
             bottom="16px"
           >
-            <Skeleton height="20" rounded={"16px"} width={width - 32} />
+            <Skeleton
+              height="48px"
+              roundedLeft={"full"}
+              width={"48px"}
+              startColor="primary.500"
+              endColor="primary.50"
+            />
           </HStack>
         </Stack>
       )}
@@ -277,6 +305,10 @@ const TopIcon: React.FC<{
   top?: string;
   bottom?: string;
   transition?: string;
+  rounded?: string;
+  roundedLeft?: string;
+  size?: string;
+  bg?: string;
 }> = ({ onClick, left, icon, ...props }) => {
   return (
     <IconButton
@@ -290,6 +322,8 @@ const TopIcon: React.FC<{
       zIndex="10"
       bg="primary.50"
       rounded={"full"}
+      border={"none"}
+      _focus={{ boxShadow: "none", outline: "none" }}
       onClick={onClick}
       {...props}
     />

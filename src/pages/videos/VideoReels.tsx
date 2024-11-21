@@ -191,7 +191,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
   const [visibleIndex, setVisibleIndex] = useState(0);
   const { height: itemSize, width } = useDeviceSize();
   const navigate = useNavigate();
-  const trackDataRef = useRef<any[]>([]);
+  // const trackDataRef = useRef<any[]>([]);
 
   const handleScroll = useCallback(
     debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
@@ -201,14 +201,8 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
       if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
         // call tracking API
-        if (Object.keys(trackDataRef.current)?.length > 0) {
-          console.log("tracking", {
-            id: videos?.[newVisibleIndex]?.contentId,
-            adapter: "diksha",
-            type: "course",
-            data: trackDataRef.current || {},
-          });
-        }
+        // const telemetryKey = Object.keys(trackDataRef.current);
+        // if (telemetryKey?.length > 0) {}
       }
     }, 500),
     [videos, itemSize]
@@ -226,7 +220,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
     };
   }, [itemSize]);
 
-  const newHandleEvent = (data: any) => {
+  const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
     if (!result || !result?.type) return;
     if (result?.type === "height") {
@@ -235,10 +229,21 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
         qmlRef.current.style.height = `${he}px`;
       }
     } else {
-      trackDataRef.current = {
-        ...trackDataRef.current,
-        [result.type]: result?.data,
-      };
+      // trackDataRef.current = {
+      //   ...trackDataRef.current,
+      //   [result.type]: result?.data,
+      // };
+      console.log(result, "scoreDetails");
+      const retult = await content.addLessonTracking({
+        ...result?.data,
+        courseId: videos?.[visibleIndex]?.contentId,
+        moduleId: videos?.[visibleIndex]?.contentId,
+        lessonId: videos?.[visibleIndex]?.contentId,
+        programId: videos?.[visibleIndex]?.programId,
+        subject:
+          videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+      });
+      console.log(content, retult, "retult");
     }
   };
 

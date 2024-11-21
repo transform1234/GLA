@@ -1,4 +1,3 @@
-import API from "../utils/api";
 const baseUrl: string = `${import.meta.env.VITE_API_AUTH_URL}/api/v1`;
 
 interface IGetOneParams {
@@ -8,34 +7,37 @@ interface IGetOneParams {
   header?: Record<string, string>;
 }
 
-
 export const getOne = async ({ id, adapter, type, header }: IGetOneParams) => {
+  const headers = new Headers({
+    ...header,
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  });
+
   try {
-    const response = await API.get(
-      `${baseUrl}/course/${adapter}/hierarchy/contentid`, 
+    const response = await fetch(
+      `${baseUrl}/course/${adapter}/hierarchy/contentid?courseId=${id}&type=${type}`,
       {
-        headers: {
-          ...header,
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        params: {
-          courseId: id,
-          type: type,
-        },
+        method: "GET",
+        headers,
       }
     );
 
-    return response.data?.data || {}; // Extract data field.
+    if (response.ok) {
+      const result = await response.json();
+      return result?.data || {};
+    } else {
+      console.log("Failed to fetch data");
+      return {};
+    }
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.error("course/hierarchy/contentid", e.message);
+      console.log("course/hierarchy/contentid", e.message);
     } else {
-      console.error("course/hierarchy/contentid", String(e));
+      console.log("course/hierarchy/contentid", String(e));
     }
     return {};
   }
 };
-
 
 // interface IGetAllParams {
 //   page?: number;
@@ -146,29 +148,31 @@ export const getAltUserContent = async ({
   subject?: string;
 }): Promise<any> => {
   try {
-    const response = await API.post(
-      `${baseUrl}/altprogramassociation/glaUserContent`,
+    const response = await fetch(
+      `${baseUrl}/altprogramassociation/glaUserContent?page=${page}&limit=${limit}`,
       {
-        programId,
-        subject,
-        page,
-        limit,
-      },
-      {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({ programId, subject, page, limit }),
       }
     );
 
-    return response.data; // Axios parses the JSON response automatically.
+    const result = await response.json();
+    if (response.ok) {
+      return result;
+    } else {
+      console.log("Failed to fetch alt user content");
+      return { data: [] };
+    }
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.error("altprogramassociation/glaUserContent", e.message);
+      console.log("course/progress/contentid", e.message);
     } else {
-      console.error("altprogramassociation/glaUserContent", String(e));
+      console.log("course/progress/contentid", String(e));
     }
-    return { data: [] }; // Fallback empty data.
+    return { data: [] };
   }
 };
-

@@ -6,6 +6,7 @@ import {
   Skeleton,
   SkeletonCircle,
   Stack,
+  VStack,
 } from "@chakra-ui/react";
 import { debounce } from "lodash";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
@@ -34,9 +35,12 @@ const VideoItem: React.FC<{
   const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });
-  const [heightPerItem, setHeightPerItem] = useState<number>(0);
+  const [heightPerItem, setHeightPerItem] = useState<{
+    width: number;
+    height: number;
+  }>({ width: 0, height: 0 });
   useEffect(() => {
-    setHeightPerItem(height / 8);
+    setHeightPerItem({ height: 0, width: 0 });
   }, [height]);
 
   useEffect(() => {
@@ -72,7 +76,7 @@ const VideoItem: React.FC<{
       }}
     >
       {isVisible && !isLoading ? (
-        <div>
+        <Box>
           <SunbirdPlayer
             {...{ width, height }}
             _playerStypeHeight={height}
@@ -84,16 +88,49 @@ const VideoItem: React.FC<{
             public_url={VITE_PLAYER_URL}
           />
           {qml_id && (
-            <Center>
+            <VStack>
+              <TopIcon
+                onClick={() => {
+                  if (heightPerItem?.height === 0) {
+                    setHeightPerItem({ height: height / 3, width: width - 31 });
+                  } else {
+                    setHeightPerItem({ height: 0, width: 0 });
+                  }
+                }}
+                rounded="none"
+                roundedLeft="full"
+                size="lg"
+                _icon={{ width: heightPerItem?.height === 0 ? "100%" : "" }}
+                p={heightPerItem?.height === 0 ? "5px 16px" : ""}
+                icon={
+                  heightPerItem?.height === 0
+                    ? "TakeAQuizIcon"
+                    : "ChevronRightIcon"
+                }
+                bg={heightPerItem?.width === 0 ? "white" : "transparent"}
+                right={
+                  heightPerItem?.width === 0
+                    ? "0px"
+                    : `${heightPerItem?.width - 32}`
+                }
+                bottom={
+                  heightPerItem?.height === 0
+                    ? "32px"
+                    : `${heightPerItem?.height - 32}`
+                }
+                transition="right 0.5s,bottom 0.5s"
+                top="auto"
+              />
               <SunbirdPlayer
                 forwardedRef={isVisible ? refQml : false}
                 style={{ border: "none", borderRadius: "16px" }}
                 _vstack={{
                   position: "absolute",
                   bottom: "16px",
-                  transition: "height 0.5s",
+                  transition: "right 0.5s,width 0.5s, height 0.5s",
+                  right: "16px",
                 }}
-                {...{ width: width - 32, height: heightPerItem }}
+                {...heightPerItem}
                 {...{ ...lessonQml, iframeId: "assessment" }}
                 userData={{
                   firstName: localStorage.getItem("name"),
@@ -101,27 +138,48 @@ const VideoItem: React.FC<{
                 }}
                 public_url={VITE_PLAYER_URL}
               />
-            </Center>
+            </VStack>
           )}
-        </div>
+        </Box>
       ) : (
         <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
           <HStack gap="5" padding={4} justifyContent={"space-between"}>
             <HStack gap="5">
-              <SkeletonCircle size="9" />
-              <SkeletonCircle size="9" />
-              <SkeletonCircle size="9" />
+              <SkeletonCircle
+                size="8"
+                startColor="primary.500"
+                endColor="primary.50"
+              />
+              <SkeletonCircle
+                size="8"
+                startColor="primary.500"
+                endColor="primary.50"
+              />
+              <SkeletonCircle
+                size="8"
+                startColor="primary.500"
+                endColor="primary.50"
+              />
             </HStack>
-            <SkeletonCircle size="9" />
+            <SkeletonCircle
+              size="8"
+              startColor="primary.500"
+              endColor="primary.50"
+            />
           </HStack>
           <HStack
             width="full"
             position="absolute"
-            justifyContent="center"
-            alignItems="center"
-            bottom="16px"
+            justifyContent="end"
+            bottom="32px"
           >
-            <Skeleton height="20" rounded={"16px"} width={width - 32} />
+            <Skeleton
+              height="48px"
+              roundedLeft={"full"}
+              width={"110px"}
+              startColor="primary.500"
+              endColor="primary.50"
+            />
           </HStack>
         </Stack>
       )}
@@ -248,13 +306,25 @@ export default VideoReel;
 const TopIcon: React.FC<{
   onClick: () => void;
   icon: any;
+  _icon?: any;
   right?: string;
   left?: string;
-}> = ({ onClick, left, icon, ...props }) => {
+  zIndex?: string;
+  top?: string;
+  bottom?: string;
+  transition?: string;
+  rounded?: string;
+  roundedLeft?: string;
+  size?: string;
+  bg?: string;
+  p?: string;
+}> = ({ onClick, left, icon, _icon, ...props }) => {
   return (
     <IconButton
       aria-label="Go back"
-      icon={<IconByName name={icon} boxSize="2rem" color="primary.500" />}
+      icon={
+        <IconByName name={icon} boxSize="2rem" color="primary.500" {..._icon} />
+      }
       size="mg"
       variant="ghost"
       position="absolute"
@@ -263,6 +333,8 @@ const TopIcon: React.FC<{
       zIndex="10"
       bg="primary.50"
       rounded={"full"}
+      border={"none"}
+      _focus={{ boxShadow: "none", outline: "none" }}
       onClick={onClick}
       {...props}
     />

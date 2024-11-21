@@ -11,7 +11,7 @@ export const fetchToken = async (username: string, password: string) => {
       username,
       password,
       grant_type: "password",
-      client_secret: "9ca6e96d-f72e-4208-91f4-a2d8e681f767",
+      client_secret: `${import.meta.env.VITE_APP_SECRET_KEY}`
     }));
 
     return response.data; // Axios automatically parses JSON.

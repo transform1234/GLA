@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import {
   VStack,
   Box,
+  Input,
   FormControl,
   FormLabel,
   Link,
   Center,
+  IconButton,
   useDisclosure,
   Alert,
   AlertIcon,
@@ -16,7 +18,7 @@ import PopupModal from "../../components/common/PopupModal";
 import transformLogo from "../../assets/logo/TSHeader.png";
 import logo from "../../assets/logo/Logo-Large.png";
 import background from "../../assets/images/bg.png";
-import { fetchToken, getAuthUser } from "../../services/auth";
+import { fetchToken, getAuthUser } from "../../services/auth/auth";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import PrimaryButton from "../../components/common/button/PrimaryButton";

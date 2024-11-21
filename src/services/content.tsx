@@ -176,3 +176,67 @@ export const getAltUserContent = async ({
     return { data: [] };
   }
 };
+
+export const addLessonTracking = async ({
+  courseId,
+  moduleId,
+  lessonId,
+  status,
+  contentType,
+  timeSpent,
+  score,
+  scoreDetails,
+  programId,
+  subject,
+}: {
+  courseId: string;
+  moduleId: string;
+  lessonId: string;
+  status: string;
+  contentType: string;
+  timeSpent: number;
+  score: number;
+  scoreDetails: string;
+  programId: string;
+  subject: string;
+}): Promise<any> => {
+  try {
+    const response = await fetch(
+      `${baseUrl}/altlessontracking/altAddLessonTracking?program=${
+        programId || "e5fe89b2-cbc6-473a-99ba-83313d2e4072"
+      }&subject=${subject}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId,
+          moduleId,
+          lessonId,
+          status,
+          contentType,
+          timeSpent,
+          score,
+          scoreDetails,
+        }),
+      }
+    );
+
+    const result = await response.json();
+    if (response.ok) {
+      return result;
+    } else {
+      console.log("Failed to add lesson tracking");
+      return {};
+    }
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.log("course/progress/contentid", e.message);
+    } else {
+      console.log("course/progress/contentid", String(e));
+    }
+    return {};
+  }
+};

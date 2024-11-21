@@ -76,7 +76,7 @@ const VideoItem: React.FC<{
       }}
     >
       {isVisible && !isLoading ? (
-        <div>
+        <Box>
           <SunbirdPlayer
             {...{ width, height }}
             _playerStypeHeight={height}
@@ -140,7 +140,7 @@ const VideoItem: React.FC<{
               />
             </VStack>
           )}
-        </div>
+        </Box>
       ) : (
         <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
           <HStack gap="5" padding={4} justifyContent={"space-between"}>
@@ -171,12 +171,12 @@ const VideoItem: React.FC<{
             width="full"
             position="absolute"
             justifyContent="end"
-            bottom="16px"
+            bottom="32px"
           >
             <Skeleton
               height="48px"
               roundedLeft={"full"}
-              width={"48px"}
+              width={"110px"}
               startColor="primary.500"
               endColor="primary.50"
             />

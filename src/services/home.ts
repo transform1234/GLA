@@ -1,6 +1,7 @@
 import moment from "moment";
 import _ from "lodash";
 const dateFor = moment().format("YYYY-MM-DD");
+import API from "../utils/api";
 
 export const getProgramId = async () => {
   const token = localStorage.getItem("token");
@@ -8,11 +9,6 @@ export const getProgramId = async () => {
   if (!token) {
     throw new Error("Token not available in localStorage");
   }
-
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
 
   const requestBody = {
     board: localStorage.getItem("board"),
@@ -22,20 +18,17 @@ export const getProgramId = async () => {
   };
 
   try {
-    const response = await fetch(
+    const response = await API.post(
       `${import.meta.env.VITE_API_AUTH_URL}/api/v1/altprogram/bmgs`,
+      requestBody,
       {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(requestBody),
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    const data = await response.json();
+    const data = response.data;
 
     if (data?.data) {
       const programId = data?.data[0]?.programId;
@@ -53,39 +46,33 @@ export const getSubjectList = async () => {
     const programData = await getProgramId();
 
     if (programData?.programId) {
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
+      const requestBody = {
+        board: localStorage.getItem("board"),
+        medium: localStorage.getItem("medium"),
+        grade: localStorage.getItem("grade"),
+        programId: programData.programId,
       };
 
-      const response = await fetch(
+      const response = await API.post(
         `${
           import.meta.env.VITE_API_AUTH_URL
         }/api/v1/altprogramassociation/altsubjectlist`,
+        requestBody,
         {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify({
-            board: localStorage.getItem("board"),
-            medium: localStorage.getItem("medium"),
-            grade: localStorage.getItem("grade"),
-            programId: programData.programId,
-          }),
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch subject list");
-      }
-
-      const subjectList = await response.json();
+      const subjectList = response.data;
 
       if (subjectList?.data) {
         return _.sortBy(subjectList.data, "rules");
       }
-    } else {
-      return [];
     }
+
+    return [];
   } catch (error) {
     console.error("Error in getting subject list:", error);
     throw error;

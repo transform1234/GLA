@@ -1,29 +1,26 @@
-import URL from "../../utils/constants/url-constants.json";
+import URL from "../utils/constants/url-constants.json";
+import API from "../utils/api"
+
 
 export const fetchToken = async (username: string, password: string) => {
   const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
 
-  const response = await fetch(authUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
+  try {
+    const response = await API.post(authUrl, new URLSearchParams({
       client_id: "hasura-app",
       username,
       password,
       grant_type: "password",
       client_secret: "9ca6e96d-f72e-4208-91f4-a2d8e681f767",
-    }),
-  });
+    }));
 
-  if (!response.ok) {
+    return response.data; // Axios automatically parses JSON.
+  } catch (error) {
+    console.error("Failed to fetch token:", error);
     throw new Error("Failed to fetch token");
   }
-
-  const data = await response.json();
-  return data;
 };
+
 
 export const getAuthUser = async () => {
   const token = localStorage.getItem("token");
@@ -34,18 +31,17 @@ export const getAuthUser = async () => {
 
   const userUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.USER}`;
 
-  const response = await fetch(userUrl, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
+  try {
+    const response = await API.get(userUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
 
-  if (!response.ok) {
+    return response.data; // Axios automatically parses JSON.
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
     throw new Error("Failed to fetch user data");
   }
-
-  const data = await response.json();
-  return data;
 };

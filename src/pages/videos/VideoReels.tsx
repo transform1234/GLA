@@ -17,7 +17,6 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import IconByName from "../../components/common/icons/Icon";
 import { handleEvent } from "./utils";
-const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 
 const VideoItem: React.FC<{
   id: string;
@@ -81,7 +80,6 @@ const VideoItem: React.FC<{
               firstName: localStorage.getItem("name"),
               lastName: "",
             }}
-            public_url={VITE_PLAYER_URL}
           />
           {qml_id && (
             <Center>
@@ -99,7 +97,6 @@ const VideoItem: React.FC<{
                   firstName: localStorage.getItem("name"),
                   lastName: "",
                 }}
-                public_url={VITE_PLAYER_URL}
               />
             </Center>
           )}

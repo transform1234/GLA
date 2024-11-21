@@ -66,33 +66,21 @@ export const handleTrackData = (
       return oldData;
     }, []);
     scoreDetails = JSON.stringify(newFormatData);
-    let milliseconds = trackData?.data?.edata?.duration;
-    const timeSpentString: string = (milliseconds / 1000).toString();
-    const formattedNumber =
-      timeSpentString.slice(0, -3) + "." + timeSpentString.slice(-3);
-    const timeSpentInt = parseFloat(formattedNumber);
-    const inSeconds = Math.ceil(timeSpentInt);
     data = {
       status: "completed",
       contentType: fileType,
-      timeSpent: inSeconds,
+      timeSpent: trackData?.trackData?.duration,
       score: trackData?.score,
-      scoreDetails: scoreDetails,
+      scoreDetails,
     };
   } else {
-    scoreDetails = trackData;
-    let milliseconds = trackData?.data?.edata?.duration;
-    const timeSpentString: string = (milliseconds / 1000).toString();
-    const formattedNumber =
-      timeSpentString.slice(0, -3) + "." + timeSpentString.slice(-3);
-    const timeSpentInt = parseFloat(formattedNumber);
-    const inSeconds = Math.ceil(timeSpentInt);
+    scoreDetails = JSON.stringify(trackData);
     data = {
       status: "completed",
       contentType: fileType,
-      timeSpent: inSeconds,
+      timeSpent: trackData?.trackData?.duration,
       score: trackData?.score || 0,
-      scoreDetails: scoreDetails,
+      scoreDetails,
     };
   }
   return { data, type: playerType };

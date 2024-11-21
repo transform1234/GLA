@@ -284,6 +284,7 @@ export default function Login() {
                   <CustomInput
                     placeholder={t("LOGIN_ENTER_PASSWORD")}
                     value={password}
+                    isPassword={true}
                     onChange={(value) => handleInputChange("password", value)}
                     error={!!errors.password && isSubmitted}
                     errorMessage={errors.password}

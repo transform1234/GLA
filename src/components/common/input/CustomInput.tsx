@@ -20,7 +20,6 @@ interface CustomInputProps {
   onChange: (value: string) => void;
   error?: boolean;
   errorMessage?: string; 
-  showToggleIcon?: boolean;
   showClearIcon?: boolean;
   iconType?: string;
   isPassword?: boolean;
@@ -32,7 +31,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
   value,
   onChange,
   error,
-  showToggleIcon,
   errorMessage,
   showClearIcon,
   iconType,
@@ -111,7 +109,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
        
       />
       <InputRightElement width="3rem" cursor="pointer">
-        {showToggleIcon && isPassword && (
+        { isPassword && (
           <IconButton
             position="absolute"
             right="10px"

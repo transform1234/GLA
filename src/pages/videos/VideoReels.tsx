@@ -100,9 +100,11 @@ const VideoItem: React.FC<{
                 rounded="none"
                 roundedLeft="full"
                 size="lg"
+                _icon={{ width: heightPerItem?.height === 0 ? "100%" : "" }}
+                p={heightPerItem?.height === 0 ? "5px 16px" : ""}
                 icon={
                   heightPerItem?.height === 0
-                    ? "ChevronLeftIcon"
+                    ? "TakeAQuizIcon"
                     : "ChevronRightIcon"
                 }
                 bg={heightPerItem?.width === 0 ? "white" : "transparent"}
@@ -113,7 +115,7 @@ const VideoItem: React.FC<{
                 }
                 bottom={
                   heightPerItem?.height === 0
-                    ? "16px"
+                    ? "32px"
                     : `${heightPerItem?.height - 32}`
                 }
                 transition="right 0.5s,bottom 0.5s"
@@ -304,6 +306,7 @@ export default VideoReel;
 const TopIcon: React.FC<{
   onClick: () => void;
   icon: any;
+  _icon?: any;
   right?: string;
   left?: string;
   zIndex?: string;
@@ -314,11 +317,14 @@ const TopIcon: React.FC<{
   roundedLeft?: string;
   size?: string;
   bg?: string;
-}> = ({ onClick, left, icon, ...props }) => {
+  p?: string;
+}> = ({ onClick, left, icon, _icon, ...props }) => {
   return (
     <IconButton
       aria-label="Go back"
-      icon={<IconByName name={icon} boxSize="2rem" color="primary.500" />}
+      icon={
+        <IconByName name={icon} boxSize="2rem" color="primary.500" {..._icon} />
+      }
       size="mg"
       variant="ghost"
       position="absolute"

@@ -4,7 +4,7 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
 } from "@chakra-ui/icons";
-import { Icon, Circle, Text } from "@chakra-ui/react";
+import { Icon, Text } from "@chakra-ui/react";
 
 interface IconProps {
   name: string;
@@ -83,6 +83,13 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       <Icon viewBox="-4 -4 28 28" fill="currentColor" color={color} {...props}>
         <path d="M15 17.4999H5.83329V6.66658L11.6666 0.833252L12.7083 1.87492C12.8055 1.97214 12.8854 2.10409 12.9479 2.27075C13.0104 2.43742 13.0416 2.59714 13.0416 2.74992V3.04159L12.125 6.66658H17.5C17.9444 6.66658 18.3333 6.83325 18.6666 7.16658C19 7.49992 19.1666 7.88881 19.1666 8.33325V9.99992C19.1666 10.0971 19.1527 10.2013 19.125 10.3124C19.0972 10.4235 19.0694 10.5277 19.0416 10.6249L16.5416 16.4999C16.4166 16.7777 16.2083 17.0138 15.9166 17.2083C15.625 17.4027 15.3194 17.4999 15 17.4999ZM7.49996 15.8333H15L17.5 9.99992V8.33325H9.99996L11.125 3.74992L7.49996 7.37492V15.8333ZM5.83329 6.66658V8.33325H3.33329V15.8333H5.83329V17.4999H1.66663V6.66658H5.83329Z" />
       </Icon>
+    );
+  },
+  TakeAQuizIcon: ({ ...props }) => {
+    return (
+      <Text fontSize="1em" {...props}>
+        take a quiz
+      </Text>
     );
   },
   ChevronRightIcon,

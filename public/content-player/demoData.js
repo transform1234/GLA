@@ -167,12 +167,11 @@ const playerConfig = {
       l1: "505c7c48ac6dc1edc9b08f21db5a571d",
     },
     tags: [""],
-    cdata: [],
     timeDiff: 0,
     objectRollup: {},
-    // host: process.env.REACT_APP_BASE_URL,
-    host: "https://sunbirdsaas.com",
-    endpoint: "",
+    host: metadata.telemetryBaseUrl || "",
+    endpoint: metadata.telemetryEndpoint || "/data/v1/telemetry",
+    apislug: metadata.apislug || "",
     userData: metadata?.userData ? metadata?.userData : {},
     app: [""], // Genie tags
     partner: [""], // Partner tags

@@ -3,8 +3,9 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
+  SearchIcon,
 } from "@chakra-ui/icons";
-import { Icon, Text } from "@chakra-ui/react";
+import { Button, Icon, Text } from "@chakra-ui/react";
 
 interface IconProps {
   name: string;
@@ -96,10 +97,29 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
   ChevronLeftIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  SearchIcon,
 };
 
-const IconByName: React.FC<IconProps> = ({ name, color, ...props }) => {
+const IconByName: React.FC<IconProps> = ({
+  name,
+  color,
+  onClick,
+  ...props
+}) => {
   const Component = iconsMap[name];
+  if (onClick) {
+    return (
+      <Button
+        variant="link"
+        _hover={{ borderColor: "transparent" }}
+        _focus={{ outline: "none" }}
+        onClick={onClick}
+        {...props}
+      >
+        {Component ? <Component name={name} color={color} /> : null}
+      </Button>
+    );
+  }
   return Component ? <Component name={name} color={color} {...props} /> : null;
 };
 

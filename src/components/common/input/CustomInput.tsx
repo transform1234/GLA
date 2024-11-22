@@ -1,17 +1,16 @@
-import React, { useState } from "react";
 import {
+  Box,
+  IconButton,
+  Image,
   Input,
   InputGroup,
   InputRightElement,
-  IconButton,
-  Image,
-  useTheme,
   Text,
-  Box
 } from "@chakra-ui/react";
-import visibility from "../../../assets/icons/visibility.svg"; 
-import visibilityOff from "../../../assets/icons/visibility_off.svg"; 
+import React, { useState } from "react";
 import searchIcon from "../../../assets/icons/search.svg";
+import visibility from "../../../assets/icons/visibility.svg";
+import visibilityOff from "../../../assets/icons/visibility_off.svg";
 import warning from "../../../assets/icons/warning.svg";
 
 interface CustomInputProps {
@@ -19,11 +18,12 @@ interface CustomInputProps {
   value: string;
   onChange: (value: string) => void;
   error?: boolean;
-  errorMessage?: string; 
+  errorMessage?: string;
   showClearIcon?: boolean;
   iconType?: string;
   isPassword?: boolean;
   disabled?: boolean;
+  transition?: string;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -32,13 +32,12 @@ const CustomInput: React.FC<CustomInputProps> = ({
   onChange,
   error,
   errorMessage,
-  showClearIcon,
   iconType,
   isPassword,
   disabled,
+  ...prop
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const theme = useTheme();
 
   const handleToggleVisibility = () => {
     setShowPassword(!showPassword);
@@ -53,7 +52,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
       };
     }
     if (error && !value) {
-     
       return {
         borderColor: "backgroundGrey",
         bg: "white",
@@ -89,73 +87,78 @@ const CustomInput: React.FC<CustomInputProps> = ({
   };
 
   return (
-    <>
-    <InputGroup>
-      <Input
-        type={showPassword && isPassword ? "text" : isPassword ? "password" : "text"}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        borderWidth="2px"
-        borderStyle="solid"
-        borderColor={getBorderColor().borderColor}
-        _focus={{ borderColor: getHoverAndFocusColor() }}
-        _focusVisible={{ borderColor: getHoverAndFocusColor() }}
-        _hover={{ borderColor: getHoverAndFocusColor() }}
-        color={getBorderColor().color}
-        isDisabled={disabled}
-        bg={getBorderColor().bg}
-        pr="2.5rem"
-       
-      />
-      <InputRightElement width="3rem" cursor="pointer">
-        { isPassword && (
-          <IconButton
-            position="absolute"
-            right="10px"
-            top="60%"
-            variant="unstyled"
-            transform="translateY(-50%)"
-            onClick={handleToggleVisibility}
-            height="auto"
-            minWidth="auto"
-            aria-label="Toggle visibility"
-            border="none"
-            outline="none"
-          >
+    <Box {...prop}>
+      <InputGroup>
+        <Input
+          type={
+            showPassword && isPassword
+              ? "text"
+              : isPassword
+              ? "password"
+              : "text"
+          }
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          borderWidth="2px"
+          borderStyle="solid"
+          borderColor={getBorderColor().borderColor}
+          _focus={{ borderColor: getHoverAndFocusColor() }}
+          _focusVisible={{ borderColor: getHoverAndFocusColor() }}
+          _hover={{ borderColor: getHoverAndFocusColor() }}
+          color={getBorderColor().color}
+          isDisabled={disabled}
+          bg={getBorderColor().bg}
+          pr="2.5rem"
+        />
+        <InputRightElement width="3rem" cursor="pointer">
+          {isPassword && (
+            <IconButton
+              position="absolute"
+              right="10px"
+              top="60%"
+              variant="unstyled"
+              transform="translateY(-50%)"
+              onClick={handleToggleVisibility}
+              height="auto"
+              minWidth="auto"
+              aria-label="Toggle visibility"
+              border="none"
+              outline="none"
+            >
+              <Image
+                src={showPassword ? visibilityOff : visibility}
+                alt="Toggle visibility"
+                style={{
+                  filter: `invert(27%) sepia(84%) saturate(2448%) hue-rotate(165deg) brightness(95%) contrast(92%)`,
+                }}
+              />
+            </IconButton>
+          )}
+
+          {iconType === "search" && (
             <Image
-              src={showPassword ? visibilityOff : visibility}
-              alt="Toggle visibility"
+              src={searchIcon}
+              alt="Search"
               style={{
+                width: "20px",
+                height: "20px",
                 filter: `invert(27%) sepia(84%) saturate(2448%) hue-rotate(165deg) brightness(95%) contrast(92%)`,
               }}
             />
-          </IconButton>
-        )}
+          )}
+        </InputRightElement>
+      </InputGroup>
 
-        {iconType === "search" && (
-          <Image
-            src={searchIcon}
-            alt="Search"
-            style={{
-              width: "20px",
-              height: "20px",
-              filter: `invert(27%) sepia(84%) saturate(2448%) hue-rotate(165deg) brightness(95%) contrast(92%)`,
-            }}
-          />
-        )}
-      </InputRightElement>
-    </InputGroup>
-
-     {error && errorMessage && (
-  <Box display="flex" alignItems="center">
-    <Image src={warning} alt="Warning" mr="2" />
-    <Text color="red.500" fontSize="12px">
-      {errorMessage}
-    </Text>
-  </Box>
-)}
-    </>
+      {error && errorMessage && (
+        <Box display="flex" alignItems="center">
+          <Image src={warning} alt="Warning" mr="2" />
+          <Text color="red.500" fontSize="12px">
+            {errorMessage}
+          </Text>
+        </Box>
+      )}
+    </Box>
   );
 };
 

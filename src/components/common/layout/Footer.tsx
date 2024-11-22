@@ -88,20 +88,41 @@ const Footer: React.FC<FooterProps> = ({
             item={item}
             key={`${item}-${index}`}
             cursor="pointer"
-            opacity={selected === index ? 1 : 0.5}
             flex={1}
             onClick={() => {
               setSelected(index);
               item?.onClick && item?.onClick();
             }}
           >
-            <Text color={selected === index ? "primary.500" : "gray.900"}>
+            <Text
+              {...(item?.isOutOFBox && {
+                color: selected === index ? "primary.500" : "white",
+              })}
+            >
               <Center>
                 <VStack alignItems="center">
-                  <VStack py="3" alignItems="center" spacing={1}>
+                  <VStack
+                    py="3"
+                    alignItems="center"
+                    spacing={1}
+                    {...(item?.isOutOFBox && {
+                      bottom: "20px",
+                      position: "absolute",
+                      bg: "primary.500",
+                      rounded: "full",
+                      width: "80px",
+                      height: "80px",
+                      border: "3px solid white",
+                      py: "0px",
+                      justifyContent: "center",
+                    })}
+                  >
                     <Box
                       w="100%"
                       padding={"2px 20px"}
+                      {...(item?.isOutOFBox && {
+                        padding: "0px",
+                      })}
                       bg={selected === index ? "primary.100" : "transparent"}
                       rounded="16px"
                     >
@@ -120,7 +141,9 @@ const Footer: React.FC<FooterProps> = ({
                     <Text
                       fontSize="12"
                       lineHeight="16px"
-                      color={selected === index ? "primary.500" : "gray.900"}
+                      {...(item?.isOutOFBox && {
+                        color: selected === index ? "primary.500" : "white",
+                      })}
                     >
                       {t(item.title)}
                     </Text>

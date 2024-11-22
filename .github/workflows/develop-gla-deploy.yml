@@ -61,7 +61,13 @@ jobs:
       - name: Deploy with rsync
         run: |
            rsync -avz -e "ssh -i ~/.ssh/id_rsa" ./dist/ ${{ secrets.USERNAME_GLA_DEV }}@${{ secrets.HOST_DNS_GLA_DEV }}:/var/www/alt-gla-dev.uniteframework.io/public
-          
+
+      - name: Copy to server dist folder
+        run: |
+          sshpass -p '${{ secrets.EC2_SSH_KEY_GLA_DEV  }}' ssh -v -o StrictHostKeyChecking=no ${{ secrets.USERNAME_GLA_DEV  }}@${{ secrets.HOST_DNS_GLA_DEV  }} <<'ENDSSH'
+          cd /home/prasad/gla-player-dist/
+          ./deploy.sh
+          ENDSSH
      # - name: Copy Package
      #   run: |
      #     sh ./scripts/pack-prod-build.sh

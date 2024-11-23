@@ -78,7 +78,7 @@ export const handleTrackData = (
     data = {
       status: "completed",
       contentType: fileType,
-      timeSpent: trackData?.trackData?.duration,
+      timeSpent: trackData?.duration || trackData?.trackData?.duration,
       score: trackData?.score || 0,
       scoreDetails,
     };

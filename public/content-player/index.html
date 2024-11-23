@@ -15,6 +15,8 @@
     <script src="./demoData.js"></script>
 
     <script type="text/javascript">
+      const iframeId = metadata?.iframeId || "default_iframe";
+      const mimeType = metadata?.mimeType || "";
       var previewElement = document.getElementById("content-player");
       previewElement.onload = function () {
         reportWindowSize();
@@ -31,7 +33,12 @@
       }
 
       function passData(data) {
-        window?.parent?.postMessage(data, "*");
+        const messageData = {
+          iframeId, // Include unique iframeId here
+          mimeType,
+          ...(typeof data?.data === "string" ? JSON.parse(data.data) : data?.data || data?.detail || {}),
+        };
+        window?.parent?.postMessage(messageData, "*");
       }
       window.addEventListener(
         "message",

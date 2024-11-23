@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QUML Player web component demo</title>
+    <link rel="stylesheet" href="./theme.css?version=1.0.0" />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+      crossorigin="anonymous"
+    ></script>
+    <!-- <link rel="stylesheet" href="./carousel.css" /> -->
+    <link rel="stylesheet" href="./styles.css?version=1.0.0" />
+    <link rel="stylesheet" href="./style.css?version=1.0.0" />
+  </head>
+  <body>
+    <div class="player-grid" id="my-player"></div>
+
+    <script type="text/javascript" src="sunbird-quml-player.min.js"></script>
+    <script type="text/javascript" src="demoData.js"></script>
+    <script type="text/javascript">
+      // Need to pass the API URL to fetch the question set
+      window.questionListUrl = "https://vdn.diksha.gov.in/api/question/v1/list";
+      const iframeId = metadata?.iframeId || "default_iframe";
+      const mimeType = metadata?.mimeType || "";
+
+      if (window?.name) {
+        const data = JSON.parse(window?.name);
+        if (data?.questionListUrl) {
+          if (localStorage.getItem("console")) {
+          }
+          window.questionListUrl = data?.questionListUrl;
+        }
+      }
+      // window.questionListUrl = "https://alt-shiksha.uniteframework.io/api/v1/list";
+
+      const qumlPlayerElement = document.createElement("sunbird-quml-player");
+      qumlPlayerElement.setAttribute(
+        "player-config",
+        JSON.stringify(playerConfig)
+      );
+      qumlPlayerElement.addEventListener("telemetryEvent", (event) => {
+        postMessage(event);
+      });
+
+      var myPlayer = document.getElementById("my-player");
+      myPlayer.appendChild(qumlPlayerElement);
+
+      // collapsible button
+      // const button = document.createElement("button");
+      // button.classList.add("collapse-button");
+      // button.classList.add("collapse-close");
+      // const iconDown = `<svg width="12.75" height="12.75" viewBox="0 0 8.5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+      //     <path d="M4.25 2.55L1.05 5.95L0 5.1L4.25 0.6L8.5 5.1L7.95 5.95L4.25 2.55Z" fill="#03627C"/>
+      //   </svg>`;
+      // const iconUp = `<svg width="12.75" height="12.75" viewBox="0 0 8.5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+      //     <path d="M4.25 3.4L1.05 0.75L0 1.2L4.25 5.7L8.5 1.2L7.95 0.75L4.25 3.4Z" fill="#03627C"/>
+      //   </svg>`;
+      // button.innerHTML = iconDown;
+      // button.onclick = function () {
+      //   if (
+      //     myPlayer
+      //       .querySelector(".collapse-button")
+      //       .classList.contains("collapse-close")
+      //   ) {
+      //     document.body.style.background = "#fff";
+      //     document.body.style.overflow = "inherit";
+      //     button.innerHTML = iconUp;
+      //     postMessage({ detail: { action: "iconUp" } });
+
+      //     myPlayer
+      //       .querySelector(".landscape-content")
+      //       .classList.add("displayblock");
+      //     myPlayer
+      //       .querySelector(
+      //         ".quml-header__metadata.quml-header__metadata--portrait"
+      //       )
+      //       .classList.add("displayblock");
+      //   } else {
+      //     document.body.style.background = "#000";
+      //     document.body.style.overflow = "hidden";
+      //     button.innerHTML = iconDown;
+      //     postMessage({ detail: { action: "iconDown" } });
+      //     myPlayer
+      //       .querySelector(".landscape-content")
+      //       .classList.remove("displayblock");
+      //     myPlayer
+      //       .querySelector(
+      //         ".quml-header__metadata.quml-header__metadata--portrait"
+      //       )
+      //       .classList.remove("displayblock");
+      //   }
+      //   myPlayer
+      //     .querySelector(".collapse-button")
+      //     .classList.toggle("collapse-close");
+      // };
+      // myPlayer.appendChild(button);
+      const landscape = document.getElementsByClassName("main-container");
+      const landscapeElement = landscape?.[0] ? landscape?.[0] : landscape;
+
+      function reportWindowSize() {
+        landscapeElement.setAttribute(
+          "style",
+          `height: ${window.innerHeight}px`
+        );
+        // landscapeElement.setAttribute("width", window.innerWidth - "40");
+      }
+      reportWindowSize();
+      window.onresize = reportWindowSize;
+      const postMessage = (event) => {
+        try {
+          const messageData = {
+            iframeId, // Include unique iframeId here
+            mimeType,
+            ...JSON.parse(JSON.stringify(event?.detail)),
+          };
+          window?.parent?.postMessage(messageData, "*");
+        } catch (error) {
+          console.error("Failed to post message:", error);
+        }
+      };
+    </script>
+  </body>
+</html>

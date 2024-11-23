@@ -27,6 +27,7 @@ const menuList = [
     route: "/videos",
     icon: "WatchIcon",
     title: "Watch",
+    isOutOFBox: true,
   },
   {
     route: "/guide",

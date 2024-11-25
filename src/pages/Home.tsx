@@ -61,11 +61,16 @@ export default function Homepage() {
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      setSelectedSubject(localStorage.getItem("subject") ?? "English");
+      let storedSubject = localStorage.getItem("subject") ?? "";
       const programData = await getProgramId();
       if (programData) {
         const res: any = await getSubjectList();
         const subjectR = chunk(res, 4);
+        if (!storedSubject && res.length > 0) {
+          storedSubject = res[0]?.subject;
+          localStorage.setItem("subject", storedSubject);
+        }
+        setSelectedSubject(storedSubject);
         setSubjects(subjectR);
       }
     };

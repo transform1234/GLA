@@ -16,11 +16,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 21.1.0
-          
       - name: Copy .env file
         env:
-         ENV_FILE_CONTENT: ${{ secrets.env_prod }}
-        run: echo "$ENV_FILE_CONTENT" > .env
+          ENV_FILE_CONTENT_NEW: ${{ secrets.ENV_PROD }}
+        run: echo "$ENV_FILE_CONTENT_NEW" > .env
           
       - name: Generate React Build
         run: |

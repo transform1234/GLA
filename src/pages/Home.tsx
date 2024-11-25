@@ -61,7 +61,7 @@ export default function Homepage() {
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      setSelectedSubject(localStorage.getItem("subject") || "");
+      setSelectedSubject(localStorage.getItem("subject") ?? "English");
       const programData = await getProgramId();
       if (programData) {
         const res: any = await getSubjectList();

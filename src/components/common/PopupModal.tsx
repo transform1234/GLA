@@ -6,18 +6,16 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
-  Box,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import IconButton from "./button/IconButton";
-import PrimaryButton from "./button/PrimaryButton";
 import CustomHeading from "./typography/Heading";
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   showIcon: boolean;
-  children: React.ReactNode[];
+  children: React.ReactNode;
   footerContent?: React.ReactNode;
 }
 
@@ -38,15 +36,15 @@ const PopupModal: React.FC<InfoModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       size={"xs"}
+      isCentered
     >
       <AlertDialogOverlay>
-        <AlertDialogContent>
+        <AlertDialogContent borderRadius="16px">
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             <CustomHeading
               variant="h2"
               fontSize="1.25rem"
               fontWeight="bold"
-              mb="1rem"
               title={title}
               color="primary.500"
             />

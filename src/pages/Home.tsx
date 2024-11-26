@@ -61,7 +61,7 @@ export default function Homepage() {
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      let storedSubject = localStorage.getItem("subject") ?? "";
+      let storedSubject = localStorage.getItem("subject") || "";
       const programData = await getProgramId();
       if (programData) {
         const res: any = await getSubjectList();

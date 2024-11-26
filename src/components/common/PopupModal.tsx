@@ -36,15 +36,10 @@ const PopupModal: React.FC<InfoModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       size={"xs"}
-      
+      isCentered
     >
-      <AlertDialogOverlay
-           display="flex"
-           height="100vh"
-      >
-        <AlertDialogContent
-           borderRadius="16px"
-        >
+      <AlertDialogOverlay>
+        <AlertDialogContent borderRadius="16px">
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             <CustomHeading
               variant="h2"

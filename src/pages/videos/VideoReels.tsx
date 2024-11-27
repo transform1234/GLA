@@ -49,13 +49,13 @@ const VideoItem: React.FC<{
       setIsLoading(true);
       let resultData = await content.getOne({
         id,
-        adapter: "diksha",
+        adapter: "sunbird",
         type: "course",
       });
       if (qml_id) {
         let qmlResult = await content.getOne({
           id: qml_id,
-          adapter: "diksha",
+          adapter: "sunbird",
           type: "assessment",
         });
         setLessonQml(qmlResult);

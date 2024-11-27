@@ -1,5 +1,5 @@
 name: Deploy to PROD-GLA  
-on:   
+on:    
   push: 
     branches:
       - prod 

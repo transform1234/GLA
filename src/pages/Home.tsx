@@ -61,11 +61,16 @@ export default function Homepage() {
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      setSelectedSubject(localStorage.getItem("subject") || "");
+      let storedSubject = localStorage.getItem("subject") || "";
       const programData = await getProgramId();
       if (programData) {
         const res: any = await getSubjectList();
         const subjectR = chunk(res, 4);
+        if (!storedSubject && res.length > 0) {
+          storedSubject = res[0]?.subject;
+          localStorage.setItem("subject", storedSubject);
+        }
+        setSelectedSubject(storedSubject);
         setSubjects(subjectR);
       }
     };
@@ -79,7 +84,7 @@ export default function Homepage() {
 
   return (
     <Layout>
-      <VStack spacing={4} align={"stretch"} px="4">
+      <VStack spacing={10} align={"stretch"} px="4">
         {/* Learn Something Today Section */}
         <VStack pt="6" spacing={4}>
           <CustomHeading
@@ -104,9 +109,28 @@ export default function Homepage() {
                   subject.map((sub: any) => (
                     <VStack
                       key={sub.subject}
-                      spacing={4}
-                      p="3"
+                      spacing={3}
+                      p="2.5"
                       onClick={() => handelSelectSubject(sub.subject)}
+                      cursor="pointer"
+                      rounded={
+                        sub.subject === selectedSubject ? "1rem" : "none"
+                      }
+                      bg={
+                        sub.subject === selectedSubject
+                          ? "primary.50"
+                          : "transparent"
+                      }
+                      border={
+                        sub.subject === selectedSubject
+                          ? "3px solid"
+                          : "transparent"
+                      }
+                      borderColor={
+                        sub.subject === selectedSubject
+                          ? "primary.500"
+                          : "borderColor"
+                      }
                     >
                       {/* Render the specific image for each subject */}
                       <Image
@@ -119,8 +143,9 @@ export default function Homepage() {
                         alt={`${sub.subject} icon`}
                       />
                       <CustomHeading
+                        marginBottom="0"
                         textAlign="center"
-                        lineHeight="20px"
+                        lineHeight="11px"
                         fontSize="12px"
                         fontWeight="700"
                         textTransform="uppercase"
@@ -129,11 +154,7 @@ export default function Homepage() {
                             sub.subject?.toLowerCase() as keyof typeof subjectIcons
                           ]?.label || sub.subject
                         }
-                        color={
-                          sub.subject === selectedSubject
-                            ? "primary.500"
-                            : "gray.800"
-                        }
+                        color={"primary.500"}
                       />
                     </VStack>
                   ))}
@@ -142,29 +163,25 @@ export default function Homepage() {
         </VStack>
         {/* Watch Section */}
         <Box>
-          <HStack mb={2}>
+          {/* <HStack mb={2}>
             <Text fontSize="20px" fontWeight="bold" color="primary.500">
               {t("HOME_WATCH")}
             </Text>
-            <Image
-              src={arrow}
-              alt="Arrow"
-              boxSize="12px"
-            />
-          </HStack>
+            <Image src={arrow} alt="Arrow" boxSize="12px" />
+          </HStack> */}
           <HStack spacing={4}>
             <VStack spacing={4}>
               {chunk(watchSectionData, 2).map((chunk, rowIndex) => (
                 <HStack key={rowIndex} spacing={5}>
                   {chunk.map((item, index) => (
-                 <Box
-                 key={index}
-                 position="relative"
-                 borderRadius="9px"
-                 overflow="hidden"
-                 borderWidth="4px"
-                 borderColor="borderColor"
-               >
+                    <Box
+                      key={index}
+                      position="relative"
+                      borderRadius="9px"
+                      overflow="hidden"
+                      borderWidth="4px"
+                      borderColor="borderColor"
+                    >
                       <Image src={item.src} alt={item.alt} borderRadius="md" />
                       <Box
                         padding={3}

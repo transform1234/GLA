@@ -73802,7 +73802,7 @@
             return this._baseUrl + this.languageBasePath;
           },
           getTelematyAPI: function () {
-            return this._baseUrl + this.telemetryBasePath;
+            return this._baseUrl + (window.globalConfig?.endpoint || this.telemetryBasePath);
           },
           setBaseUrl: function (e) {
             this._baseUrl = e;

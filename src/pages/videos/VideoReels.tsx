@@ -238,8 +238,8 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
       console.log(result, "scoreDetails");
       const retult = await content.addLessonTracking({
         ...result?.data,
-        courseId: videos?.[visibleIndex]?.contentId,
-        moduleId: videos?.[visibleIndex]?.contentId,
+        // courseId: videos?.[visibleIndex]?.contentId,
+        // moduleId: videos?.[visibleIndex]?.contentId,
         lessonId: videos?.[visibleIndex]?.contentId,
         programId: videos?.[visibleIndex]?.programId,
         subject:

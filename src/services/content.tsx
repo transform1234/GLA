@@ -188,6 +188,7 @@ export const addLessonTracking = async ({
   scoreDetails,
   programId,
   subject,
+  contentSource,
 }: {
   courseId: string;
   moduleId: string;
@@ -199,6 +200,7 @@ export const addLessonTracking = async ({
   scoreDetails: string;
   programId: string;
   subject: string;
+  contentSource: string;
 }): Promise<any> => {
   try {
     const response = await fetch(
@@ -220,6 +222,7 @@ export const addLessonTracking = async ({
           timeSpent,
           score,
           scoreDetails,
+          contentSource,
         }),
       }
     );

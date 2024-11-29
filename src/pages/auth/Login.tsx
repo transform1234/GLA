@@ -163,8 +163,8 @@ export default function Login() {
         localStorage.setItem("section", resultTeacher?.data[0]?.section);
 
         if (resultTeacher?.data[0]?.userId) {
-          navigate("/home");
           navigate(0);
+          navigate("/home");
         } else {
           localStorage.removeItem("token");
           setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });

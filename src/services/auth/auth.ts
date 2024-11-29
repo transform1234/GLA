@@ -51,14 +51,17 @@ export const getAuthUser = async () => {
 };
 export const checkUserDetails = async () => {
   try {
-    const userUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.USER_VALIDATION}`;
-    const token = localStorage.getItem('token');
+    const userUrl = `${import.meta.env.VITE_API_AUTH_URL}${
+      URL.USER_VALIDATION
+    }`;
+    const token = localStorage.getItem("token");
+    
     if (!token) {
-      return { success: false, error: 'No token' };
+      return { success: false, token: null };
     }
 
     const response = await fetch(userUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -66,16 +69,86 @@ export const checkUserDetails = async () => {
 
     if (!response.ok) {
       if (response.status === 401) {
-        return { success: false, status: 'Unauthorized', message: 'Unauthorized access' };
+        try {
+          let refreshToken = await getNewAccessToken();
+          const { access_token, refresh_token } = refreshToken;
+
+          const retryResponse = await fetch(userUrl, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+
+          if (!retryResponse.ok) {
+            return {
+              success: false,
+              token: null,
+            };
+          } else {
+            localStorage.setItem("token", access_token);
+            localStorage.setItem("refreshToken", refresh_token);
+            return {
+              success: true,
+              token: access_token,
+            };
+          }
+          // const retryData = await retryResponse.json();
+          // return { success: true, data: retryData };
+        } catch (error) {
+          console.error("Error refreshing token:", error);
+          return {
+            success: false,
+            token: null,
+          };
+        }
       } else {
         const errorText = await response.text();
-        throw new Error(`Error: ${errorText || 'Unknown error'}`);
+        console.error("Error validating user details:", errorText);
+        return {
+          success: false,
+          token: null,
+        };
       }
     }
 
     const data = await response.json();
-    return { success: true, data };
+    return { success: true, token };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    return {
+      success: false,
+      token: null,
+    };
+  }
+};
+
+export const getNewAccessToken = async () => {
+  const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (!refreshToken) {
+    throw new Error("No refresh token found in localStorage.");
+  }
+
+  try {
+    const response = await fetch(authUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `client_id=hasura-app&refresh_token=${refreshToken}&grant_type=refresh_token&client_secret=${
+        import.meta.env.VITE_APP_SECRET_KEY
+      }`,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to refresh token.");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    throw error;
   }
 };

@@ -3,7 +3,6 @@ import {
   Box,
   HStack,
   Image,
-  Link,
   StackDivider,
   Text,
   VStack,
@@ -20,8 +19,6 @@ import { getProgramId, getSubjectList } from "../services/home";
 import reelImg from "../assets/images/reel.png";
 import reelImg2 from "../assets/images/reel2.png";
 import { chunk } from "lodash";
-import arrow from "../assets/icons/chevron_forward.svg";
-import { checkUserDetails } from "../services/auth/auth";
 import { useNavigate } from "react-router-dom";
 const watchSectionData: Array<any> = [
   {
@@ -85,23 +82,6 @@ export default function Homepage() {
     localStorage.setItem("subject", subject);
   };
 
-    useEffect(() => {
-      const fetchData = async () => {
-        const result = await checkUserDetails();
-        if (!result.success) {
-          if (result.status === 'Unauthorized' || result.error === 'No token') {
-            localStorage.removeItem("token");
-            navigate("/login");
-            navigate(0);
-          }
-          console.error(result.message);
-        } else {
-          console.log(result.message);
-        }
-      };
-
-      fetchData();
-    }, [navigate]); 
 
   return (
     <Layout>

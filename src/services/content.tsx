@@ -1,3 +1,4 @@
+import URL from "../utils/constants/url-constants.json";
 const baseUrl: string = `${import.meta.env.VITE_API_AUTH_URL}/api/v1`;
 
 interface IGetOneParams {
@@ -15,7 +16,7 @@ export const getOne = async ({ id, adapter, type, header }: IGetOneParams) => {
 
   try {
     const response = await fetch(
-      `${baseUrl}/course/${adapter}/hierarchy/contentid?courseId=${id}&type=${type}`,
+      `${baseUrl}/course/${adapter}${URL.CONTENT_ID}?courseId=${id}&type=${type}`,
       {
         method: "GET",
         headers,
@@ -149,7 +150,7 @@ export const getAltUserContent = async ({
 }): Promise<any> => {
   try {
     const response = await fetch(
-      `${baseUrl}/altprogramassociation/glaUserContent?page=${page}&limit=${limit}`,
+      `${baseUrl}${URL.GLA_USER_CONTENT}?page=${page}&limit=${limit}`,
       {
         method: "POST",
         headers: {
@@ -202,7 +203,7 @@ export const addLessonTracking = async ({
 }): Promise<any> => {
   try {
     const response = await fetch(
-      `${baseUrl}/altlessontracking/altAddLessonTracking?program=${
+      `${baseUrl}${URL.ALT_LESSON_TRACKING}?program=${
         programId || "e5fe89b2-cbc6-473a-99ba-83313d2e4072"
       }&subject=${subject}`,
       {

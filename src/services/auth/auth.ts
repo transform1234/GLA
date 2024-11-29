@@ -49,3 +49,33 @@ export const getAuthUser = async () => {
   const data = await response.json();
   return data;
 };
+export const checkUserDetails = async () => {
+  try {
+    const userUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.USER_VALIDATION}`;
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return { success: false, error: 'No token' };
+    }
+
+    const response = await fetch(userUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        return { success: false, status: 'Unauthorized', message: 'Unauthorized access' };
+      } else {
+        const errorText = await response.text();
+        throw new Error(`Error: ${errorText || 'Unknown error'}`);
+      }
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error: unknown) {
+    return { success: false, error: (error as Error).message };
+  }
+};

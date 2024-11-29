@@ -18,6 +18,7 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import IconByName from "../../components/common/icons/Icon";
 import { handleEvent } from "./utils";
+import { checkUserDetails } from "../../services/auth/auth";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 
 const VideoItem: React.FC<{
@@ -29,6 +30,7 @@ const VideoItem: React.FC<{
 }> = memo(({ id, qml_id, isVisible, refQml, style }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { width, height } = useDeviceSize();
+  const navigate = useNavigate();
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });
@@ -65,6 +67,24 @@ const VideoItem: React.FC<{
     };
     inti();
   }, [id, isVisible]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await checkUserDetails();
+      if (!result.success) {
+        if (result.status === 'Unauthorized' || result.error === 'No token') {
+          localStorage.removeItem("token");
+          navigate("/login");
+          navigate(0);
+        }
+        console.error(result.message);
+      } else {
+        console.log(result.message);
+      }
+    };
+
+    fetchData();
+  }, [navigate]); 
 
   return (
     <div

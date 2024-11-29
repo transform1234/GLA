@@ -1,6 +1,5 @@
 import {
   Box,
-  Center,
   HStack,
   IconButton,
   Skeleton,
@@ -29,6 +28,7 @@ const VideoItem: React.FC<{
 }> = memo(({ id, qml_id, isVisible, refQml, style }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { width, height } = useDeviceSize();
+  const navigate = useNavigate();
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });

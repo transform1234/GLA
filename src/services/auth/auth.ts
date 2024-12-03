@@ -68,7 +68,7 @@ export const checkUserDetails = async () => {
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
+      if (response.status !== 200) {
         try {
           let refreshToken = await getNewAccessToken();
           const { access_token, refresh_token } = refreshToken;

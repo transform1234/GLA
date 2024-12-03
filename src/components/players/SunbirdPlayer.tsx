@@ -4,9 +4,11 @@ import React, { useRef, useEffect } from "react";
 import { handleEvent } from "../../pages/videos/utils";
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
+const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
+const VITE_CONTENT_PLAYER_URL = import.meta.env.VITE_CONTENT_PLAYER_URL;
 
 interface SunbirdPlayerProps {
-  public_url: string;
+  public_url?: string;
   forwardedRef?: any;
   setTrackData?: (data: any) => void;
   width: number;
@@ -38,6 +40,7 @@ const SunbirdPlayer = ({
   const fileType = typeMatch ? typeMatch[1] : "";
   let trackData: any[] = [];
   const [url, setUrl] = React.useState<string>("");
+  const [publicUrl, setPublicUrl] = React.useState<string>(public_url || "");
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -79,6 +82,7 @@ const SunbirdPlayer = ({
         "video/x-youtube",
       ].includes(mimeType)
     ) {
+      setPublicUrl(VITE_CONTENT_PLAYER_URL || publicUrl);
       setUrl(`/content-player`);
     }
   }, [mimeType]);
@@ -160,7 +164,9 @@ const SunbirdPlayer = ({
             telemetryBaseUrl: VITE_TELEMETRY_BASE_URL || null,
             telemetryEndpoint: VITE_TELEMETRY_END_POINT || null,
           })}
-          src={`${public_url || process.env.PUBLIC_URL || ""}${url}/index.html`}
+          src={`${
+            publicUrl || VITE_PLAYER_URL || process.env.PUBLIC_URL || ""
+          }${url}/index.html`}
         />
       </VStack>
     );

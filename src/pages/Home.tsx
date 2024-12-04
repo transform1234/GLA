@@ -60,6 +60,7 @@ export default function Homepage() {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProgramId = async () => {
@@ -107,32 +108,14 @@ export default function Homepage() {
   };
 
   useEffect(() => {
+    fetchSuggestions();
+  }, [searchTerm]);
+
+  useEffect(() => {
     const storedSubject = localStorage.getItem("subject");
     if (storedSubject) {
       handleSelectSubject(storedSubject);
     }
-
-    fetchSuggestions();
-  }, []); 
-
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      const payload = {
-        searchQuery: searchTerm,
-        // programId : "66be30d2-d251-489b-b0d9-9f2ec9562da5",
-        programId: localStorage.getItem("programID"),
-        subject: localStorage.getItem("subject"),
-        limit: 5,
-      };
-      try {
-        const response = await fetchSearchResults(payload);
-        setSuggestions(response?.paginatedData || []);
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-      }
-    };
-
-    fetchSuggestions();
   }, []);
 
   const handleSearchChange = (value: string) => {
@@ -140,7 +123,7 @@ export default function Homepage() {
   };
 
   const handleSuggestionClick = (value: string) => {
-    console.log("Selected suggestion:", value);
+    navigate(`/watch?search=${encodeURIComponent(value.trim())}`);
   };
 
   return (

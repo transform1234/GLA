@@ -3,6 +3,7 @@ import {
   AlertIcon,
   AlertTitle,
   Box,
+  Center,
   HStack,
   IconButton,
   Skeleton,
@@ -34,7 +35,6 @@ const VideoItem: React.FC<{
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { width, height } = useDeviceSize();
-  const navigate = useNavigate();
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
   });
@@ -157,6 +157,7 @@ const VideoItem: React.FC<{
                   lastName: "",
                 }}
                 public_url={VITE_PLAYER_URL}
+                adapter={adapter}
               />
             </VStack>
           )}

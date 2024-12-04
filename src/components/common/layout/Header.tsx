@@ -19,15 +19,20 @@ import { debounce } from "lodash";
 
 interface HeaderProps {
   children?: React.ReactNode;
-  suggestions: string[];
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
+  suggestions?: string[];
+  searchTerm?: string;
+  onSearchChange?: (value: string) => void | undefined;
   onSuggestionClick?: (suggestion: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({suggestions, searchTerm, onSearchChange, onSuggestionClick }: HeaderProps) => {
+const Header: React.FC<HeaderProps> = ({
+  suggestions,
+  searchTerm,
+  onSearchChange,
+  onSuggestionClick,
+}: HeaderProps) => {
   const { t } = useTranslation();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string | undefined>("");
   const { isOpen, onToggle } = useDisclosure();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -39,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({suggestions, searchTerm, onSearchChange,
   }, [searchTerm]);
 
   const debouncedSearch = debounce((value: string) => {
-    onSearchChange(value);
+    onSearchChange?.(value);
   }, 500);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,12 +54,11 @@ const Header: React.FC<HeaderProps> = ({suggestions, searchTerm, onSearchChange,
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const value = (e.target as HTMLInputElement).value;  // Type assertion here
+    const value = (e.target as HTMLInputElement).value; // Type assertion here
     if (e.key === "Enter" && value.trim()) {
       navigate(`/watch?search=${encodeURIComponent(value.trim())}`);
     }
   };
-  
 
   useEffect(() => {
     const handleScroll = () => {

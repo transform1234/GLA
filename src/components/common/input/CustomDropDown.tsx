@@ -17,12 +17,12 @@ import backIcon from "../../../assets/icons/arrow_back_ios.svg";
 
 interface CustomInputProps {
   placeholder?: string;
-  suggestions: string[];
+  suggestions?: string[];
   onInputChange?: (value: string) => void;
   onSuggestionClick?: (value: string) => void;
   icon?: string;
   showClearIcon?: boolean;
-  value: string;
+  value: string | undefined;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   isBackButton: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;

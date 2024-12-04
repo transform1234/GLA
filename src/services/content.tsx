@@ -244,3 +244,25 @@ export const addLessonTracking = async ({
     return {};
   }
 };
+export const fetchSearchResults = async (payload : any): Promise<any> => {
+  try {
+    const response = await fetch(`${baseUrl}${URL.SEARCH}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    throw error;
+  }
+};

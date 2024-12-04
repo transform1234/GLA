@@ -20,6 +20,7 @@ import reelImg from "../assets/images/reel.png";
 import reelImg2 from "../assets/images/reel2.png";
 import { chunk } from "lodash";
 import { useNavigate } from "react-router-dom";
+import { fetchSearchResults } from "../services/content";
 const watchSectionData: Array<any> = [
   {
     category: ["Math", "Mixed Fraction"],
@@ -56,37 +57,102 @@ const subjectIcons = {
 export default function Homepage() {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
-  const navigate = useNavigate();
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      let storedSubject = localStorage.getItem("subject") || "";
-      const programData = await getProgramId();
-      if (programData) {
-        const res: any = await getSubjectList();
-        const subjectR = chunk(res, 4);
-        if (!storedSubject && res.length > 0) {
-          storedSubject = res[0]?.subject;
-          localStorage.setItem("subject", storedSubject);
+      try {
+        let storedSubject = localStorage.getItem("subject") || "";
+        const programData = await getProgramId();
+        if (programData) {
+          const res: any = await getSubjectList();
+          const subjectR = chunk(res, 4);
+          if (!storedSubject && res.length > 0) {
+            storedSubject = res[0]?.subject;
+            localStorage.setItem("subject", storedSubject);
+          }
+          setSelectedSubject(storedSubject);
+          setSubjects(subjectR);
         }
-        setSelectedSubject(storedSubject);
-        setSubjects(subjectR);
+      } catch (error) {
+        console.error("Error fetching program data:", error);
       }
     };
 
     fetchProgramId();
   }, []);
-  const handelSelectSubject = (subject: string) => {
+
+  const handleSelectSubject = (subject: string) => {
     setSelectedSubject(subject);
     localStorage.setItem("subject", subject);
+    fetchSuggestions();
   };
 
+  const fetchSuggestions = async () => {
+    const payload = {
+      searchQuery: searchTerm,
+      programId: localStorage.getItem("programID"),
+      subject: localStorage.getItem("subject"),
+      limit: 5,
+    };
+
+    try {
+      const response = await fetchSearchResults(payload);
+      setSuggestions(response?.paginatedData || []);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  };
+
+  useEffect(() => {
+    const storedSubject = localStorage.getItem("subject");
+    if (storedSubject) {
+      handleSelectSubject(storedSubject);
+    }
+
+    fetchSuggestions();
+  }, []); 
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      const payload = {
+        searchQuery: searchTerm,
+        // programId : "66be30d2-d251-489b-b0d9-9f2ec9562da5",
+        programId: localStorage.getItem("programID"),
+        subject: localStorage.getItem("subject"),
+        limit: 5,
+      };
+      try {
+        const response = await fetchSearchResults(payload);
+        setSuggestions(response?.paginatedData || []);
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      }
+    };
+
+    fetchSuggestions();
+  }, []);
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  const handleSuggestionClick = (value: string) => {
+    console.log("Selected suggestion:", value);
+  };
 
   return (
-    <Layout>
+    <Layout
+      _header={{
+        searchTerm: searchTerm,
+        suggestions: suggestions,
+        onSearchChange: handleSearchChange,
+        onSuggestionClick: handleSuggestionClick,
+      }}
+    >
       <VStack spacing={10} align={"stretch"} px="4">
-        {/* Learn Something Today Section */}
         <VStack pt="6" spacing={4}>
           <CustomHeading
             textAlign="center"
@@ -99,7 +165,7 @@ export default function Homepage() {
             color="textPrimary"
           />
           {subjects &&
-            subjects.map((subject, index) => (
+            subjects?.map((subject, index) => (
               <HStack
                 key={`subject-${index}`}
                 w="100%"
@@ -112,7 +178,7 @@ export default function Homepage() {
                       key={sub.subject}
                       spacing={3}
                       p="2.5"
-                      onClick={() => handelSelectSubject(sub.subject)}
+                      onClick={() => handleSelectSubject(sub.subject)}
                       cursor="pointer"
                       rounded={
                         sub.subject === selectedSubject ? "1rem" : "none"

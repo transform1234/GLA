@@ -128,7 +128,7 @@ const Footer: React.FC<FooterProps> = ({
                     >
                       <IconByName
                         name={item?.icon || "HomeIcon"}
-                        isDisabled
+                        disabled
                         _icon={{
                           size: "24px",
                           color:

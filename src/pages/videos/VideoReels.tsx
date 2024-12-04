@@ -105,6 +105,7 @@ const VideoItem: React.FC<{
               lastName: "",
             }}
             public_url={VITE_PLAYER_URL}
+            adapter={adapter}
           />
           {qml_id && (
             <VStack>

@@ -17,6 +17,7 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@reduxjs/toolkit": "^2.2.7",
+    "@sentry/react": "^8.41.0",
     "@types/react-router-dom": "^5.3.3",
     "apexcharts": "^3.54.0",
     "axios": "^1.7.7",

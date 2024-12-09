@@ -14,7 +14,6 @@ import { fetchSearchResults } from "../../services/content";
 import Layout from "../../components/common/layout/layout";
 import defaultImage from "../../assets/images/default-img.png";
 import VideoReel from "./VideoReels";
-import { json } from "stream/consumers";
 
 const Watch: React.FC = () => {
   const navigate = useNavigate();
@@ -22,10 +21,10 @@ const Watch: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [videos, setVideos] = useState<any[]>([]);
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+  // const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
+  // const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -97,9 +96,16 @@ const Watch: React.FC = () => {
 
   const handleVideoClick = (video: any, index: number) => {
     // navigate(/videos/${index}/${video.contentId});
-    localStorage.setItem("videos", JSON.stringify([video]));
-    navigate("/videos");
-
+    localStorage.setItem(
+      "filter",
+      JSON.stringify({
+        searchQuery: searchTerm,
+        programId: localStorage.getItem("programID"),
+        subject: localStorage.getItem("subject"),
+        limit: 10,
+      })
+    );
+    navigate(`/videos?index==${encodeURIComponent(index)}`);
   };
 
   return (
@@ -124,7 +130,6 @@ const Watch: React.FC = () => {
         >
           <VStack spacing={10} align={"stretch"} px="4">
             <Box>
-          {!selectedVideo ? (
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 {videos.map((item, index) => (
                   <GridItem
@@ -135,7 +140,7 @@ const Watch: React.FC = () => {
                     borderWidth="4px"
                     borderColor="gray.200"
                     cursor="pointer"
-                    onClick={() => handleVideoClick(item,index)}
+                    onClick={() => handleVideoClick(item, index)}
                   >
                     <Image
                       src={item.src}
@@ -168,13 +173,9 @@ const Watch: React.FC = () => {
                           </Badge>
                         ))}
                     </Box>
-                 
                   </GridItem>
                 ))}
               </Grid>
-               ) : (
-              <VideoReel videos={videos} />
-            )}
             </Box>
           </VStack>
         </Layout>

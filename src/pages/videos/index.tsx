@@ -34,7 +34,7 @@ const App = () => {
         const result = await getAltUserContent({
           page: 1,
           limit: 60,
-          programId: "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
+          programId: localStorage.getItem("programID") || "",
           subject: await getSubject(),
         });
 

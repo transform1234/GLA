@@ -17,8 +17,8 @@ interface Props {
   isHeaderVisible?: boolean;
   _header?: {
     suggestions?: string[];
-    searchTerm: string;
-    onSearchChange: (value: string) => void;
+    searchTerm?: string;
+    onSearchChange?: (value: string) => void;
     onSuggestionClick?: (suggestion: string) => void;
   };
 }
@@ -68,7 +68,16 @@ const Layout: React.FC<Props> = ({
           bg="white"
           boxShadow="0px 0px 15px 0px #e1e1e1"
         >
-          {isHeaderVisible && <Header {..._header} />}
+          {isHeaderVisible && (
+            <Header
+              {..._header} 
+              searchTerm={_header?.searchTerm || ""}
+              suggestions={_header?.suggestions || []}
+              onSearchChange={_header?.onSearchChange || (() => {})}
+              onSuggestionClick={_header?.onSuggestionClick}
+            />
+          )}
+
           {children}
 
           {isFooterVisible && (

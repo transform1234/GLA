@@ -134,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({
             value={search}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
-            suggestions={suggestions}
+            suggestions={suggestions || []}
             onSuggestionClick={onSuggestionClick}
           />
         </Collapse>

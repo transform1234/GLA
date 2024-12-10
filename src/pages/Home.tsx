@@ -211,8 +211,8 @@ export default function Homepage() {
                           ? "primary.500"
                           : "borderColor"
                       }
-                      width="77px"
-                      height="87px"
+                      width="75px"
+                      height="85px"
                       justifyContent="center"
                       alignItems="center"
                     >
@@ -268,7 +268,7 @@ export default function Homepage() {
                       borderRadius="9px"
                       overflow="hidden"
                       borderWidth="4px"
-                      borderColor="gray.200"
+                      borderColor="borderColor"
                       cursor="pointer"
                       onClick={() => handleVideoClick(item, index)}
                     >

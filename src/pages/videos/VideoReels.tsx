@@ -1,6 +1,5 @@
 import {
   Box,
-  Center,
   HStack,
   IconButton,
   Skeleton,
@@ -241,7 +240,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
     return () => {
       window.removeEventListener("message", handleEventNew);
     };
-  }, [visibleIndex]);
+  }, [visibleIndex, videos]);
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
@@ -270,7 +269,14 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
-      console.log(player, retult1, "retult");
+      console.log(
+        player,
+        retult1,
+        visibleIndex,
+        videos?.[visibleIndex],
+        videos,
+        "retult"
+      );
     }
   };
 

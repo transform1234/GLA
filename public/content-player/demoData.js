@@ -154,7 +154,7 @@ const playerConfig = {
     authToken: "", // Auth key to make V3 api calls
     contentId: metadata?.identifier, // ContentId used to get body data from content API call
     sid: "7283cf2e-d215-9944-b0c5-269489c6fa56", // User sessionid on portal or mobile
-    did: "3c0a3724311fe944dec5df559cc4e006", // Unique id to identify the device or browser
+    did: localStorage.getItem("id"), // Unique id to identify the device or browser
     uid: "anonymous", // Current logged in user id
     channel: "505c7c48ac6dc1edc9b08f21db5a571d", // To identify the channel(Channel ID). Default value ""
     // Producer information. Generally the App which is creating the event, default value {}

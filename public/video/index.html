@@ -27,24 +27,36 @@
         context: {
           mode: "play",
           authToken: "",
-          sid: "7283cf2e-d215-9944-b0c5-269489c6fa56",
+          contentId: metadata?.identifier, // ContentId used to get body data from content API call
+
+          sid:
+            metadata?.playerContext?.sid ||
+            "7283cf2e-d215-9944-b0c5-269489c6fa56",
           did: localStorage.getItem("id"),
-          uid: "anonymous",
-          channel: "505c7c48ac6dc1edc9b08f21db5a571d",
+          uid: localStorage.getItem("id"),
+          channel: metadata?.playerContext?.channel || "palooza",
           pdata: {
-            id: "prod.diksha.portal",
-            ver: "3.2.12",
-            pid: "sunbird-portal.contentplayer",
+            id: "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+            ver: "0.0.1", // version of the App
+            pid: "palooza.portal.contentplayer", //
+            ...(metadata?.playerContext?.pdata || {}),
           },
-          contextRollup: { l1: "505c7c48ac6dc1edc9b08f21db5a571d" },
+          contextRollup: { l1: "" },
           tags: [""],
-          cdata: [],
+
           timeDiff: 0,
           objectRollup: {},
           host: metadata.telemetryBaseUrl || "",
           endpoint: metadata.telemetryEndpoint || "/data/v1/telemetry",
           apislug: metadata.apislug || "",
           userData: metadata?.userData ? metadata?.userData : {},
+          cdata: [
+            {
+              //correlation data
+              type: "", //Used to indicate action that is being correlated
+              id: "", //The correlation ID value
+            },
+          ],
         },
         config: {
           traceId: "afhjgh",

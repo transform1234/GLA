@@ -1,7 +1,13 @@
+import { uniqueId } from "lodash";
 import URL from "../../utils/constants/url-constants.json";
+import { jwtDecode } from "jwt-decode";
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
-import { jwtDecode } from "jwt-decode";
+const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
+const VITE_APP_ID = import.meta.env.VITE_APP_ID;
+const VITE_APP_VER = import.meta.env.VITE_APP_VER;
+const VITE_APP_PID = import.meta.env.VITE_APP_PID;
+const VITE_APP_ENV = import.meta.env.VITE_APP_ENV;
 
 export const fetchToken = async (username: string, password: string) => {
   const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
@@ -16,7 +22,7 @@ export const fetchToken = async (username: string, password: string) => {
       username,
       password,
       grant_type: "password",
-      client_secret: "9ca6e96d-f72e-4208-91f4-a2d8e681f767",
+      client_secret: VITE_APP_SECRET_KEY,
     }),
   });
 
@@ -26,42 +32,47 @@ export const fetchToken = async (username: string, password: string) => {
   const data = await response.json();
   const tokenDecoded: any = jwtDecode(data.access_token);
 
+  if (localStorage.getItem("contentSessionId") === null) {
+    localStorage.setItem("contentSessionId", uniqueId());
+  }
+
   const dataString = JSON.stringify({
-    id: "alt.telemetry",
+    id: "palooza.telemetry",
     ver: "3.0",
     ets: Date.now(),
     events: [
       {
-        eid: "INTERACT",
+        eid: "START",
         ets: Date.now(),
         ver: "3.0",
-        mid: `INTERACT:${tokenDecoded?.sub}`,
+        mid: `START:${uniqueId()}`,
         actor: {
           id: tokenDecoded?.sub,
           type: "User",
         },
         context: {
-          channel: "0134892941899694081",
+          channel: "palooza",
           pdata: {
-            id: "palooza.portal",
-            ver: "5.0.0",
-            pid: "palooza-portal",
+            id: VITE_APP_ID || "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+            ver: VITE_APP_VER || "0.0.1", // version of the App
+            pid: VITE_APP_PID || "palooza.portal.contentplayer", //
           },
-          env: "public",
-          sid: "065866e0-b79d-11ef-b38d-5baa6d826998",
+          env: VITE_APP_ENV,
+          sid: localStorage.getItem("contentSessionId"),
           did: tokenDecoded?.sub,
           cdata: [],
           rollup: {
             l1: "0134892941899694081",
           },
-          uid: "anonymous",
+          uid: tokenDecoded?.sub,
         },
         object: {},
         tags: ["0134892941899694081"],
         edata: {
           id: "login",
-          type: "click",
+          type: "session",
           pageid: "login",
+          duration: new Date().getTime(), // Optional. Time taken to initialize/start
         },
       },
     ],
@@ -94,41 +105,42 @@ export const logout = async () => {
   }
   const tokenDecoded: any = jwtDecode(token);
   const dataString = JSON.stringify({
-    id: "alt.telemetry",
+    id: "palooza.telemetry",
     ver: "3.0",
     ets: Date.now(),
     events: [
       {
-        eid: "INTERACT",
+        eid: "END",
         ets: Date.now(),
         ver: "3.0",
-        mid: `INTERACT:${tokenDecoded?.sub}`,
+        mid: `END:${uniqueId()}`,
         actor: {
           id: tokenDecoded?.sub,
           type: "User",
         },
         context: {
-          channel: "0134892941899694081",
+          channel: "palooza",
           pdata: {
-            id: "palooza.portal",
-            ver: "5.0.0",
-            pid: "palooza-portal",
+            id: VITE_APP_ID || "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+            ver: VITE_APP_VER || "0.0.1", // version of the App
+            pid: VITE_APP_PID || "palooza.portal.contentplayer", //
           },
-          env: "public",
-          sid: "065866e0-b79d-11ef-b38d-5baa6d826998",
+          env: VITE_APP_ENV,
+          sid: localStorage.getItem("contentSessionId"),
           did: tokenDecoded?.sub,
           cdata: [],
           rollup: {
-            l1: "0134892941899694081",
+            l1: "",
           },
-          uid: "anonymous",
+          uid: tokenDecoded?.sub,
         },
         object: {},
-        tags: ["0134892941899694081"],
+        tags: [""],
         edata: {
           id: "logout",
-          type: "click",
+          type: "session",
           pageid: "logout",
+          duration: new Date().getTime(), // Optional. Time taken to initialize/start
         },
       },
     ],
@@ -155,9 +167,12 @@ export const logout = async () => {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${token}`,
     },
     body: new URLSearchParams({
       client_id: clientId,
+      client_secret: VITE_APP_SECRET_KEY,
+      refresh_token: localStorage.getItem("refreshToken") || "",
     }),
   });
 

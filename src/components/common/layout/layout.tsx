@@ -32,9 +32,9 @@ const Layout: React.FC<Props> = ({
     message: `${t("POPUP_CONFIRM_MSG")}`,
   });
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      logout();
+      await logout();
       navigate("/login");
       navigate(0);
     } catch (error) {

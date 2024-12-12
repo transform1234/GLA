@@ -8,7 +8,7 @@ import {
   Stack,
   VStack,
 } from "@chakra-ui/react";
-import { debounce } from "lodash";
+import { debounce, uniqueId } from "lodash";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
@@ -19,6 +19,9 @@ import * as content from "../../services/content";
 import IconByName from "../../components/common/icons/Icon";
 import { handleEvent } from "./utils";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
+const VITE_APP_ID = import.meta.env.VITE_APP_ID;
+const VITE_APP_VER = import.meta.env.VITE_APP_VER;
+const VITE_APP_PID = import.meta.env.VITE_APP_PID;
 
 const VideoItem: React.FC<{
   id: string;
@@ -86,6 +89,15 @@ const VideoItem: React.FC<{
               lastName: "",
             }}
             public_url={VITE_PLAYER_URL}
+            playerContext={{
+              sid: uniqueId(),
+              pdata: {
+                // optional
+                id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+                ver: VITE_APP_VER, // Version of the App
+                pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
+              },
+            }}
           />
           {qml_id && (
             <VStack>
@@ -137,6 +149,15 @@ const VideoItem: React.FC<{
                   lastName: "",
                 }}
                 public_url={VITE_PLAYER_URL}
+                playerContext={{
+                  sid: uniqueId(),
+                  pdata: {
+                    // optional
+                    id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+                    ver: VITE_APP_VER, // Version of the App
+                    pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
+                  },
+                }}
               />
             </VStack>
           )}
@@ -236,7 +257,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
       //   [result.type]: result?.data,
       // };
       const { type, data } = result;
-      const retult1 = await content.addLessonTracking({
+      const player = {
         ...data,
         // courseId: videos?.[visibleIndex]?.contentId,
         // moduleId: videos?.[visibleIndex]?.contentId,
@@ -247,8 +268,9 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
         programId: videos?.[visibleIndex]?.programId,
         subject:
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-      });
-      console.log(content, retult1, "retult");
+      };
+      const retult1 = await content.addLessonTracking(player);
+      console.log(player, retult1, "retult");
     }
   };
 

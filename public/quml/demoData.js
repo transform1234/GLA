@@ -250,46 +250,36 @@ const sectionContent = {
 let metadata = window.name ? JSON.parse(window.name) : sectionContent;
 const playerConfig = {
   context: {
-    threshold: 3,
     mode: "play",
-    authToken: " ",
-    sid: "913b3c6c-2874-26dd-ed0c-c23ddc00b718",
+    authToken: "",
+    contentId: metadata?.identifier, // ContentId used to get body data from content API call
+
+    sid: metadata?.playerContext?.sid || "7283cf2e-d215-9944-b0c5-269489c6fa56",
     did: localStorage.getItem("id"),
-    uid: "",
-    channel: "01268904781886259221",
+    uid: localStorage.getItem("id"),
+    channel: metadata?.playerContext?.channel || "palooza",
     pdata: {
-      id: "preprod.diksha.portal",
-      ver: "3.3.0",
-      pid: "sunbird-portal.contentplayer",
+      id: "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+      ver: "0.0.1", // version of the App
+      pid: "palooza.portal.contentplayer", //
+      ...(metadata?.playerContext?.pdata || {}),
     },
-    contextRollup: {
-      l1: "string",
-      l2: "string",
-      l3: "string",
-      l4: "string",
-    },
-    tags: [],
-    cdata: [
-      {
-        id: "c0c9384a82a75f219468d363e1891963",
-        type: "ContentSession",
-      },
-      {
-        id: "a12f45a1d7078901adb27b48be4b428d",
-        type: "PlaySession",
-      },
-    ],
-    timeDiff: 5,
-    objectRollup: {
-      l1: "string",
-      l2: "string",
-      l3: "string",
-      l4: "string",
-    },
+    contextRollup: { l1: "" },
+    tags: [""],
+
+    timeDiff: 0,
+    objectRollup: {},
     host: metadata.telemetryBaseUrl || "",
     endpoint: metadata.telemetryEndpoint || "/data/v1/telemetry",
     apislug: metadata.apislug || "",
     userData: metadata?.userData ? metadata?.userData : {},
+    cdata: [
+      {
+        //correlation data
+        type: "", //Used to indicate action that is being correlated
+        id: "", //The correlation ID value
+      },
+    ],
   },
   metadata: metadata,
   config: {

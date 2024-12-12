@@ -150,22 +150,22 @@ const metadata = window?.name ? JSON.parse(window.name) : metadataDefault;
 
 const playerConfig = {
   context: {
-    mode: "preview/edit/play", // to identify preview used by the user to play/edit/preview
-    authToken: "", // Auth key to make V3 api calls
+    mode: "play",
+    authToken:
+      metadata?.playerContext?.authToken || localStorage.getItem("token"),
     contentId: metadata?.identifier, // ContentId used to get body data from content API call
-    sid: "7283cf2e-d215-9944-b0c5-269489c6fa56", // User sessionid on portal or mobile
-    did: localStorage.getItem("id"), // Unique id to identify the device or browser
-    uid: "anonymous", // Current logged in user id
-    channel: "505c7c48ac6dc1edc9b08f21db5a571d", // To identify the channel(Channel ID). Default value ""
-    // Producer information. Generally the App which is creating the event, default value {}
+
+    sid: metadata?.playerContext?.sid || "7283cf2e-d215-9944-b0c5-269489c6fa56",
+    did: localStorage.getItem("id"),
+    uid: localStorage.getItem("id"),
+    channel: metadata?.playerContext?.channel || "palooza",
     pdata: {
-      id: "prod.diksha.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
-      ver: "3.2.12", // version of the App
-      pid: "sunbird-portal.contentplayer", // Optional. In case the component is distributed, then which instance of that component
+      id: "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+      ver: "0.0.1", // version of the App
+      pid: "palooza.portal.contentplayer", //
+      ...(metadata?.playerContext?.pdata || {}),
     },
-    contextRollup: {
-      l1: "505c7c48ac6dc1edc9b08f21db5a571d",
-    },
+    contextRollup: { l1: "" },
     tags: [""],
     timeDiff: 0,
     objectRollup: {},
@@ -173,9 +173,6 @@ const playerConfig = {
     endpoint: metadata.telemetryEndpoint || "/data/v1/telemetry",
     apislug: metadata.apislug || "",
     userData: metadata?.userData ? metadata?.userData : {},
-    app: [""], // Genie tags
-    partner: [""], // Partner tags
-    dims: [""], // Encrypted dimension tags passed by respective channels
     cdata: [
       {
         //correlation data

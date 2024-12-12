@@ -9,6 +9,7 @@ import PrimaryButton from "../button/PrimaryButton";
 import { useTranslation } from "react-i18next";
 import CustomHeading from "../typography/Heading";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../../services/auth/auth";
 
 interface Props {
   children: React.ReactNode;
@@ -32,9 +33,13 @@ const Layout: React.FC<Props> = ({
   });
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-    navigate(0);
+    try {
+      logout();
+      navigate("/login");
+      navigate(0);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const menuList = [

@@ -1,4 +1,5 @@
 {
-    "AUTH": "/auth/realms/hasura-app/protocol/openid-connect/token",
-    "USER": "/api/v1/user"
+  "AUTH": "/auth/realms/hasura-app/protocol/openid-connect/token",
+  "LOGOUT": "/auth/realms/hasura-app/protocol/openid-connect/logout",
+  "USER": "/api/v1/user"
 }

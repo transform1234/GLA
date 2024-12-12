@@ -67,21 +67,21 @@ export const fetchToken = async (username: string, password: string) => {
     ],
   });
 
-  // const responseTelemetry = await fetch(
-  //   `${VITE_TELEMETRY_BASE_URL}${VITE_TELEMETRY_END_POINT}`,
-  //   {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${data.access_token}`,
-  //     },
-  //     body: dataString,
-  //   }
-  // );
+  const responseTelemetry = await fetch(
+    `${VITE_TELEMETRY_BASE_URL}${VITE_TELEMETRY_END_POINT}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${data.access_token}`,
+      },
+      body: dataString,
+    }
+  );
 
-  // if (!responseTelemetry.ok) {
-  //   throw new Error("Failed to send telemetry");
-  // }
+  if (!responseTelemetry.ok) {
+    throw new Error("Failed to send telemetry");
+  }
   return data;
 };
 

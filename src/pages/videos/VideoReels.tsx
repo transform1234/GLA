@@ -220,7 +220,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
     return () => {
       window.removeEventListener("message", handleEventNew);
     };
-  }, [itemSize]);
+  }, [visibleIndex]);
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
@@ -235,17 +235,20 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
       //   ...trackDataRef.current,
       //   [result.type]: result?.data,
       // };
-      console.log(result, "scoreDetails");
-      const retult = await content.addLessonTracking({
-        ...result?.data,
+      const { type, data } = result;
+      const retult1 = await content.addLessonTracking({
+        ...data,
         // courseId: videos?.[visibleIndex]?.contentId,
         // moduleId: videos?.[visibleIndex]?.contentId,
-        lessonId: videos?.[visibleIndex]?.contentId,
+        lessonId:
+          type === "assessmet"
+            ? videos?.[visibleIndex]?.contentId
+            : videos?.[visibleIndex]?.lesson_questionset,
         programId: videos?.[visibleIndex]?.programId,
         subject:
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       });
-      console.log(content, retult, "retult");
+      console.log(content, retult1, "retult");
     }
   };
 

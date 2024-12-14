@@ -1,6 +1,6 @@
 import URL from "../../utils/constants/url-constants.json";
 import { jwtDecode } from "jwt-decode";
-import { uniqueId } from "../utilService";
+import { uniqueId } from "../utilService"; // generate manually
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
 const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;

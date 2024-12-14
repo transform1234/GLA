@@ -7,7 +7,7 @@ import {
   Stack,
   VStack,
 } from "@chakra-ui/react";
-import { debounce, uniqueId } from "lodash";
+import { debounce } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
@@ -89,7 +89,7 @@ const VideoItem: React.FC<{
             }}
             public_url={VITE_PLAYER_URL}
             playerContext={{
-              sid: uniqueId(),
+              sid: localStorage.getItem("contentSessionId"),
               pdata: {
                 // optional
                 id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
@@ -149,7 +149,7 @@ const VideoItem: React.FC<{
                 }}
                 public_url={VITE_PLAYER_URL}
                 playerContext={{
-                  sid: uniqueId(),
+                  sid: localStorage.getItem("contentSessionId"),
                   pdata: {
                     // optional
                     id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"

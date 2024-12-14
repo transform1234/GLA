@@ -1,6 +1,6 @@
-import { uniqueId } from "lodash";
 import URL from "../../utils/constants/url-constants.json";
 import { jwtDecode } from "jwt-decode";
+import { uniqueId } from "../utilService"; // generate manually
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
 const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
@@ -31,10 +31,7 @@ export const fetchToken = async (username: string, password: string) => {
   }
   const data = await response.json();
   const tokenDecoded: any = jwtDecode(data.access_token);
-
-  if (localStorage.getItem("contentSessionId") === null) {
-    localStorage.setItem("contentSessionId", uniqueId());
-  }
+  localStorage.setItem("contentSessionId", data?.session_state);
 
   const dataString = JSON.stringify({
     id: "palooza.telemetry",

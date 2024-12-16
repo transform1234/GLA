@@ -124,7 +124,7 @@ export const logout = async () => {
           },
           env: VITE_APP_ENV,
           sid: localStorage.getItem("contentSessionId"),
-          did: tokenDecoded?.sub,
+          did: localStorage.getItem("did"),
           cdata: [],
           rollup: {
             l1: "",

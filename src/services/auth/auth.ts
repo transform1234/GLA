@@ -184,7 +184,7 @@ export const logout = async () => {
   }
 
   localStorage.removeItem("token");
-  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("refreshToken"); // add
   localStorage.removeItem("board");
   localStorage.removeItem("medium");
   localStorage.removeItem("grade");

@@ -1,5 +1,6 @@
 import moment from "moment";
 import _ from "lodash";
+import URL from "../utils/constants/url-constants.json";
 const dateFor = moment().format("YYYY-MM-DD");
 
 export const getProgramId = async () => {
@@ -23,7 +24,7 @@ export const getProgramId = async () => {
 
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_AUTH_URL}/api/v1/altprogram/bmgs`,
+      `${import.meta.env.VITE_API_AUTH_URL}${URL.ALT_PROGRAM_BMGS}`,
       {
         method: "POST",
         headers: headers,
@@ -61,7 +62,7 @@ export const getSubjectList = async () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_API_AUTH_URL
-        }/api/v1/altprogramassociation/altsubjectlist`,
+        }${URL.SUBJECT_LIST}`,
         {
           method: "POST",
           headers: headers,

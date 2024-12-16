@@ -255,8 +255,8 @@ const playerConfig = {
     contentId: metadata?.identifier, // ContentId used to get body data from content API call
 
     sid: metadata?.playerContext?.sid || "7283cf2e-d215-9944-b0c5-269489c6fa56",
-    did: localStorage.getItem("id"),
-    uid: localStorage.getItem("id"),
+    did: metadata?.playerContext?.did,
+    uid: metadata?.playerContext?.uid, // set from ifram data1
     channel: metadata?.playerContext?.channel || "palooza",
     pdata: {
       id: "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"

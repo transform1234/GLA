@@ -91,7 +91,7 @@ const VideoItem: React.FC<{
             playerContext={{
               sid: localStorage.getItem("contentSessionId"),
               uid: localStorage.getItem("id"),
-              did: localStorage.getItem("did"),
+              did: localStorage.getItem("did"), // send for ifram data
               pdata: {
                 // optional
                 id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
@@ -153,7 +153,7 @@ const VideoItem: React.FC<{
                 playerContext={{
                   sid: localStorage.getItem("contentSessionId"),
                   uid: localStorage.getItem("id"),
-                  did: localStorage.getItem("did"),
+                  did: localStorage.getItem("did"), // send for ifram data
                   pdata: {
                     // optional
                     id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"

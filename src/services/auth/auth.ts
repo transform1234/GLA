@@ -32,7 +32,6 @@ export const fetchToken = async (username: string, password: string) => {
   const data = await response.json();
   const tokenDecoded: any = jwtDecode(data.access_token);
   localStorage.setItem("contentSessionId", data?.session_state);
-  localStorage.setItem("did", data?.sub);
 
   const dataString = JSON.stringify({
     id: "palooza.telemetry",

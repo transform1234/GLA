@@ -3,7 +3,6 @@ import {
   Box,
   HStack,
   Image,
-  Link,
   StackDivider,
   Text,
   VStack,
@@ -20,7 +19,7 @@ import { getProgramId, getSubjectList } from "../services/home";
 import reelImg from "../assets/images/reel.png";
 import reelImg2 from "../assets/images/reel2.png";
 import { chunk } from "lodash";
-import arrow from "../assets/icons/chevron_forward.svg";
+import { useNavigate } from "react-router-dom";
 const watchSectionData: Array<any> = [
   {
     category: ["Math", "Mixed Fraction"],
@@ -58,6 +57,7 @@ export default function Homepage() {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
   const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProgramId = async () => {
@@ -81,6 +81,7 @@ export default function Homepage() {
     setSelectedSubject(subject);
     localStorage.setItem("subject", subject);
   };
+
 
   return (
     <Layout>

@@ -52,7 +52,7 @@ function AppRouter() {
     };
 
     validateUser();
-  }, [location.pathname]);
+  }, [location.pathname]); // call on page change
 
   return (
     <Routes>

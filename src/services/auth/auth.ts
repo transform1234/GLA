@@ -32,6 +32,7 @@ export const fetchToken = async (username: string, password: string) => {
   const data = await response.json();
   const tokenDecoded: any = jwtDecode(data.access_token);
   localStorage.setItem("contentSessionId", data?.session_state);
+  localStorage.setItem("did", data?.sub);
 
   const dataString = JSON.stringify({
     id: "palooza.telemetry",
@@ -56,7 +57,7 @@ export const fetchToken = async (username: string, password: string) => {
           },
           env: VITE_APP_ENV,
           sid: localStorage.getItem("contentSessionId"),
-          did: tokenDecoded?.sub,
+          did: localStorage.getItem("did"),
           cdata: [],
           rollup: {
             l1: "0134892941899694081",

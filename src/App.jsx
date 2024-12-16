@@ -6,6 +6,7 @@ import guestRoutes from "./routes/guest";
 import authRoutes from "./routes/auth";
 import Loading from "./components/common/Loading";
 import customTheme from "./utils/theme";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 const theme = extendTheme(customTheme);
 
@@ -20,6 +21,14 @@ function App() {
     } else {
       setRoutes(guestRoutes);
     }
+    const init = async () => {
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      if (!localStorage.getItem("did")) {
+        localStorage.setItem("did", visitorId);
+      }
+    };
+    init();
   }, []);
 
   return (

@@ -27,6 +27,7 @@ const App = () => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);
+  const [programID, setProgramID] = useState<string>("");
 
   useEffect(() => {
     const init = async () => {
@@ -47,6 +48,10 @@ const App = () => {
         } else {
           setVideos(result?.data || []);
         }
+        const programData = await getProgramId();
+        if (programData?.programId) {
+          setProgramID(programData?.programId);
+        }
       } catch (e) {
         setError(
           `Failed to fetch content for the selected subject: ${localStorage.getItem(
@@ -64,7 +69,7 @@ const App = () => {
   return error ? (
     <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
-    <VideoReel videos={videos} />
+    <VideoReel videos={videos} programID={programID} />
   );
 };
 

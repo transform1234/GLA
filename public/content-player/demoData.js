@@ -166,20 +166,14 @@ const playerConfig = {
       ...(metadata?.playerContext?.pdata || {}),
     },
     contextRollup: { l1: "" },
-    tags: [""],
+    tags: metadata?.playerContext?.tags || [],
     timeDiff: 0,
     objectRollup: {},
     host: metadata.telemetryBaseUrl || "",
     endpoint: metadata.telemetryEndpoint || "/data/v1/telemetry",
     apislug: metadata.apislug || "",
     userData: metadata?.userData ? metadata?.userData : {},
-    cdata: [
-      {
-        //correlation data
-        type: "", //Used to indicate action that is being correlated
-        id: "", //The correlation ID value
-      },
-    ],
+    cdata: metadata?.playerContext?.cdata || [],
   },
   config: {
     traceId: "afhjgh",

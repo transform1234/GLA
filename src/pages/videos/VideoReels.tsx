@@ -11,25 +11,75 @@ import { debounce } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
+import IconByName from "../../components/common/icons/Icon";
 import Layout from "../../components/common/layout/layout";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
-import IconByName from "../../components/common/icons/Icon";
 import { handleEvent } from "./utils";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
 const VITE_APP_PID = import.meta.env.VITE_APP_PID;
 
+const contextData = {
+  sid: localStorage.getItem("contentSessionId"),
+  uid: localStorage.getItem("id"),
+  did: localStorage.getItem("did"), // send for ifram data
+  cdata: [
+    {
+      id: localStorage.getItem("grade"),
+      type: "grade",
+    },
+    {
+      id: localStorage.getItem("medium"),
+      type: "medium",
+    },
+    {
+      id: localStorage.getItem("board"),
+      type: "board",
+    },
+    {
+      id: localStorage.getItem("subject"),
+      type: "subject",
+    },
+  ],
+  tags: [
+    {
+      id: localStorage.getItem("grade"),
+      type: "grade",
+    },
+    {
+      id: localStorage.getItem("medium"),
+      type: "medium",
+    },
+    {
+      id: localStorage.getItem("board"),
+      type: "board",
+    },
+    {
+      id: localStorage.getItem("subject"),
+      type: "subject",
+    },
+  ],
+  pdata: {
+    // optional
+    id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+    ver: VITE_APP_VER, // Version of the App
+    pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
+  },
+};
+
 const VideoItem: React.FC<{
+  programID: string | undefined;
   id: string;
   qml_id: string;
   isVisible: boolean;
   style: React.CSSProperties;
   refQml?: any;
-}> = memo(({ id, qml_id, isVisible, refQml, style }) => {
+}> = memo(({ programID, id, qml_id, isVisible, refQml, style }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [playerContext, setPlayerContext] = useState<any>(contextData);
   const { width, height } = useDeviceSize();
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
@@ -62,6 +112,23 @@ const VideoItem: React.FC<{
         });
         setLessonQml(qmlResult);
       }
+      setPlayerContext({
+        ...contextData,
+        cdata: [
+          ...contextData.cdata,
+          {
+            id: programID,
+            type: "program",
+          },
+        ],
+        tags: [
+          ...contextData.tags,
+          {
+            id: programID,
+            type: "program",
+          },
+        ],
+      });
       setLesson(resultData);
       setIsLoading(false);
     };
@@ -88,17 +155,7 @@ const VideoItem: React.FC<{
               lastName: "",
             }}
             public_url={VITE_PLAYER_URL}
-            playerContext={{
-              sid: localStorage.getItem("contentSessionId"),
-              uid: localStorage.getItem("id"),
-              did: localStorage.getItem("did"), // send for ifram data
-              pdata: {
-                // optional
-                id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
-                ver: VITE_APP_VER, // Version of the App
-                pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
-              },
-            }}
+            playerContext={playerContext}
           />
           {qml_id && (
             <VStack>
@@ -150,17 +207,7 @@ const VideoItem: React.FC<{
                   lastName: "",
                 }}
                 public_url={VITE_PLAYER_URL}
-                playerContext={{
-                  sid: localStorage.getItem("contentSessionId"),
-                  uid: localStorage.getItem("id"),
-                  did: localStorage.getItem("did"), // send for ifram data
-                  pdata: {
-                    // optional
-                    id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
-                    ver: VITE_APP_VER, // Version of the App
-                    pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
-                  },
-                }}
+                playerContext={playerContext}
               />
             </VStack>
           )}
@@ -211,7 +258,10 @@ const VideoItem: React.FC<{
   );
 });
 
-const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
+const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
+  videos,
+  programID,
+}) => {
   const listRef = useRef<HTMLDivElement>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
@@ -268,7 +318,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
           type === "assessmet"
             ? videos?.[visibleIndex]?.contentId
             : videos?.[visibleIndex]?.lesson_questionset,
-        programId: videos?.[visibleIndex]?.programId,
+        programId: programID,
         subject:
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
@@ -322,6 +372,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
             style: React.CSSProperties;
           }) => (
             <VideoItem
+              programID={programID}
               id={videos?.[index]?.contentId}
               qml_id={videos?.[index]?.lesson_questionset}
               isVisible={index === visibleIndex}

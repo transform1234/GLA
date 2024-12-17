@@ -143,7 +143,7 @@ export default function Homepage() {
             fontFamily="Inter"
             variant="h2"
             fontSize="20px"
-            fontWeight="400"
+            fontWeight="500"
             title={t("HOME_LEARN_SOMETHING_NOW")}
             color="textPrimary"
           />
@@ -152,7 +152,7 @@ export default function Homepage() {
               <HStack
                 key={`subject-${index}`}
                 w="100%"
-                divider={<StackDivider borderColor="gray.200" margin="0" />}
+                // divider={<StackDivider borderColor="gray.200" margin="0" />}
                 justifyContent={"space-around"}
               >
                 {subject &&

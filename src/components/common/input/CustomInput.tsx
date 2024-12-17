@@ -128,14 +128,16 @@ const CustomInput: React.FC<CustomInputProps> = ({
               border="none"
               outline="none"
             >
-              <Image
-                src={showPassword ? visibilityOff : visibility}
-                alt="Toggle visibility"
-                style={{
-                  filter: `invert(27%) sepia(84%) saturate(2448%) hue-rotate(165deg) brightness(95%) contrast(92%)`,
-                }}
-              />
-            </IconButton>
+            <Image
+              src={showPassword ? visibilityOff : visibility}
+              alt="Toggle visibility"
+              style={{
+                filter: error
+                  ? `invert(11%) sepia(85%) saturate(7142%) hue-rotate(13deg) brightness(88%) contrast(121%)`
+                  : `invert(27%) sepia(84%) saturate(2448%) hue-rotate(165deg) brightness(95%) contrast(92%)`,
+              }}
+            />
+          </IconButton>
           )}
 
           {iconType === "search" && (

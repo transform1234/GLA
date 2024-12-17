@@ -112,7 +112,7 @@ const Footer: React.FC<FooterProps> = ({
                       rounded: "full",
                       width: "80px",
                       height: "80px",
-                      border: "3px solid white",
+                      border: "5px solid #e3f2f7",
                       py: "0px",
                       justifyContent: "center",
                     })}
@@ -129,6 +129,9 @@ const Footer: React.FC<FooterProps> = ({
                       <IconByName
                         name={item?.icon || "HomeIcon"}
                         disabled
+                        height="24px"
+                        width="24px"
+                        isSelected={selected === index}
                         _icon={{
                           size: "24px",
                           color:

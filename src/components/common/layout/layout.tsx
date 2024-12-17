@@ -41,7 +41,15 @@ const Layout: React.FC<Props> = ({
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login", { replace: true });
+    navigate("/login");
+    navigate(0)
+  };
+
+  const cancel = () => {
+    onClose();
+    navigate("/home");
+    navigate(0)
+
   };
 
   const menuList = [
@@ -49,7 +57,7 @@ const Layout: React.FC<Props> = ({
     { route: "/leaderboard", icon: "LeaderboardIcon", title: "Leaderboard" },
     { route: "/videos", icon: "WatchIcon", title: "Watch", isOutOFBox: true },
     { route: "/guide", icon: "QuestionIcon", title: "Guide" },
-    { icon: "LogoutIcon", title: "Logout", onClick: onOpen }, // Opens the modal on Logout click
+    { icon: "LogoutIcon", title: "Logout", onClick: onOpen },
   ];
 
   return (
@@ -81,26 +89,33 @@ const Layout: React.FC<Props> = ({
       )}
       <PopupModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={cancel}
         title={modalContent.title}
         showIcon={true}
+        maxWidth="380px" 
+        height="182px"
         footerContent={
           <PrimaryButton
             onClick={() => {
-              onClose();
+              cancel();
               handleLogout();
             }}
             width="100%"
             color="white"
             bg="primary.500"
+            fontFamily="Inter"
+            fontWeight="700"
+            fontSize="16px"
+            lineHeight="24px"
+
           >
             {t("POPUP_LOGOUT")}
           </PrimaryButton>
         }
       >
         <CustomHeading
-          variant="p"
           fontSize="14px"
+          fontWeight="400"
           title={modalContent.message}
           color="textSecondary"
         />

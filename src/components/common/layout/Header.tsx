@@ -15,6 +15,7 @@ import IconByName from "../icons/Icon";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomInputWithDropdown from "../input/CustomDropDown";
 import searchIcon from "../../../assets/icons/search.svg";
+import notificationIcon from "../../../assets/icons/icn-notification.svg";
 import { debounce } from "lodash";
 
 interface HeaderProps {
@@ -33,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState<string | undefined>("");
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen, onToggle, onClose } = useDisclosure();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,6 +43,14 @@ const Header: React.FC<HeaderProps> = ({
   useEffect(() => {
     setSearch(searchTerm);
   }, [searchTerm]);
+
+  const handleSearchIconClick = () => {
+    if (isOpen) {
+      onClose(); // Close the search field if it's already open
+    } else {
+      onToggle(); // Open the search field
+    }
+  };
 
   const debouncedSearch = debounce((value: string) => {
     onSearchChange?.(value);
@@ -62,13 +71,41 @@ const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      // if (window.scrollY > 0 && isOpen) {
+      //   onClose(); // Hide the search field when scrolling
+      // }
+      setIsScrolled(window.scrollY > 0); // Update the scroll state
     };
+  
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [isOpen, onClose]);
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     // Update isScrolled only when search bar is not open
+  //     if (!isOpen) {
+  //       setIsScrolled(window.scrollY > 0);
+  //     }
+  //   };
+  
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, [isOpen]);
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     setIsScrolled(window.scrollY > 0);
+  //   };
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
 
   return (
     <Box
@@ -83,17 +120,39 @@ const Header: React.FC<HeaderProps> = ({
       <VStack align={"stretch"} spacing={3}>
         {!isWatchPage && (
           <>
-            <HStack justifyContent="space-between" align={"stretch"}>
+             <HStack height="52px"> </HStack>
+            <HStack
+              justifyContent="space-between"
+              alignItems="center"
+              w="100%"
+            >
+              {/* Left-hand side: Palooza logo */}
               <Image src={`${palooza_logo}`} height="25px" />
-              <IconByName
-                name={"SearchIcon"}
-                boxSize="1.5rem"
-                color="white"
-                onClick={onToggle}
-              />
+
+              {/* Right-hand side: SearchIcon and NotificationIcon */}
+              <HStack spacing={4}>
+                <Image
+                  src={notificationIcon}
+                  alt="Notification"
+                  cursor="pointer"
+                  boxSize="1.5rem"
+                  onClick={() => navigate("/home")}
+                />
+                {
+                  isScrolled &&
+                  <IconByName
+                  name={"SearchIcon"}
+                  width="24px"
+                  height="24px"
+                  cursor="pointer"
+                  color="white"
+                  onClick={onToggle}
+                  />
+                }
+              </HStack>
             </HStack>
 
-            <Collapse
+              <Collapse
               in={!isScrolled && !isOpen}
               transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
             >
@@ -138,6 +197,23 @@ const Header: React.FC<HeaderProps> = ({
             onSuggestionClick={onSuggestionClick}
           />
         </Collapse>
+
+        {
+         !isOpen && !isScrolled && !isWatchPage &&
+          <CustomInputWithDropdown
+          placeholder={t("HOME_SEARCH")}
+          onInputChange={onSearchChange}
+          icon={searchIcon}
+          showClearIcon={true}
+          isBackButton={isWatchPage}
+          value={search}
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
+          suggestions={suggestions}
+          onSuggestionClick={onSuggestionClick}
+        />
+        }
+       
       </VStack>
     </Box>
   );

@@ -17,6 +17,7 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import IconByName from "../../components/common/icons/Icon";
 import { handleEvent } from "./utils";
+import Loading from "../../components/common/Loading";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -211,10 +212,14 @@ const VideoItem: React.FC<{
   );
 });
 
-const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
-  const listRef = useRef<HTMLDivElement>(null);
+const VideoReel: React.FC<{
+  videos: any[];
+  programID?: string;
+  activeIndex?: string | number | undefined | null;
+}> = ({ videos, programID, activeIndex }) => {
+  const listRef = useRef<any>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
-  const [visibleIndex, setVisibleIndex] = useState(0);
+  const [visibleIndex, setVisibleIndex] = useState<number>(0);
   const { height: itemSize, width } = useDeviceSize();
   const navigate = useNavigate();
   // const trackDataRef = useRef<any[]>([]);
@@ -233,6 +238,17 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
     }, 500),
     [videos, itemSize]
   );
+
+  React.useEffect(() => {
+    if (activeIndex || activeIndex === 0) {
+      setVisibleIndex(
+        typeof activeIndex === "string" ? Number(activeIndex) : activeIndex
+      );
+      if (listRef?.current && listRef?.current?.scrollToItem) {
+        listRef.current.scrollToItem(activeIndex); // Adjust index as needed
+      }
+    }
+  }, [activeIndex, listRef?.current?.scrollToItem]);
 
   React.useEffect(() => {
     const handleEventNew = (event: any) => {
@@ -284,6 +300,19 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
     }
   };
 
+  if (activeIndex) {
+    if (typeof activeIndex === "string") {
+      activeIndex = Number(activeIndex);
+    }
+    if (isNaN(activeIndex) || activeIndex > videos?.length) {
+      return (
+        <Loading
+          message={`Video not found at index ${activeIndex}.`}
+          showSpinner={false}
+        />
+      );
+    }
+  }
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>

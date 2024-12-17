@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/common/Loading";
-import { getAltUserContent } from "../../services/content";
+import { fetchSearchResults } from "../../services/content";
 import { getProgramId, getSubjectList } from "../../services/home";
 import VideoReel from "./VideoReels";
 
@@ -31,21 +31,23 @@ const App = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const result = await getAltUserContent({
-          page: 1,
-          limit: 60,
-          programId: "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
-          subject: await getSubject(),
-        });
+        const payload = {
+          searchQuery: "",
+          programId: localStorage.getItem("programID"),
+          subject: localStorage.getItem("subject"),
+          limit: 10,
+        };
 
-        if (result?.data?.length === 0) {
+        const result = await fetchSearchResults(payload);
+
+        if (result?.paginatedData?.length === 0) {
           setError(
             `No content available for the subject: ${localStorage.getItem(
               "subject"
             )}.`
           );
         } else {
-          setVideos(result?.data || []);
+          setVideos(result?.paginatedData || []);
         }
       } catch (e) {
         setError(

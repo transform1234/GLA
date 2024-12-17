@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import english from "../assets/icons/english_icon.svg";
 import kannada from "../assets/icons/kannada_icon.svg";
+import odia from "../assets/icons/odia_icon.svg";
 import math from "../assets/icons/maths_icon.svg";
 import physics from "../assets/icons/physics_icon.svg";
 import Layout from "../components/common/layout/layout";
@@ -52,6 +53,7 @@ const subjectIcons = {
   math: { icon: math, label: "Math" },
   english: { icon: english, label: "English" },
   kannada: { icon: kannada, label: "Kannada" },
+  odia: { icon: odia, label: "Odia" },
 };
 export default function Homepage() {
   const { t } = useTranslation();
@@ -81,7 +83,6 @@ export default function Homepage() {
     setSelectedSubject(subject);
     localStorage.setItem("subject", subject);
   };
-
 
   return (
     <Layout>

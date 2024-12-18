@@ -190,7 +190,7 @@ const VideoItem: React.FC<{
               playerContext={updateCdataTag([
                 {
                   id: qml_id,
-                  type: "assessment",
+                  type: "question_set",
                 },
               ])}
             />
@@ -251,7 +251,7 @@ const VideoItem: React.FC<{
                   playerContext={updateCdataTag([
                     {
                       id,
-                      type: "course",
+                      type: "learning_content",
                     },
                   ])}
                 />
@@ -310,7 +310,7 @@ const VideoReel: React.FC<{
   programID?: string;
   authUser: any;
   activeIndex?: string | number | undefined | null;
-}> = ({ videos, programID, authUser, activeIndex}) => {
+}> = ({ videos, programID, authUser, activeIndex }) => {
   const listRef = useRef<any>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState<number>(0);
@@ -336,12 +336,12 @@ const VideoReel: React.FC<{
       setVisibleIndex(
         typeof activeIndex === "string" ? Number(activeIndex) : activeIndex
       );
-      
+
       if (listRef?.current && listRef?.current?.scrollToItem) {
         listRef.current.scrollToItem(activeIndex); // Adjust index as needed
       }
     }
-  }, [activeIndex, listRef?.current?.scrollToItem,videos.length]);
+  }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
 
   React.useEffect(() => {
     const handleEventNew = (event: any) => {

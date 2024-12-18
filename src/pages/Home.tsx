@@ -22,7 +22,8 @@ import { getProgramId, getSubjectList } from "../services/home";
 import { chunk } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { fetchSearchResults } from "../services/content";
-import defaultImage from "../assets/images/default-img.png";
+import defaultImage from "../assets/images/default-img.png"; // add default image
+
 const subjectIcons = {
   science: { icon: physics, label: "Science" },
   mathematics: { icon: math, label: "Math" },
@@ -34,7 +35,7 @@ const subjectIcons = {
 export default function Homepage() {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [videos, setVideos] = useState<any[]>([]);

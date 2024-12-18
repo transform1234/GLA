@@ -69,7 +69,7 @@ const contextData = {
   pdata: {
     // optional
     id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
-    ver: VITE_APP_VER, // Version of the App
+    ver: VITE_APP_VER, // Version of the Application
     pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
   },
 };

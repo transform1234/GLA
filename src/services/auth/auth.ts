@@ -241,6 +241,7 @@ export const checkUserDetails = async () => {
 
     if (!response.ok) {
       if (response.status !== 200) {
+        // set != 200 from == 401
         try {
           let refreshToken = await getNewAccessToken();
           const { access_token, refresh_token } = refreshToken;

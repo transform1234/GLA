@@ -19,6 +19,7 @@ const theme = extendTheme(customTheme);
 function AppRouter() {
   const [routes, setRoutes] = useState([]);
   const [token, setToken] = useState();
+  const [authUser, setAuthUser] = useState();
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
@@ -43,6 +44,7 @@ function AppRouter() {
 
       if (result?.success && result?.token) {
         setToken(result?.token);
+        setAuthUser(result?.data);
       } else {
         setToken();
       }
@@ -52,7 +54,7 @@ function AppRouter() {
     };
 
     validateUser();
-  }, [location.pathname]); // call on page change
+  }, [location?.pathname]); // call on page change
 
   return (
     <Routes>
@@ -60,7 +62,7 @@ function AppRouter() {
         <Route
           key={item?.path + index}
           path={item?.path}
-          element={<item.component />}
+          element={<item.component {...{ authUser }} />}
         />
       ))}
     </Routes>

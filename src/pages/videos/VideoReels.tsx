@@ -77,7 +77,8 @@ const VideoItem: React.FC<{
   isVisible: boolean;
   style: React.CSSProperties;
   refQml?: any;
-}> = memo(({ programID, id, qml_id, isVisible, refQml, style }) => {
+  authUser?: any;
+}> = memo(({ programID, id, qml_id, isVisible, refQml, style, authUser }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [playerContext, setPlayerContext] = useState<any>(contextData);
   const { width, height } = useDeviceSize();
@@ -120,12 +121,28 @@ const VideoItem: React.FC<{
             id: programID,
             type: "program",
           },
+          {
+            id: authUser?.Student?.School?.udiseCode,
+            type: "school_udise",
+          },
+          {
+            id: authUser?.username,
+            type: "username",
+          },
         ],
         tags: [
           ...contextData.tags,
           {
             id: programID,
             type: "program",
+          },
+          {
+            id: authUser?.Student?.School?.udiseCode,
+            type: "school_udise",
+          },
+          {
+            id: authUser?.username,
+            type: "username",
           },
         ],
       });
@@ -258,10 +275,11 @@ const VideoItem: React.FC<{
   );
 });
 
-const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
-  videos,
-  programID,
-}) => {
+const VideoReel: React.FC<{
+  videos: any[];
+  programID?: string;
+  authUser: any;
+}> = ({ videos, programID, authUser }) => {
   const listRef = useRef<HTMLDivElement>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
@@ -379,6 +397,7 @@ const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
               refQml={qmlRef}
               style={style}
               key={"VideoItem" + index}
+              authUser={authUser}
             />
           )}
         </List>

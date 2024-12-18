@@ -287,7 +287,7 @@ export const checkUserDetails = async () => {
     }
 
     const data = await response.json();
-    return { success: true, token };
+    return { success: true, token, data: data?.data?.[0] || {} };
   } catch (error: unknown) {
     return {
       success: false,

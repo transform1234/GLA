@@ -23,7 +23,7 @@ const getSubject = async () => {
   return localStorage.getItem("subject") || null;
 };
 
-const App = () => {
+const App = (props: any) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +69,7 @@ const App = () => {
   return error ? (
     <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
-    <VideoReel videos={videos} programID={programID} />
+    <VideoReel {...{ programID, videos, ...props }} />
   );
 };
 

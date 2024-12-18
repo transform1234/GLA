@@ -9,6 +9,7 @@ import {
   SkeletonCircle,
   Stack,
   VStack,
+  Center,
 } from "@chakra-ui/react";
 import { debounce } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
@@ -82,207 +83,232 @@ const VideoItem: React.FC<{
   style: React.CSSProperties;
   refQml?: any;
   adapter: string;
-}> = memo(({ id, qml_id, isVisible, adapter, programID, refQml, style }) => {
-  const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [playerContext, setPlayerContext] = useState<any>(contextData);
-  const { width, height } = useDeviceSize();
-  const [lesson, setLesson] = React.useState<{ mimeType: string }>({
-    mimeType: "",
-  });
-  const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
-    mimeType: "",
-  });
-  const [heightPerItem, setHeightPerItem] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
-  useEffect(() => {
-    setHeightPerItem({ height: 0, width: 0 });
-  }, [height]);
+  authUser?: any;
+}> = memo(
+  ({ id, qml_id, isVisible, adapter, programID, authUser, refQml, style }) => {
+    const { t } = useTranslation();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [playerContext, setPlayerContext] = useState<any>(contextData);
+    const { width, height } = useDeviceSize();
+    const [lesson, setLesson] = React.useState<{ mimeType: string }>({
+      mimeType: "",
+    });
+    const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
+      mimeType: "",
+    });
+    const [heightPerItem, setHeightPerItem] = useState<{
+      width: number;
+      height: number;
+    }>({ width: 0, height: 0 });
 
-  useEffect(() => {
-    if (!isVisible) return;
-    const inti = async () => {
-      setIsLoading(true);
-      let resultData = await content.getOne({
-        id,
-        adapter,
-        type: "course",
-      });
-      if (qml_id) {
-        let qmlResult = await content.getOne({
-          id: qml_id,
-          adapter,
-          type: "assessment",
-        });
-        setLessonQml(qmlResult);
-      }
-      setPlayerContext({
-        ...contextData,
-        cdata: [
-          ...contextData.cdata,
-          {
-            id: programID,
-            type: "program",
-          },
-        ],
-        tags: [
-          ...contextData.tags,
-          {
-            id: programID,
-            type: "program",
-          },
-        ],
-      });
-      setLesson(resultData);
-      setIsLoading(false);
+    const updateCdataTag = (data: any[]) => {
+      return {
+        ...playerContext,
+        cdata: [...playerContext.cdata, ...data],
+        tags: [...playerContext.tags, ...data],
+      };
     };
-    inti();
-  }, [id, isVisible]);
 
-  return (
-    <div
-      style={{
-        ...style,
-        width: "100%",
-        height: "100%",
-        scrollSnapAlign: "start",
-      }}
-    >
-      {!["sunbird", "diksha"].includes(adapter) ? (
-        <Center height="100%" p={4}>
-          <Alert status="error" variant="solid">
-            <AlertIcon />
-            <AlertTitle>
-              {t(
-                `This (${
-                  adapter || "Unknown Source"
-                }) content source is not supported, expected source is Diksha and Sunbird`
-              )}
-            </AlertTitle>
-          </Alert>
-        </Center>
-      ) : isVisible && !isLoading ? (
-        <Box>
-          <SunbirdPlayer
-            {...{ width, height }}
-            _playerStypeHeight={height}
-            {...{ ...lesson, iframeId: "course" }}
-            userData={{
-              firstName: localStorage.getItem("name"),
-              lastName: "",
-            }}
-            public_url={VITE_PLAYER_URL}
-            adapter={adapter}
-            playerContext={playerContext}
-          />
-          {qml_id && (
-            <VStack>
-              <TopIcon
-                onClick={() => {
-                  if (heightPerItem?.height === 0) {
-                    setHeightPerItem({ height: height / 3, width: width - 31 });
-                  } else {
-                    setHeightPerItem({ height: 0, width: 0 });
+    useEffect(() => {
+      setHeightPerItem({ height: 0, width: 0 });
+    }, [height]);
+
+    useEffect(() => {
+      if (!isVisible) return;
+      const inti = async () => {
+        setIsLoading(true);
+        let resultData = await content.getOne({
+          id,
+          adapter,
+          type: "course",
+        });
+        if (qml_id) {
+          let qmlResult = await content.getOne({
+            id: qml_id,
+            adapter,
+            type: "assessment",
+          });
+          setLessonQml(qmlResult);
+        }
+        setPlayerContext(
+          updateCdataTag([
+            {
+              id: programID,
+              type: "program",
+            },
+            {
+              id: authUser?.Student?.School?.udiseCode,
+              type: "school_udise",
+            },
+            {
+              id: authUser?.username,
+              type: "username",
+            },
+          ])
+        );
+        setLesson(resultData);
+        setIsLoading(false);
+      };
+      inti();
+    }, [id, isVisible]);
+
+    return (
+      <div
+        style={{
+          ...style,
+          width: "100%",
+          height: "100%",
+          scrollSnapAlign: "start",
+        }}
+      >
+        {!["sunbird", "diksha"].includes(adapter) ? (
+          <Center height="100%" p={4}>
+            <Alert status="error" variant="solid">
+              <AlertIcon />
+              <AlertTitle>
+                {t(
+                  `This (${
+                    adapter || "Unknown Source"
+                  }) content source is not supported, expected source is Diksha and Sunbird`
+                )}
+              </AlertTitle>
+            </Alert>
+          </Center>
+        ) : isVisible && !isLoading ? (
+          <Box>
+            <SunbirdPlayer
+              {...{ width, height }}
+              _playerStypeHeight={height}
+              {...{ ...lesson, iframeId: "course" }}
+              userData={{
+                firstName: localStorage.getItem("name"),
+                lastName: "",
+              }}
+              public_url={VITE_PLAYER_URL}
+              adapter={adapter}
+              playerContext={updateCdataTag([
+                {
+                  id: qml_id,
+                  type: "assessment",
+                },
+              ])}
+            />
+            {qml_id && (
+              <VStack>
+                <TopIcon
+                  onClick={() => {
+                    if (heightPerItem?.height === 0) {
+                      setHeightPerItem({
+                        height: height / 3,
+                        width: width - 31,
+                      });
+                    } else {
+                      setHeightPerItem({ height: 0, width: 0 });
+                    }
+                  }}
+                  rounded="none"
+                  roundedLeft="full"
+                  size="lg"
+                  _icon={{ width: heightPerItem?.height === 0 ? "100%" : "" }}
+                  p={heightPerItem?.height === 0 ? "5px 16px" : ""}
+                  icon={
+                    heightPerItem?.height === 0
+                      ? "TakeAQuizIcon"
+                      : "ChevronRightIcon"
                   }
-                }}
-                rounded="none"
-                roundedLeft="full"
-                size="lg"
-                _icon={{ width: heightPerItem?.height === 0 ? "100%" : "" }}
-                p={heightPerItem?.height === 0 ? "5px 16px" : ""}
-                icon={
-                  heightPerItem?.height === 0
-                    ? "TakeAQuizIcon"
-                    : "ChevronRightIcon"
-                }
-                bg={heightPerItem?.width === 0 ? "white" : "transparent"}
-                right={
-                  heightPerItem?.width === 0
-                    ? "0px"
-                    : `${heightPerItem?.width - 32}`
-                }
-                bottom={
-                  heightPerItem?.height === 0
-                    ? "32px"
-                    : `${heightPerItem?.height - 32}`
-                }
-                transition="right 0.5s,bottom 0.5s"
-                top="auto"
-              />
-              <SunbirdPlayer
-                forwardedRef={isVisible ? refQml : false}
-                style={{ border: "none", borderRadius: "16px" }}
-                _vstack={{
-                  position: "absolute",
-                  bottom: "16px",
-                  transition: "right 0.5s,width 0.5s, height 0.5s",
-                  right: "16px",
-                }}
-                {...heightPerItem}
-                {...{ ...lessonQml, iframeId: "assessment" }}
-                userData={{
-                  firstName: localStorage.getItem("name"),
-                  lastName: "",
-                }}
-                public_url={VITE_PLAYER_URL}
-                adapter={adapter}
-                playerContext={playerContext}
-              />
-            </VStack>
-          )}
-        </Box>
-      ) : (
-        <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
-          <HStack gap="5" padding={4} justifyContent={"space-between"}>
-            <HStack gap="5">
-              <SkeletonCircle
-                size="8"
-                startColor="primary.500"
-                endColor="primary.50"
-              />
-              <SkeletonCircle
-                size="8"
-                startColor="primary.500"
-                endColor="primary.50"
-              />
+                  bg={heightPerItem?.width === 0 ? "white" : "transparent"}
+                  right={
+                    heightPerItem?.width === 0
+                      ? "0px"
+                      : `${heightPerItem?.width - 32}`
+                  }
+                  bottom={
+                    heightPerItem?.height === 0
+                      ? "32px"
+                      : `${heightPerItem?.height - 32}`
+                  }
+                  transition="right 0.5s,bottom 0.5s"
+                  top="auto"
+                />
+                <SunbirdPlayer
+                  forwardedRef={isVisible ? refQml : false}
+                  style={{ border: "none", borderRadius: "16px" }}
+                  _vstack={{
+                    position: "absolute",
+                    bottom: "16px",
+                    transition: "right 0.5s,width 0.5s, height 0.5s",
+                    right: "16px",
+                  }}
+                  {...heightPerItem}
+                  {...{ ...lessonQml, iframeId: "assessment" }}
+                  userData={{
+                    firstName: localStorage.getItem("name"),
+                    lastName: "",
+                  }}
+                  public_url={VITE_PLAYER_URL}
+                  adapter={adapter}
+                  playerContext={updateCdataTag([
+                    {
+                      id,
+                      type: "course",
+                    },
+                  ])}
+                />
+              </VStack>
+            )}
+          </Box>
+        ) : (
+          <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
+            <HStack gap="5" padding={4} justifyContent={"space-between"}>
+              <HStack gap="5">
+                <SkeletonCircle
+                  size="8"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+                <SkeletonCircle
+                  size="8"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+                <SkeletonCircle
+                  size="8"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+              </HStack>
               <SkeletonCircle
                 size="8"
                 startColor="primary.500"
                 endColor="primary.50"
               />
             </HStack>
-            <SkeletonCircle
-              size="8"
-              startColor="primary.500"
-              endColor="primary.50"
-            />
-          </HStack>
-          <HStack
-            width="full"
-            position="absolute"
-            justifyContent="end"
-            bottom="32px"
-          >
-            <Skeleton
-              height="48px"
-              roundedLeft={"full"}
-              width={"110px"}
-              startColor="primary.500"
-              endColor="primary.50"
-            />
-          </HStack>
-        </Stack>
-      )}
-    </div>
-  );
-});
+            <HStack
+              width="full"
+              position="absolute"
+              justifyContent="end"
+              bottom="32px"
+            >
+              <Skeleton
+                height="48px"
+                roundedLeft={"full"}
+                width={"110px"}
+                startColor="primary.500"
+                endColor="primary.50"
+              />
+            </HStack>
+          </Stack>
+        )}
+      </div>
+    );
+  }
+);
 
-const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
-  videos,
-  programID,
-}) => {
+const VideoReel: React.FC<{
+  videos: any[];
+  programID?: string;
+  authUser: any;
+}> = ({ videos, programID, authUser }) => {
   const listRef = useRef<HTMLDivElement>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
@@ -297,9 +323,7 @@ const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
       let newVisibleIndex = Math.round(scrollOffset / itemSize);
       if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
-        // call tracking API
-        // const telemetryKey = Object.keys(trackDataRef.current);
-        // if (telemetryKey?.length > 0) {}
+        // call tracking API here
       }
     }, 500),
     [videos, itemSize]
@@ -401,6 +425,7 @@ const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
               style={style}
               adapter={videos?.[index]?.contentSource}
               key={"VideoItem" + index}
+              authUser={authUser}
             />
           )}
         </List>

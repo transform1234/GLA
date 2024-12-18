@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import english from "../assets/icons/english_icon.svg";
 import kannada from "../assets/icons/kannada_icon.svg";
+import odia from "../assets/icons/odia_icon.svg";
 import math from "../assets/icons/maths_icon.svg";
 import physics from "../assets/icons/physics_icon.svg";
 import Layout from "../components/common/layout/layout";
@@ -28,6 +29,7 @@ const subjectIcons = {
   math: { icon: math, label: "Math" },
   english: { icon: english, label: "English" },
   kannada: { icon: kannada, label: "Kannada" },
+  odia: { icon: odia, label: "Odia" },
 };
 export default function Homepage() {
   const { t } = useTranslation();
@@ -91,7 +93,7 @@ export default function Homepage() {
         }))
       );
       setError(null);
-    }catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
       setVideos([]);
     }
@@ -108,7 +110,7 @@ export default function Homepage() {
     }
 
     fetchSuggestions();
-  }, []); 
+  }, []);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -149,7 +151,6 @@ export default function Homepage() {
   const handleSuggestionClick = (value: string) => {
     navigate(`/watch?search=${encodeURIComponent(value.trim())}`);
   };
-
 
   const handleVideoClick = (video: any, index: number) => {
     localStorage.setItem("videos", JSON.stringify([video]));
@@ -313,7 +314,7 @@ export default function Homepage() {
                 </Grid>
               )}
             </Box>
-            </VStack>
+          </VStack>
         </Box>
       </VStack>
     </Layout>

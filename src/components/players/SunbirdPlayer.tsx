@@ -23,6 +23,7 @@ interface SunbirdPlayerProps {
   _playerStypeHeight?: number;
   handleExitButton?: () => void;
   style?: React.CSSProperties;
+  playerContext?: object;
 }
 
 const SunbirdPlayer = ({

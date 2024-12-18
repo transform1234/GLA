@@ -28,9 +28,10 @@
   "HOME_HELLO": "Hello",
   "HOME_LEARN_SOMETHING_NOW": "Learn Something Now",
   "HOME_SEARCH": "Search...",
-  "HOME_WATCH": "Watch",
+  "HOME_WATCH": "WATCH",
   "POPUP_CONFIRM_LOGOUT" : "LOGGING OUT ?",
   "POPUP_CONFIRM_MSG" : "Don’t worry, your progress will be saved the next time you log back in.",
-  "POPUP_LOGOUT" : "LOGOUT"
+  "POPUP_LOGOUT" : "LOGOUT",
+  "HOME_NO_VIDEOS_AVAILABLE" : "No Videos Availabe to show"
 
 }

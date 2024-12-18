@@ -16,12 +16,20 @@ interface Props {
   loading?: boolean;
   isFooterVisible?: boolean;
   isHeaderVisible?: boolean;
+  _header?: {
+    suggestions?: string[];
+    searchTerm?: string;
+    onSearchChange?: (value: string) => void;
+    onSuggestionClick?: (suggestion: string) => void;
+  };
 }
+
 const Layout: React.FC<Props> = ({
   children,
   loading = false,
   isFooterVisible = true,
   isHeaderVisible = true,
+  _header,
 }) => {
   const { width, height } = useDeviceSize();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -66,7 +74,8 @@ const Layout: React.FC<Props> = ({
           bg="white"
           boxShadow="0px 0px 15px 0px #e1e1e1"
         >
-          {isHeaderVisible && <Header />}
+          {isHeaderVisible && <Header {..._header} />}
+
           {children}
 
           {isFooterVisible && (

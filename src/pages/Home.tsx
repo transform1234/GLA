@@ -1,6 +1,8 @@
 import {
   Badge,
   Box,
+  Grid,
+  GridItem,
   HStack,
   Image,
   StackDivider,
@@ -17,36 +19,11 @@ import physics from "../assets/icons/physics_icon.svg";
 import Layout from "../components/common/layout/layout";
 import CustomHeading from "../components/common/typography/Heading";
 import { getProgramId, getSubjectList } from "../services/home";
-import reelImg from "../assets/images/reel.png";
-import reelImg2 from "../assets/images/reel2.png";
 import { chunk } from "lodash";
 import { useNavigate } from "react-router-dom";
-const watchSectionData: Array<any> = [
-  {
-    category: ["Math", "Mixed Fraction"],
-    src: reelImg,
-    alt: "Lesson",
-    title: "Learn easy mixed fraction",
-  },
-  {
-    category: ["Science", "Human Evolution"],
-    src: reelImg2,
-    alt: "Lesson",
-    title: "Evolution of human species",
-  },
-  {
-    category: ["Science", "Human Evolution"],
-    src: reelImg,
-    alt: "Lesson",
-    title: "Evolution of human species",
-  },
-  {
-    category: ["Science", "Human Evolution"],
-    src: reelImg2,
-    alt: "Lesson",
-    title: "Evolution of human species",
-  },
-];
+import { fetchSearchResults } from "../services/content";
+import defaultImage from "../assets/images/default-img.png"; // add default image
+
 const subjectIcons = {
   science: { icon: physics, label: "Science" },
   mathematics: { icon: math, label: "Math" },
@@ -58,36 +35,139 @@ const subjectIcons = {
 export default function Homepage() {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [videos, setVideos] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      let storedSubject = localStorage.getItem("subject") || "";
-      const programData = await getProgramId();
-      if (programData) {
-        const res: any = await getSubjectList();
-        const subjectR = chunk(res, 4);
-        if (!storedSubject && res.length > 0) {
-          storedSubject = res[0]?.subject;
-          localStorage.setItem("subject", storedSubject);
+      try {
+        let storedSubject = localStorage.getItem("subject") || "";
+        const programData = await getProgramId();
+        if (programData) {
+          const res: any = await getSubjectList();
+          const subjectR = chunk(res, 4);
+          if (!storedSubject && res.length > 0) {
+            storedSubject = res[0]?.subject;
+            localStorage.setItem("subject", storedSubject);
+          }
+          setSelectedSubject(storedSubject);
+          setSubjects(subjectR);
         }
-        setSelectedSubject(storedSubject);
-        setSubjects(subjectR);
+      } catch (error) {
+        console.error("Error fetching program data:", error);
       }
     };
 
     fetchProgramId();
   }, []);
-  const handelSelectSubject = (subject: string) => {
+
+  const handleSelectSubject = (subject: string) => {
     setSelectedSubject(subject);
     localStorage.setItem("subject", subject);
+    fetchSuggestions();
+  };
+
+  const fetchSuggestions = async () => {
+    const payload = {
+      searchQuery: searchTerm,
+      programId: localStorage.getItem("programID"),
+      subject: localStorage.getItem("subject"),
+      limit: 5,
+    };
+
+    try {
+      const response = await fetchSearchResults(payload);
+      setSuggestions(response?.paginatedData || []);
+      setVideos(
+        response?.paginatedData?.map((item: any) => ({
+          src: item.img
+            ? `/path/to/image/${item?.contentId}.jpg`
+            : defaultImage,
+          alt: item?.name,
+          name: item?.name,
+          category: [item?.subject],
+          contentId: item?.contentId,
+        }))
+      );
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setVideos([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuggestions();
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const storedSubject = localStorage.getItem("subject");
+    if (storedSubject) {
+      handleSelectSubject(storedSubject);
+    }
+
+    fetchSuggestions();
+  }, []);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      const payload = {
+        searchQuery: searchTerm,
+        programId: localStorage.getItem("programID"),
+        subject: localStorage.getItem("subject"),
+        limit: 5,
+      };
+      try {
+        const response = await fetchSearchResults(payload);
+        setSuggestions(response?.paginatedData || []);
+        setVideos(
+          response?.paginatedData?.map((item: any) => ({
+            src: item.img
+              ? `/path/to/image/${item?.contentId}.jpg`
+              : defaultImage,
+            alt: item?.name,
+            name: item?.name,
+            category: [item?.subject],
+            contentId: item?.contentId,
+          }))
+        );
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setVideos([]);
+      }
+    };
+
+    fetchSuggestions();
+  }, []);
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+  };
+
+  const handleSuggestionClick = (value: string) => {
+    navigate(`/watch?search=${encodeURIComponent(value.trim())}`);
+  };
+
+  const handleVideoClick = (video: any, index: number) => {
+    localStorage.setItem("videos", JSON.stringify([video]));
+    navigate(`/videos?index==${encodeURIComponent(index)}`);
   };
 
   return (
-    <Layout>
+    <Layout
+      _header={{
+        searchTerm: searchTerm,
+        suggestions: suggestions,
+        onSearchChange: handleSearchChange,
+        onSuggestionClick: handleSuggestionClick,
+      }}
+    >
       <VStack spacing={10} align={"stretch"} px="4">
-        {/* Learn Something Today Section */}
         <VStack pt="6" spacing={4}>
           <CustomHeading
             textAlign="center"
@@ -100,7 +180,7 @@ export default function Homepage() {
             color="textPrimary"
           />
           {subjects &&
-            subjects.map((subject, index) => (
+            subjects?.map((subject, index) => (
               <HStack
                 key={`subject-${index}`}
                 w="100%"
@@ -113,7 +193,7 @@ export default function Homepage() {
                       key={sub.subject}
                       spacing={3}
                       p="2.5"
-                      onClick={() => handelSelectSubject(sub.subject)}
+                      onClick={() => handleSelectSubject(sub.subject)}
                       cursor="pointer"
                       rounded={
                         sub.subject === selectedSubject ? "1rem" : "none"
@@ -133,6 +213,10 @@ export default function Homepage() {
                           ? "primary.500"
                           : "borderColor"
                       }
+                      width="75px"
+                      height="85px"
+                      justifyContent="center"
+                      alignItems="center"
                     >
                       {/* Render the specific image for each subject */}
                       <Image
@@ -171,20 +255,32 @@ export default function Homepage() {
             </Text>
             <Image src={arrow} alt="Arrow" boxSize="12px" />
           </HStack> */}
-          <HStack spacing={4}>
-            <VStack spacing={4}>
-              {chunk(watchSectionData, 2).map((chunk, rowIndex) => (
-                <HStack key={rowIndex} spacing={5}>
-                  {chunk.map((item, index) => (
-                    <Box
+          <VStack spacing={10} align={"stretch"} px="4">
+            <Box>
+              {videos?.length === 0 ? (
+                <Text color="red.500" fontSize="xl" textAlign="center">
+                  {t("HOME_NO_VIDEOS_AVAILABLE")}
+                </Text>
+              ) : (
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  {videos?.map((item, index) => (
+                    <GridItem
                       key={index}
                       position="relative"
                       borderRadius="9px"
                       overflow="hidden"
                       borderWidth="4px"
                       borderColor="borderColor"
+                      cursor="pointer"
+                      onClick={() => handleVideoClick(item, index)}
                     >
-                      <Image src={item.src} alt={item.alt} borderRadius="md" />
+                      <Image
+                        src={item.src}
+                        alt={item.alt}
+                        borderRadius="md"
+                        objectFit="cover"
+                        width="100%"
+                      />
                       <Box
                         padding={3}
                         position="absolute"
@@ -198,31 +294,28 @@ export default function Homepage() {
                           py={1}
                           textAlign="left"
                         >
-                          {item.title}
+                          {item.name}
                         </Text>
                         {Array.isArray(item.category) &&
                           item.category.map((cat: any, catIndex: number) => (
                             <Badge
                               key={catIndex}
+                              fontSize="10px"
                               colorScheme="whiteAlpha"
                               bg="whiteAlpha.300"
-                              borderColor="white"
-                              borderWidth="0"
-                              mx="1"
-                              fontSize="12px"
-                              fontWeight="400"
                               color="white"
+                              mx="1"
                             >
                               {cat}
                             </Badge>
                           ))}
                       </Box>
-                    </Box>
+                    </GridItem>
                   ))}
-                </HStack>
-              ))}
-            </VStack>
-          </HStack>
+                </Grid>
+              )}
+            </Box>
+          </VStack>
         </Box>
       </VStack>
     </Layout>

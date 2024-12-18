@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Box,
   HStack,
   IconButton,
@@ -9,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { debounce } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
 import IconByName from "../../components/common/icons/Icon";
@@ -65,7 +69,7 @@ const contextData = {
   pdata: {
     // optional
     id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
-    ver: VITE_APP_VER, // Version of the App
+    ver: VITE_APP_VER, // Version of the Application
     pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
   },
 };
@@ -77,7 +81,9 @@ const VideoItem: React.FC<{
   isVisible: boolean;
   style: React.CSSProperties;
   refQml?: any;
-}> = memo(({ programID, id, qml_id, isVisible, refQml, style }) => {
+  adapter: string;
+}> = memo(({ id, qml_id, isVisible, adapter, programID, refQml, style }) => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [playerContext, setPlayerContext] = useState<any>(contextData);
   const { width, height } = useDeviceSize();
@@ -101,13 +107,13 @@ const VideoItem: React.FC<{
       setIsLoading(true);
       let resultData = await content.getOne({
         id,
-        adapter: "sunbird",
+        adapter,
         type: "course",
       });
       if (qml_id) {
         let qmlResult = await content.getOne({
           id: qml_id,
-          adapter: "sunbird",
+          adapter,
           type: "assessment",
         });
         setLessonQml(qmlResult);
@@ -144,7 +150,20 @@ const VideoItem: React.FC<{
         scrollSnapAlign: "start",
       }}
     >
-      {isVisible && !isLoading ? (
+      {!["sunbird", "diksha"].includes(adapter) ? (
+        <Center height="100%" p={4}>
+          <Alert status="error" variant="solid">
+            <AlertIcon />
+            <AlertTitle>
+              {t(
+                `This (${
+                  adapter || "Unknown Source"
+                }) content source is not supported, expected source is Diksha and Sunbird`
+              )}
+            </AlertTitle>
+          </Alert>
+        </Center>
+      ) : isVisible && !isLoading ? (
         <Box>
           <SunbirdPlayer
             {...{ width, height }}
@@ -155,6 +174,7 @@ const VideoItem: React.FC<{
               lastName: "",
             }}
             public_url={VITE_PLAYER_URL}
+            adapter={adapter}
             playerContext={playerContext}
           />
           {qml_id && (
@@ -207,6 +227,7 @@ const VideoItem: React.FC<{
                   lastName: "",
                 }}
                 public_url={VITE_PLAYER_URL}
+                adapter={adapter}
                 playerContext={playerContext}
               />
             </VStack>
@@ -378,6 +399,7 @@ const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
               isVisible={index === visibleIndex}
               refQml={qmlRef}
               style={style}
+              adapter={videos?.[index]?.contentSource}
               key={"VideoItem" + index}
             />
           )}

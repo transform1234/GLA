@@ -120,7 +120,7 @@ const SunbirdPlayer = ({
       }
     }
   };
-
+  // console.log(adapter);
   if (url) {
     return (
       <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>

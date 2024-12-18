@@ -323,7 +323,7 @@ const VideoReel: React.FC<{
       let newVisibleIndex = Math.round(scrollOffset / itemSize);
       if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
-        // call tracking API
+        // call tracking API here
       }
     }, 500),
     [videos, itemSize]

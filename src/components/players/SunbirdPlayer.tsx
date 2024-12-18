@@ -116,7 +116,7 @@ const SunbirdPlayer = ({
       if (typeof forwardedRef === "function") {
         forwardedRef(ref); // If forwardedRef is a function
       } else {
-        forwardedRef.current = ref; // If forwardedRef is an object ref
+        forwardedRef.current = ref; // If forwardedRef is an object ref obj
       }
     }
   };

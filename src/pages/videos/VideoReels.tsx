@@ -324,8 +324,6 @@ const VideoReel: React.FC<{
       if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
         // call tracking API
-        // const telemetryKey = Object.keys(trackDataRef.current);
-        // if (telemetryKey?.length > 0) {}
       }
     }, 500),
     [videos, itemSize]

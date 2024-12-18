@@ -100,6 +100,15 @@ const VideoItem: React.FC<{
       width: number;
       height: number;
     }>({ width: 0, height: 0 });
+
+    const updateCdataTag = (data: any[]) => {
+      return {
+        ...playerContext,
+        cdata: [...playerContext.cdata, ...data],
+        tags: [...playerContext.tags, ...data],
+      };
+    };
+
     useEffect(() => {
       setHeightPerItem({ height: 0, width: 0 });
     }, [height]);
@@ -121,10 +130,8 @@ const VideoItem: React.FC<{
           });
           setLessonQml(qmlResult);
         }
-        setPlayerContext({
-          ...contextData,
-          cdata: [
-            ...contextData.cdata,
+        setPlayerContext(
+          updateCdataTag([
             {
               id: programID,
               type: "program",
@@ -137,23 +144,8 @@ const VideoItem: React.FC<{
               id: authUser?.username,
               type: "username",
             },
-          ],
-          tags: [
-            ...contextData.tags,
-            {
-              id: programID,
-              type: "program",
-            },
-            {
-              id: authUser?.Student?.School?.udiseCode,
-              type: "school_udise",
-            },
-            {
-              id: authUser?.username,
-              type: "username",
-            },
-          ],
-        });
+          ])
+        );
         setLesson(resultData);
         setIsLoading(false);
       };
@@ -194,7 +186,12 @@ const VideoItem: React.FC<{
               }}
               public_url={VITE_PLAYER_URL}
               adapter={adapter}
-              playerContext={playerContext}
+              playerContext={updateCdataTag([
+                {
+                  id: qml_id,
+                  type: "assessment",
+                },
+              ])}
             />
             {qml_id && (
               <VStack>
@@ -250,7 +247,12 @@ const VideoItem: React.FC<{
                   }}
                   public_url={VITE_PLAYER_URL}
                   adapter={adapter}
-                  playerContext={playerContext}
+                  playerContext={updateCdataTag([
+                    {
+                      id,
+                      type: "course",
+                    },
+                  ])}
                 />
               </VStack>
             )}

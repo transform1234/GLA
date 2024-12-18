@@ -120,7 +120,7 @@ const SunbirdPlayer = ({
       }
     }
   };
-  console.log(adapter);
+
   if (url) {
     return (
       <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>
@@ -161,6 +161,7 @@ const SunbirdPlayer = ({
             ...props,
             questionListUrl: `${baseUrl}/question/${adapter}/questionList`,
             // questionListUrl: `https://alt-dev.uniteframework.io/course/questionset`,
+            // questionListUrl: `https://sunbirdsaas.com/api/question/v1/list`,
             telemetryBaseUrl: VITE_TELEMETRY_BASE_URL || null,
             telemetryEndpoint: VITE_TELEMETRY_END_POINT || null,
           })}

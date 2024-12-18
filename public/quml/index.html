@@ -26,6 +26,18 @@
       window.questionListUrl = "https://vdn.diksha.gov.in/api/question/v1/list";
       const iframeId = metadata?.iframeId || "default_iframe";
       const mimeType = metadata?.mimeType || "";
+      const postMessage = (event) => {
+        try {
+          const messageData = {
+            iframeId, // Include unique iframeId here
+            mimeType,
+            ...JSON.parse(JSON.stringify(event?.detail)),
+          };
+          window?.parent?.postMessage(messageData, "*");
+        } catch (error) {
+          console.error("Failed to post message:", error);
+        }
+      };
 
       if (window?.name) {
         const data = JSON.parse(window?.name);
@@ -110,18 +122,8 @@
       }
       reportWindowSize();
       window.onresize = reportWindowSize;
-      const postMessage = (event) => {
-        try {
-          const messageData = {
-            iframeId, // Include unique iframeId here
-            mimeType,
-            ...JSON.parse(JSON.stringify(event?.detail)),
-          };
-          window?.parent?.postMessage(messageData, "*");
-        } catch (error) {
-          console.error("Failed to post message:", error);
-        }
-      };
+
+      console.log(metadata, "metadata");
     </script>
   </body>
 </html>

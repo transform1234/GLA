@@ -28,46 +28,43 @@ const Watch: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     let query = params.get("search") || "";
-    if(query === "all"){
-      setSearchTerm("");
-    }{
-      setSearchTerm(query);
-    }
+    setSearchTerm(query);
+  }, [location.search]);
 
-    const fetchData = async () => {
-      if (!query) return;
+  useEffect(() => {
+    fetchData(searchTerm);
+  }, [searchTerm])
 
-      const payload = {
-        searchQuery: query === "all" ? "" : query,
-        programId: localStorage.getItem("programID"),
-        subject: localStorage.getItem("subject"),
-        limit: 60,
-      };
-
-      try {
-        const response = await fetchSearchResults(payload);
-        setVideos(
-          response?.paginatedData?.map((item: any) => ({
-            src: item.img
-              ? `/path/to/image/${item?.contentId}.jpg`
-              : defaultImage,
-            alt: item?.name,
-            name: item?.name,
-            category: [item?.subject],
-            contentId: item?.contentId,
-          }))
-        );
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-        setVideos([]);
-      } finally {
-        setLoading(false);
-      }
+  const fetchData = async (search :any) => {
+    if (!search) return;
+    const payload = {
+      searchQuery: search || '',
+      programId: localStorage.getItem("programID"),
+      subject: localStorage.getItem("subject"),
+      limit: 60,
     };
 
-    fetchData();
-  }, [location.search]);
+    try {
+      const response = await fetchSearchResults(payload);
+      setVideos(
+        response?.paginatedData?.map((item: any) => ({
+          src: item.img
+            ? `/path/to/image/${item?.contentId}.jpg`
+            : defaultImage,
+          alt: item?.name,
+          name: item?.name,
+          category: [item?.subject],
+          contentId: item?.contentId,
+        }))
+      );
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setVideos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -75,7 +72,7 @@ const Watch: React.FC = () => {
         searchQuery: searchTerm,
         programId: localStorage.getItem("programID"),
         subject: localStorage.getItem("subject"),
-        limit: 60,
+        limit: 5,
       };
       try {
         const response = await fetchSearchResults(payload);
@@ -89,6 +86,8 @@ const Watch: React.FC = () => {
   }, []);
 
   const handleSearchChange = (value: string) => {
+    console.log(value);
+    
     setSearchTerm(value);
   };
 

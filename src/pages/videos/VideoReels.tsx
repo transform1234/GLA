@@ -3,7 +3,6 @@ import {
   AlertIcon,
   AlertTitle,
   Box,
-  Center,
   HStack,
   IconButton,
   Skeleton,
@@ -11,7 +10,7 @@ import {
   Stack,
   VStack,
 } from "@chakra-ui/react";
-import { debounce } from "lodash";
+import { debounce } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -23,17 +22,70 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { handleEvent } from "./utils";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
+const VITE_APP_ID = import.meta.env.VITE_APP_ID;
+const VITE_APP_VER = import.meta.env.VITE_APP_VER;
+const VITE_APP_PID = import.meta.env.VITE_APP_PID;
+
+const contextData = {
+  sid: localStorage.getItem("contentSessionId"),
+  uid: localStorage.getItem("id"),
+  did: localStorage.getItem("did"), // send for ifram data
+  cdata: [
+    {
+      id: localStorage.getItem("grade"),
+      type: "grade",
+    },
+    {
+      id: localStorage.getItem("medium"),
+      type: "medium",
+    },
+    {
+      id: localStorage.getItem("board"),
+      type: "board",
+    },
+    {
+      id: localStorage.getItem("subject"),
+      type: "subject",
+    },
+  ],
+  tags: [
+    {
+      id: localStorage.getItem("grade"),
+      type: "grade",
+    },
+    {
+      id: localStorage.getItem("medium"),
+      type: "medium",
+    },
+    {
+      id: localStorage.getItem("board"),
+      type: "board",
+    },
+    {
+      id: localStorage.getItem("subject"),
+      type: "subject",
+    },
+  ],
+  pdata: {
+    // optional
+    id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+    ver: VITE_APP_VER, // Version of the App
+    pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
+  },
+};
 
 const VideoItem: React.FC<{
+  programID: string | undefined;
   id: string;
   qml_id: string;
   isVisible: boolean;
   style: React.CSSProperties;
   refQml?: any;
   adapter: string;
-}> = memo(({ id, qml_id, isVisible, adapter, refQml, style }) => {
+}> = memo(({ id, qml_id, isVisible, adapter, programID, refQml, style }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [playerContext, setPlayerContext] = useState<any>(contextData);
   const { width, height } = useDeviceSize();
   const [lesson, setLesson] = React.useState<{ mimeType: string }>({
     mimeType: "",
@@ -66,6 +118,23 @@ const VideoItem: React.FC<{
         });
         setLessonQml(qmlResult);
       }
+      setPlayerContext({
+        ...contextData,
+        cdata: [
+          ...contextData.cdata,
+          {
+            id: programID,
+            type: "program",
+          },
+        ],
+        tags: [
+          ...contextData.tags,
+          {
+            id: programID,
+            type: "program",
+          },
+        ],
+      });
       setLesson(resultData);
       setIsLoading(false);
     };
@@ -106,6 +175,7 @@ const VideoItem: React.FC<{
             }}
             public_url={VITE_PLAYER_URL}
             adapter={adapter}
+            playerContext={playerContext}
           />
           {qml_id && (
             <VStack>
@@ -158,6 +228,7 @@ const VideoItem: React.FC<{
                 }}
                 public_url={VITE_PLAYER_URL}
                 adapter={adapter}
+                playerContext={playerContext}
               />
             </VStack>
           )}
@@ -208,7 +279,10 @@ const VideoItem: React.FC<{
   );
 });
 
-const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
+const VideoReel: React.FC<{ videos: any[]; programID?: string }> = ({
+  videos,
+  programID,
+}) => {
   const listRef = useRef<HTMLDivElement>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
@@ -241,7 +315,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
     return () => {
       window.removeEventListener("message", handleEventNew);
     };
-  }, [itemSize]);
+  }, [visibleIndex, videos]);
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
@@ -256,17 +330,28 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
       //   ...trackDataRef.current,
       //   [result.type]: result?.data,
       // };
-      console.log(result, "scoreDetails");
-      const retult = await content.addLessonTracking({
-        ...result?.data,
+      const { type, data } = result;
+      const player = {
+        ...data,
         // courseId: videos?.[visibleIndex]?.contentId,
         // moduleId: videos?.[visibleIndex]?.contentId,
-        lessonId: videos?.[visibleIndex]?.contentId,
-        programId: videos?.[visibleIndex]?.programId,
+        lessonId:
+          type === "assessmet"
+            ? videos?.[visibleIndex]?.contentId
+            : videos?.[visibleIndex]?.lesson_questionset,
+        programId: programID,
         subject:
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-      });
-      console.log(content, retult, "retult");
+      };
+      const retult1 = await content.addLessonTracking(player);
+      console.log(
+        player,
+        retult1,
+        visibleIndex,
+        videos?.[visibleIndex],
+        videos,
+        "retult"
+      );
     }
   };
 
@@ -308,6 +393,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
             style: React.CSSProperties;
           }) => (
             <VideoItem
+              programID={programID}
               id={videos?.[index]?.contentId}
               qml_id={videos?.[index]?.lesson_questionset}
               isVisible={index === visibleIndex}

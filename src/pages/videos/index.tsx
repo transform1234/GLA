@@ -27,6 +27,7 @@ const App = () => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);
+  const [programID, setProgramID] = useState<string>("");
 
   useEffect(() => {
     const init = async () => {
@@ -34,7 +35,7 @@ const App = () => {
         const result = await getAltUserContent({
           page: 1,
           limit: 60,
-          programId: "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
+          programId: localStorage.getItem("programID") || "",
           subject: await getSubject(),
         });
 
@@ -46,6 +47,10 @@ const App = () => {
           );
         } else {
           setVideos(result?.data || []);
+        }
+        const programData = await getProgramId();
+        if (programData?.programId) {
+          setProgramID(programData?.programId);
         }
       } catch (e) {
         setError(
@@ -64,7 +69,7 @@ const App = () => {
   return error ? (
     <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
-    <VideoReel videos={videos} />
+    <VideoReel videos={videos} programID={programID} />
   );
 };
 

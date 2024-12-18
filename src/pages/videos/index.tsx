@@ -23,7 +23,7 @@ const getSubject = async () => {
   return localStorage.getItem("subject") || null;
 };
 
-const App = (props) => {
+const App = (props: any) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);

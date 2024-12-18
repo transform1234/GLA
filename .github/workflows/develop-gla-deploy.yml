@@ -2,8 +2,8 @@ name: Deploy to DEV
 on:
   push:
     branches:
-      # - develop
-      - UAT
+      - develop
+      # - UAT
 jobs:
   build:
     name: Generate Build and Deploy to DEV

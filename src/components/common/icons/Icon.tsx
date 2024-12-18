@@ -88,7 +88,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
   TakeAQuizIcon: ({ ...props }) => {
     return (
       <Text fontSize="1em" {...props}>
-        take a quiz
+       Take a Quiz
       </Text>
     );
   },

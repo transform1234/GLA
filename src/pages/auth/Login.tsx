@@ -297,7 +297,7 @@ export default function Login() {
                   onClick={handleLogin}
                   width="100%"
                   color="white"
-                  isDisabled={isLoginDisabled}
+                  disabled={isLoginDisabled}
                   marginTop="20px"
                 >
                   {t("LOGIN")}

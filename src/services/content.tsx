@@ -189,6 +189,7 @@ export const addLessonTracking = async ({
   scoreDetails,
   programId,
   subject,
+  contentSource,
 }: {
   courseId: string;
   moduleId: string;
@@ -200,6 +201,7 @@ export const addLessonTracking = async ({
   scoreDetails: string;
   programId: string;
   subject: string;
+  contentSource: string;
 }): Promise<any> => {
   try {
     const response = await fetch(
@@ -221,6 +223,7 @@ export const addLessonTracking = async ({
           timeSpent,
           score,
           scoreDetails,
+          contentSource,
         }),
       }
     );
@@ -239,5 +242,27 @@ export const addLessonTracking = async ({
       console.log("course/progress/contentid", String(e));
     }
     return {};
+  }
+};
+export const fetchSearchResults = async (payload : any): Promise<any> => {
+  try {
+    const response = await fetch(`${baseUrl}${URL.SEARCH}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    throw error;
   }
 };

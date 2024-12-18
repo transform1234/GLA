@@ -91,6 +91,9 @@
         },
       };
       const metadata = window.name ? JSON.parse(window.name) : metadataDemo;
+      const iframeId = metadata?.iframeId || "default_iframe";
+      const mimeType = metadata?.mimeType || "";
+
       const playerConfig = {
         context: {
           mode: "play",
@@ -140,9 +143,20 @@
       const myPlayer = document.getElementById("my-player");
       myPlayer.appendChild(pdfElement);
       pdfElement.addEventListener("playerEvent", (event) => {
-        window?.parent?.postMessage(event?.detail, "*");
-        // window?.parent?.postMessage(event, "*");
+        postMessage(event);
       });
+      const postMessage = (event) => {
+        try {
+          const messageData = {
+            iframeId, // Include unique iframeId here
+            mimeType,
+            ...JSON.parse(JSON.stringify(event?.detail)),
+          };
+          window?.parent?.postMessage(messageData, "*");
+        } catch (error) {
+          console.error("Failed to post message:", error);
+        }
+      };
     </script>
   </body>
 </html>

@@ -13,7 +13,6 @@ import Loading from "../../components/common/Loading";
 import { fetchSearchResults } from "../../services/content";
 import Layout from "../../components/common/layout/layout";
 import defaultImage from "../../assets/images/default-img.png";
-import VideoReel from "./VideoReels";
 
 const Watch: React.FC = () => {
   const navigate = useNavigate();
@@ -28,20 +27,23 @@ const Watch: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const query = params.get("search") || "";
-    setSearchTerm(query);
+    let query = params.get("search") || "";
+    if(query === "all"){
+      setSearchTerm("");
+    }{
+      setSearchTerm(query);
+    }
 
     const fetchData = async () => {
       if (!query) return;
 
       const payload = {
-        searchQuery: query,
+        searchQuery: query === "all" ? "" : query,
         programId: localStorage.getItem("programID"),
         subject: localStorage.getItem("subject"),
-        limit: 5,
+        limit: 60,
       };
 
-      setLoading(true);
       try {
         const response = await fetchSearchResults(payload);
         setVideos(
@@ -73,7 +75,7 @@ const Watch: React.FC = () => {
         searchQuery: searchTerm,
         programId: localStorage.getItem("programID"),
         subject: localStorage.getItem("subject"),
-        limit: 10,
+        limit: 60,
       };
       try {
         const response = await fetchSearchResults(payload);
@@ -105,7 +107,7 @@ const Watch: React.FC = () => {
         limit: 10,
       })
     );
-    navigate(`/videos?index==${encodeURIComponent(index)}`);
+    navigate(`/videos?index=${encodeURIComponent(index)}`);
   };
 
   return (
@@ -128,7 +130,7 @@ const Watch: React.FC = () => {
             onSuggestionClick: handleSuggestionClick,
           }}
         >
-          <VStack spacing={10} align={"stretch"} px="4">
+          <VStack mt={4} spacing={10} align={"stretch"} px="4">
             <Box>
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 {videos.map((item, index) => (
@@ -138,7 +140,7 @@ const Watch: React.FC = () => {
                     borderRadius="9px"
                     overflow="hidden"
                     borderWidth="4px"
-                    borderColor="gray.200"
+                    borderColor="borderColor"
                     cursor="pointer"
                     onClick={() => handleVideoClick(item, index)}
                   >

@@ -22,6 +22,7 @@ import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { handleEvent } from "./utils";
+import Loading from "../../components/common/Loading";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 
 const VideoItem: React.FC<{
@@ -208,10 +209,14 @@ const VideoItem: React.FC<{
   );
 });
 
-const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
-  const listRef = useRef<HTMLDivElement>(null);
+const VideoReel: React.FC<{
+  videos: any[];
+  programID?: string;
+  activeIndex?: string | number | undefined | null;
+}> = ({ videos, programID, activeIndex }) => {
+  const listRef = useRef<any>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
-  const [visibleIndex, setVisibleIndex] = useState(0);
+  const [visibleIndex, setVisibleIndex] = useState<number>(0);
   const { height: itemSize, width } = useDeviceSize();
   const navigate = useNavigate();
   // const trackDataRef = useRef<any[]>([]);
@@ -232,6 +237,18 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
   );
 
   React.useEffect(() => {
+    if (activeIndex || activeIndex === 0) {
+      setVisibleIndex(
+        typeof activeIndex === "string" ? Number(activeIndex) : activeIndex
+      );
+      
+      if (listRef?.current && listRef?.current?.scrollToItem) {
+        listRef.current.scrollToItem(activeIndex); // Adjust index as needed
+      }
+    }
+  }, [activeIndex, listRef?.current?.scrollToItem,videos.length]);
+
+  React.useEffect(() => {
     const handleEventNew = (event: any) => {
       newHandleEvent(event);
     };
@@ -241,7 +258,7 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
     return () => {
       window.removeEventListener("message", handleEventNew);
     };
-  }, [itemSize]);
+  }, [visibleIndex, videos]);
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
@@ -256,20 +273,36 @@ const VideoReel: React.FC<{ videos: any[] }> = ({ videos }) => {
       //   ...trackDataRef.current,
       //   [result.type]: result?.data,
       // };
-      console.log(result, "scoreDetails");
-      const retult = await content.addLessonTracking({
-        ...result?.data,
+      const { type, data } = result;
+      const player = {
+        ...data,
         // courseId: videos?.[visibleIndex]?.contentId,
         // moduleId: videos?.[visibleIndex]?.contentId,
-        lessonId: videos?.[visibleIndex]?.contentId,
+        lessonId:
+          type === "assessmet"
+            ? videos?.[visibleIndex]?.contentId
+            : videos?.[visibleIndex]?.lesson_questionset,
         programId: videos?.[visibleIndex]?.programId,
         subject:
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-      });
-      console.log(content, retult, "retult");
+      };
+      const retult1 = await content.addLessonTracking(player);
     }
   };
 
+  if (activeIndex) {
+    if (typeof activeIndex === "string") {
+      activeIndex = Number(activeIndex);
+    }
+    if (isNaN(activeIndex) || activeIndex > videos?.length) {
+      return (
+        <Loading
+          message={`Video not found at index ${activeIndex}.`}
+          showSpinner={false}
+        />
+      );
+    }
+  }
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>

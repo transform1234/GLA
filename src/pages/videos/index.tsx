@@ -27,6 +27,9 @@ const App = () => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);
+  const [programID, setProgramID] = useState<string>("");
+  const query = new URLSearchParams(window.location.search);
+  const index = query.get("index");
 
   useEffect(() => {
     const init = async () => {
@@ -66,7 +69,7 @@ const App = () => {
   return error ? (
     <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
-    <VideoReel videos={videos} />
+    <VideoReel videos={videos} programID={programID} activeIndex={index} />
   );
 };
 

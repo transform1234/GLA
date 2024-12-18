@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/common/Loading";
-import { getAltUserContent } from "../../services/content";
+import { fetchSearchResults } from "../../services/content";
 import { getProgramId, getSubjectList } from "../../services/home";
 import VideoReel from "./VideoReels";
 
@@ -27,26 +27,30 @@ const App = (props: any) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);
+  const query = new URLSearchParams(window.location.search);
+  const index = query.get("index");
   const [programID, setProgramID] = useState<string>("");
 
   useEffect(() => {
     const init = async () => {
       try {
-        const result = await getAltUserContent({
-          page: 1,
-          limit: 60,
-          programId: localStorage.getItem("programID") || "",
+        const payload = {
+          searchQuery: "",
+          programId: localStorage.getItem("programID"),
           subject: await getSubject(),
-        });
+          limit: 10,
+        };
 
-        if (result?.data?.length === 0) {
+        const result = await fetchSearchResults(payload);
+
+        if (result?.paginatedData?.length === 0) {
           setError(
             `No content available for the subject: ${localStorage.getItem(
               "subject"
             )}.`
           );
         } else {
-          setVideos(result?.data || []);
+          setVideos(result?.paginatedData || []);
         }
         const programData = await getProgramId();
         if (programData?.programId) {
@@ -69,7 +73,7 @@ const App = (props: any) => {
   return error ? (
     <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
-    <VideoReel {...{ programID, videos, ...props }} />
+    <VideoReel {...{ programID, videos,activeIndex:index, ...props }}/>
   );
 };
 

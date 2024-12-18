@@ -14,6 +14,7 @@ import {
 import close from "../../../assets/icons/close.svg";
 import { useNavigate } from "react-router-dom";
 import backIcon from "../../../assets/icons/arrow_back_ios.svg";
+import { useTranslation } from "react-i18next";
 
 interface CustomInputProps {
   placeholder?: string;
@@ -45,6 +46,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const handleSearchChange = (value: string) => {
     setSearch(value);
     onInputChange?.(value);
@@ -174,8 +176,8 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
               _hover={{ bg: "gray.100" }}
               onClick={() => console.log("See all results")}
             >
-              <Text fontSize="14px" fontFamily="Inter" color="primary.500">
-                See all results
+              <Text fontSize="14px" fontFamily="Inter" color="primary.500" onClick={() => navigate(`/watch?search=${encodeURIComponent('all')}`)}>
+                {t("SEE_ALL_RESULTS")}
               </Text>
             </ListItem>
           </List>

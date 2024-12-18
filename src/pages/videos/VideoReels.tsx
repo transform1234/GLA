@@ -22,6 +22,7 @@ import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { handleEvent } from "./utils";
+import Loading from "../../components/common/Loading";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -308,10 +309,11 @@ const VideoReel: React.FC<{
   videos: any[];
   programID?: string;
   authUser: any;
-}> = ({ videos, programID, authUser }) => {
-  const listRef = useRef<HTMLDivElement>(null);
+  activeIndex?: string | number | undefined | null;
+}> = ({ videos, programID, authUser, activeIndex}) => {
+  const listRef = useRef<any>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
-  const [visibleIndex, setVisibleIndex] = useState(0);
+  const [visibleIndex, setVisibleIndex] = useState<number>(0);
   const { height: itemSize, width } = useDeviceSize();
   const navigate = useNavigate();
   // const trackDataRef = useRef<any[]>([]);
@@ -328,6 +330,18 @@ const VideoReel: React.FC<{
     }, 500),
     [videos, itemSize]
   );
+
+  React.useEffect(() => {
+    if (activeIndex || activeIndex === 0) {
+      setVisibleIndex(
+        typeof activeIndex === "string" ? Number(activeIndex) : activeIndex
+      );
+      
+      if (listRef?.current && listRef?.current?.scrollToItem) {
+        listRef.current.scrollToItem(activeIndex); // Adjust index as needed
+      }
+    }
+  }, [activeIndex, listRef?.current?.scrollToItem,videos.length]);
 
   React.useEffect(() => {
     const handleEventNew = (event: any) => {
@@ -368,17 +382,22 @@ const VideoReel: React.FC<{
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
-      console.log(
-        player,
-        retult1,
-        visibleIndex,
-        videos?.[visibleIndex],
-        videos,
-        "retult"
-      );
     }
   };
 
+  if (activeIndex) {
+    if (typeof activeIndex === "string") {
+      activeIndex = Number(activeIndex);
+    }
+    if (isNaN(activeIndex) || activeIndex > videos?.length) {
+      return (
+        <Loading
+          message={`Video not found at index ${activeIndex}.`}
+          showSpinner={false}
+        />
+      );
+    }
+  }
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>

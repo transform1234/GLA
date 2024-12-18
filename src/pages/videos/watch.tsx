@@ -13,7 +13,6 @@ import Loading from "../../components/common/Loading";
 import { fetchSearchResults } from "../../services/content";
 import Layout from "../../components/common/layout/layout";
 import defaultImage from "../../assets/images/default-img.png";
-import VideoReel from "./VideoReels";
 
 const Watch: React.FC = () => {
   const navigate = useNavigate();
@@ -28,44 +27,44 @@ const Watch: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const query = params.get("search") || "";
+    let query = params.get("search") || "";
     setSearchTerm(query);
+  }, [location.search]);
 
-    const fetchData = async () => {
-      if (!query) return;
+  useEffect(() => {
+    fetchData(searchTerm);
+  }, [searchTerm])
 
-      const payload = {
-        searchQuery: query,
-        programId: localStorage.getItem("programID"),
-        subject: localStorage.getItem("subject"),
-        limit: 5,
-      };
-
-      setLoading(true);
-      try {
-        const response = await fetchSearchResults(payload);
-        setVideos(
-          response?.paginatedData?.map((item: any) => ({
-            src: item.img
-              ? `/path/to/image/${item?.contentId}.jpg`
-              : defaultImage,
-            alt: item?.name,
-            name: item?.name,
-            category: [item?.subject],
-            contentId: item?.contentId,
-          }))
-        );
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-        setVideos([]);
-      } finally {
-        setLoading(false);
-      }
+  const fetchData = async (search :any) => {
+    if (!search) return;
+    const payload = {
+      searchQuery: search || '',
+      programId: localStorage.getItem("programID"),
+      subject: localStorage.getItem("subject"),
+      limit: 60,
     };
 
-    fetchData();
-  }, [location.search]);
+    try {
+      const response = await fetchSearchResults(payload);
+      setVideos(
+        response?.paginatedData?.map((item: any) => ({
+          src: item.img
+            ? `/path/to/image/${item?.contentId}.jpg`
+            : defaultImage,
+          alt: item?.name,
+          name: item?.name,
+          category: [item?.subject],
+          contentId: item?.contentId,
+        }))
+      );
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setVideos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -73,7 +72,7 @@ const Watch: React.FC = () => {
         searchQuery: searchTerm,
         programId: localStorage.getItem("programID"),
         subject: localStorage.getItem("subject"),
-        limit: 10,
+        limit: 5,
       };
       try {
         const response = await fetchSearchResults(payload);
@@ -87,6 +86,8 @@ const Watch: React.FC = () => {
   }, []);
 
   const handleSearchChange = (value: string) => {
+    console.log(value);
+    
     setSearchTerm(value);
   };
 
@@ -105,7 +106,7 @@ const Watch: React.FC = () => {
         limit: 10,
       })
     );
-    navigate(`/videos?index==${encodeURIComponent(index)}`);
+    navigate(`/videos?index=${encodeURIComponent(index)}`);
   };
 
   return (
@@ -128,7 +129,7 @@ const Watch: React.FC = () => {
             onSuggestionClick: handleSuggestionClick,
           }}
         >
-          <VStack spacing={10} align={"stretch"} px="4">
+          <VStack mt={4} spacing={10} align={"stretch"} px="4">
             <Box>
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 {videos.map((item, index) => (
@@ -138,7 +139,7 @@ const Watch: React.FC = () => {
                     borderRadius="9px"
                     overflow="hidden"
                     borderWidth="4px"
-                    borderColor="gray.200"
+                    borderColor="borderColor"
                     cursor="pointer"
                     onClick={() => handleVideoClick(item, index)}
                   >

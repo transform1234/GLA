@@ -155,7 +155,7 @@ export default function Homepage() {
 
   const handleVideoClick = (video: any, index: number) => {
     localStorage.setItem("videos", JSON.stringify([video]));
-    navigate(`/videos?index==${encodeURIComponent(index)}`);
+    navigate(`/videos?index=${encodeURIComponent(index)}`);
   };
 
   return (

@@ -21,6 +21,8 @@ interface Props {
     searchTerm?: string;
     onSearchChange?: (value: string) => void;
     onSuggestionClick?: (suggestion: string) => void;
+    onSubjectSelect?: (subject: string) => void;
+    bottomComponent?: React.ReactNode;
   };
 }
 
@@ -53,7 +55,7 @@ const Layout: React.FC<Props> = ({
   const menuList = [
     { route: "/home", icon: "HomeIcon", title: "Home" },
     { route: "/leaderboard", icon: "LeaderboardIcon", title: "Leaderboard" },
-    { route: "/videos", icon: "WatchIcon", title: "Watch", isOutOFBox: true },
+    { route: "/watch", icon: "WatchIcon", title: "Watch", isOutOFBox: true },
     { route: "/guide", icon: "QuestionIcon", title: "Guide" },
     { icon: "LogoutIcon", title: "Logout", onClick: onOpen }, // Opens the modal on Logout click
   ];

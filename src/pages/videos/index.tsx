@@ -30,15 +30,23 @@ const App = (props: any) => {
   const query = new URLSearchParams(window.location.search);
   const index = query.get("index");
   const [programID, setProgramID] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const init = async () => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get("search") || '';
+    setSearchTerm(query);
+  }, [location.search]);
+
+  useEffect(() => {
+    const fetchData = async (search : any) => {
       try {
+        if (!search) return;
         const payload = {
-          searchQuery: "",
+          searchQuery: search,
           programId: localStorage.getItem("programID"),
           subject: await getSubject(),
-          limit: 10,
+          limit: 100,
         };
 
         const result = await fetchSearchResults(payload);
@@ -52,10 +60,6 @@ const App = (props: any) => {
         } else {
           setVideos(result?.paginatedData || []);
         }
-        const programData = await getProgramId();
-        if (programData?.programId) {
-          setProgramID(programData?.programId);
-        }
       } catch (e) {
         setError(
           `Failed to fetch content for the selected subject: ${localStorage.getItem(
@@ -64,8 +68,37 @@ const App = (props: any) => {
         );
       }
     };
-    init();
-  }, []);
+
+    fetchData(searchTerm);
+  }, [searchTerm]);
+
+  // Fetch all content when searchTerm is empty
+  useEffect(() => {
+    if (!searchTerm) {
+      const fetchAllContent = async () => {
+        try {
+          const payload = {
+            programId: localStorage.getItem("programID"),
+            subject: await getSubject(),
+            limit: 100,
+            searchQuery: '',
+          };
+
+          const result = await fetchSearchResults(payload);
+
+          if (result?.paginatedData?.length === 0) {
+            setError('No content available.');
+          } else {
+            setVideos(result?.paginatedData || []);
+          }
+        } catch (e) {
+          setError('Failed to fetch all content.');
+        }
+      };
+
+      fetchAllContent();
+    }
+  }, [searchTerm]);
   const onBackClick = () => {
     navigate(-1);
   };

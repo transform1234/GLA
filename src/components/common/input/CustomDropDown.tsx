@@ -52,11 +52,14 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
     onInputChange?.(value);
 
     if (value) {
-      const filtered = suggestions.filter((item: any) => item.name);
+      const filtered = suggestions.filter((item: any) =>
+        item.name.toLowerCase().includes(value.toLowerCase())
+      );
       setFilteredSuggestions(filtered);
       setShowDropdown(filtered.length > 0);
     } else {
       setShowDropdown(false);
+      setFilteredSuggestions([]);
     }
   };
 
@@ -67,8 +70,17 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   };
 
   const handleSuggestionClick = (item: any) => {
-    navigate(`/watch?search=${encodeURIComponent(item.name)}`);
+    navigate(`/search?search=${encodeURIComponent(item.name)}`);
     onSuggestionClick?.(item.name);
+    setShowDropdown(false); // Close the dropdown after selection
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && search) {
+      navigate(`/search?search=${encodeURIComponent(search)}`);
+      setShowDropdown(false);
+    }
+    onKeyDown?.(e);
   };
 
   useEffect(() => {
@@ -81,6 +93,12 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
     setFilteredSuggestions([]);
     setShowDropdown(false);
     onInputChange?.("");
+  
+  };
+
+  const handleSeeAll = () => {
+    navigate(`/search?search=${encodeURIComponent('')}`);
+    setShowDropdown(false);
   };
 
   return (
@@ -107,7 +125,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
           borderRadius="8px"
           height="46px"
           bg="white"
-          onKeyDown={onKeyDown}
+          onKeyDown={handleKeyDown}
           pl={isBackButton ? "45px" : "16px"}
         />
         <InputRightElement>
@@ -176,7 +194,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
               _hover={{ bg: "gray.100" }}
               onClick={() => console.log("See all results")}
             >
-              <Text fontSize="14px" fontFamily="Inter" color="primary.500" onClick={() => navigate(`/watch?search=${encodeURIComponent('all')}`)}>
+              <Text fontSize="14px" fontFamily="Inter" color="primary.500" onClick={handleSeeAll}>
                 {t("SEE_ALL_RESULTS")}
               </Text>
             </ListItem>

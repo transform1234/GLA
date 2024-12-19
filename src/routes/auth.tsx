@@ -2,11 +2,11 @@ import { lazy } from "react";
 
 const Videos = lazy(() => import("../pages/videos"));
 const Home = lazy(() => import("../pages/Home"));
-const Watch = lazy(() => import("../pages/videos/watch"));
+const Watch = lazy(() => import("../pages/videos/SearchPage"));
 
 export default [
   {
-    path: "/watch",
+    path: "/search",
     component: Watch,
   },
   {

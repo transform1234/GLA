@@ -338,7 +338,7 @@ const VideoReel: React.FC<{
       );
 
       if (listRef?.current && listRef?.current?.scrollToItem) {
-        listRef.current.scrollToItem(activeIndex); // Adjust index as needed
+        listRef.current.scrollToItem(activeIndex); 
       }
     }
   }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);

@@ -332,16 +332,21 @@ const VideoReel: React.FC<{
   );
 
   React.useEffect(() => {
-    if (activeIndex || activeIndex === 0) {
-      setVisibleIndex(
-        typeof activeIndex === "string" ? Number(activeIndex) : activeIndex
-      );
-
-      if (listRef?.current && listRef?.current?.scrollToItem) {
-        listRef.current.scrollToItem(activeIndex); // Adjust index as needed
+    const searchParams = new URLSearchParams(location.search);
+    const contentIdFromUrl = searchParams.get("contentId");
+  
+    if (contentIdFromUrl && videos.length > 0) {
+      const foundIndex = videos.findIndex((video) => video.contentId === contentIdFromUrl);
+      if (foundIndex !== -1) {
+        setVisibleIndex(foundIndex);
+        if (listRef?.current && listRef?.current?.scrollToItem) {
+          listRef.current.scrollToItem(foundIndex);
+        }
+      } else {
+        console.error(`Video with contentId ${contentIdFromUrl} not found.`);
       }
     }
-  }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
+  }, [location.search, videos.length, listRef?.current?.scrollToItem]);
 
   React.useEffect(() => {
     const handleEventNew = (event: any) => {

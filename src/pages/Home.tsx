@@ -150,12 +150,12 @@ export default function Homepage() {
   };
 
   const handleSuggestionClick = (value: string) => {
-    navigate(`/watch?search=${encodeURIComponent(value.trim())}`);
+    navigate(`/search?search=${encodeURIComponent(value.trim())}`);
   };
 
   const handleVideoClick = (video: any, index: number) => {
     localStorage.setItem("videos", JSON.stringify([video]));
-    navigate(`/videos?index=${encodeURIComponent(index)}`);
+    navigate(`/videos?index=${encodeURIComponent(index)}&contentId=${encodeURIComponent(video.contentId)}`);
   };
 
   return (

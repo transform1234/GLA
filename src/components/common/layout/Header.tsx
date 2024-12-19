@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const isWatchPage = location.pathname === "/watch";
+  const isSearchPage = location.pathname === "/search";
 
   useEffect(() => {
     setSearch(searchTerm);
@@ -56,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value; // Type assertion here
     if (e.key === "Enter" && value.trim()) {
-      navigate(`/watch?search=${encodeURIComponent(value.trim())}`);
+      navigate(`/search?search=${encodeURIComponent(value.trim())}`);
     }
   };
 
@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({
       transition="all 0.3s"
     >
       <VStack align={"stretch"} spacing={3}>
-        {!isWatchPage && (
+        {!isSearchPage && (
           <>
             <HStack justifyContent="space-between" align={"stretch"}>
               <Image src={`${palooza_logo}`} height="25px" />
@@ -122,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({
         )}
 
         <Collapse
-          in={isOpen || isWatchPage}
+          in={isOpen || isSearchPage}
           transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
         >
           <CustomInputWithDropdown
@@ -130,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({
             onInputChange={onSearchChange}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={isWatchPage}
+            isBackButton={isSearchPage}
             value={search}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}

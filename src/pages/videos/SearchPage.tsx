@@ -14,7 +14,7 @@ import { fetchSearchResults } from "../../services/content";
 import Layout from "../../components/common/layout/layout";
 import defaultImage from "../../assets/images/default-img.png";
 
-const Watch: React.FC = () => {
+const SearchPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState<string | null>(null);
@@ -36,12 +36,11 @@ const Watch: React.FC = () => {
   }, [searchTerm])
 
   const fetchData = async (search :any) => {
-    if (!search) return;
     const payload = {
       searchQuery: search || '',
       programId: localStorage.getItem("programID"),
       subject: localStorage.getItem("subject"),
-      limit: 60,
+      limit: 100,
     };
 
     try {
@@ -96,7 +95,6 @@ const Watch: React.FC = () => {
   };
 
   const handleVideoClick = (video: any, index: number) => {
-    // navigate(/videos/${index}/${video.contentId});
     localStorage.setItem(
       "filter",
       JSON.stringify({
@@ -106,7 +104,7 @@ const Watch: React.FC = () => {
         limit: 10,
       })
     );
-    navigate(`/videos?index=${encodeURIComponent(index)}`);
+    navigate(`/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(video?.name)}`);
   };
 
   return (
@@ -196,4 +194,4 @@ const Watch: React.FC = () => {
   );
 };
 
-export default Watch;
+export default SearchPage;

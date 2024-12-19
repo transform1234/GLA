@@ -104,7 +104,7 @@ const SearchPage: React.FC = () => {
         limit: 10,
       })
     );
-    navigate(`/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(video?.name)}`);
+    navigate(`/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(video?.name)}&subject=${encodeURIComponent(video?.category[0])}`);
   };
 
   return (

@@ -8,6 +8,7 @@ interface ContentCardProps {
     alt: string;
     name: string;
     category?: string[];
+    subject?: string;
   };
 }
 
@@ -31,19 +32,30 @@ const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
         <Text color="white" fontSize="sm" py={1} textAlign="left">
           {item.name}
         </Text>
-        {Array.isArray(item.category) &&
-          item.category.map((cat: any, catIndex: number) => (
-            <Badge
-              key={catIndex}
-              fontSize="10px"
-              colorScheme="whiteAlpha"
-              bg="whiteAlpha.300"
-              color="white"
-              mx="1"
-            >
-              {cat}
-            </Badge>
-          ))}
+        {Array.isArray(item.category)
+          ? item.category.map((cat: any, catIndex: number) => (
+              <Badge
+                key={catIndex}
+                fontSize="10px"
+                colorScheme="whiteAlpha"
+                bg="whiteAlpha.300"
+                color="white"
+                mx="1"
+              >
+                {cat}
+              </Badge>
+            ))
+          : item?.subject && (
+              <Badge
+                fontSize="10px"
+                colorScheme="whiteAlpha"
+                bg="whiteAlpha.300"
+                color="white"
+                mx="1"
+              >
+                {item?.subject}
+              </Badge>
+            )}
       </Box>
     </Box>
   );

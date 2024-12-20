@@ -55,8 +55,8 @@ const SearchPage: React.FC = () => {
   const handleVideoClick = (video: any, index: number) => {
     navigate(
       `/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(
-        video?.name
-      )}&subject=${encodeURIComponent(video?.category[0])}`
+        searchTerm
+      )}&subject=${encodeURIComponent(video?.subject)}`
     );
   };
 

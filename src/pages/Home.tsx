@@ -118,7 +118,7 @@ export default function Homepage() {
   const handleVideoClick = (video: any, index: number) => {
     navigate(
       `/videos?index=${encodeURIComponent(index)}&subject=${encodeURIComponent(
-        video.category[0]
+        video.subject
       )}`
     );
   };

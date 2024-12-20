@@ -338,7 +338,7 @@ const VideoReel: React.FC<{
       );
 
       if (listRef?.current && listRef?.current?.scrollToItem) {
-        listRef.current.scrollToItem(activeIndex); 
+        listRef.current.scrollToItem(activeIndex);
       }
     }
   }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
@@ -353,7 +353,7 @@ const VideoReel: React.FC<{
     return () => {
       window.removeEventListener("message", handleEventNew);
     };
-  }, [visibleIndex, videos]);
+  }, [visibleIndex, videos?.length]);
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
@@ -375,13 +375,14 @@ const VideoReel: React.FC<{
         // moduleId: videos?.[visibleIndex]?.contentId,
         lessonId:
           type === "assessmet"
-            ? videos?.[visibleIndex]?.contentId
-            : videos?.[visibleIndex]?.lesson_questionset,
+            ? videos?.[visibleIndex]?.lesson_questionset
+            : videos?.[visibleIndex]?.contentId,
         programId: programID,
         subject:
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
+      console.log("result1", videos?.[visibleIndex], player, result, retult1);
     }
   };
 

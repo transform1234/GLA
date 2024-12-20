@@ -368,13 +368,13 @@ const VideoReel: React.FC<{
       //   ...trackDataRef.current,
       //   [result.type]: result?.data,
       // };
-      const { type, data } = result;
+      const { iframeId, data } = result;
       const player = {
         ...data,
         // courseId: videos?.[visibleIndex]?.contentId,
         // moduleId: videos?.[visibleIndex]?.contentId,
         lessonId:
-          type === "assessmet"
+          iframeId === "assessment"
             ? videos?.[visibleIndex]?.lesson_questionset
             : videos?.[visibleIndex]?.contentId,
         programId: programID,

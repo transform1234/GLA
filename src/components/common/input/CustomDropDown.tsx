@@ -70,8 +70,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   };
 
   const handleSuggestionClick = (item: any) => {
-    navigate(`/search?search=${encodeURIComponent(item.name)}`);
-    onSuggestionClick?.(item.name);
+    onSuggestionClick?.(item || "");
     setShowDropdown(false); // Close the dropdown after selection
   };
 
@@ -93,12 +92,6 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
     setFilteredSuggestions([]);
     setShowDropdown(false);
     onInputChange?.("");
-  
-  };
-
-  const handleSeeAll = () => {
-    navigate(`/search?search=${encodeURIComponent('')}`);
-    setShowDropdown(false);
   };
 
   return (
@@ -169,7 +162,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
                 borderBottom="1px solid"
                 borderColor="borderGrey"
                 _hover={{ bg: "gray.100", cursor: "pointer" }}
-                onClick={() => handleSuggestionClick(item)}
+                onClick={() => handleSuggestionClick(item?.name)}
               >
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text fontSize="14px" fontFamily="Inter">
@@ -192,9 +185,9 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
               textAlign="center"
               cursor="pointer"
               _hover={{ bg: "gray.100" }}
-              onClick={() => console.log("See all results")}
+              onClick={(e) => handleSuggestionClick(value)}
             >
-              <Text fontSize="14px" fontFamily="Inter" color="primary.500" onClick={handleSeeAll}>
+              <Text fontSize="14px" fontFamily="Inter" color="primary.500">
                 {t("SEE_ALL_RESULTS")}
               </Text>
             </ListItem>

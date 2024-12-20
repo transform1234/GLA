@@ -22,7 +22,7 @@ import { getProgramId, getSubjectList } from "../services/home";
 import { chunk } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { fetchSearchResults } from "../services/content";
-import defaultImage from "../assets/images/default-img.png"; // add default image
+import ContentCard from "../components/common/cards/ContentCard";
 
 const subjectIcons = {
   science: { icon: physics, label: "Science" },
@@ -65,97 +65,62 @@ export default function Homepage() {
     fetchProgramId();
   }, []);
 
-  const handleSelectSubject = (subject: string) => {
+  const handleSelectSubject = async (subject: string) => {
     setSelectedSubject(subject);
     localStorage.setItem("subject", subject);
-    fetchSuggestions();
+    await getVideos("subject");
   };
 
-  const fetchSuggestions = async () => {
+  const getVideos = async (type: string = "search") => {
     const payload = {
-      searchQuery: searchTerm,
+      searchQuery: type === "search" ? searchTerm : "",
       programId: localStorage.getItem("programID"),
       subject: localStorage.getItem("subject"),
-      limit: 5,
+      limit: type === "search" ? 5 : 100,
     };
 
     try {
       const response = await fetchSearchResults(payload);
-      setSuggestions(response?.paginatedData || []);
-      setVideos(
-        response?.paginatedData?.map((item: any) => ({
-          src: item.img
-            ? `/path/to/image/${item?.contentId}.jpg`
-            : defaultImage,
-          alt: item?.name,
-          name: item?.name,
-          category: [item?.subject],
-          contentId: item?.contentId,
-        }))
-      );
-      setError(null);
+      if (type === "search") {
+        setSuggestions(response?.paginatedData);
+      } else {
+        setVideos(response?.paginatedData);
+        setError(null);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
-      setVideos([]);
+      if (type === "search") {
+        setSuggestions([]);
+      } else {
+        setVideos([]);
+      }
     }
   };
 
   useEffect(() => {
-    fetchSuggestions();
+    getVideos();
   }, [searchTerm]);
 
   useEffect(() => {
-    const storedSubject = localStorage.getItem("subject");
-    if (storedSubject) {
-      handleSelectSubject(storedSubject);
-    }
-
-    fetchSuggestions();
-  }, []);
-
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      const payload = {
-        searchQuery: searchTerm,
-        programId: localStorage.getItem("programID"),
-        subject: localStorage.getItem("subject"),
-        limit: 5,
-      };
-      try {
-        const response = await fetchSearchResults(payload);
-        setSuggestions(response?.paginatedData || []);
-        setVideos(
-          response?.paginatedData?.map((item: any) => ({
-            src: item.img
-              ? `/path/to/image/${item?.contentId}.jpg`
-              : defaultImage,
-            alt: item?.name,
-            name: item?.name,
-            category: [item?.subject],
-            contentId: item?.contentId,
-          }))
-        );
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-        setVideos([]);
+    const init = async () => {
+      const storedSubject = localStorage.getItem("subject");
+      if (storedSubject) {
+        handleSelectSubject(storedSubject);
       }
     };
-
-    fetchSuggestions();
+    init();
   }, []);
-
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-  };
 
   const handleSuggestionClick = (value: string) => {
     navigate(`/search?search=${encodeURIComponent(value.trim())}`);
   };
 
   const handleVideoClick = (video: any, index: number) => {
-    localStorage.setItem("videos", JSON.stringify([video]));
-    navigate(`/videos?index=${encodeURIComponent(index)}&subject=${encodeURIComponent(video.category[0])}`);
+    navigate(
+      `/videos?index=${encodeURIComponent(index)}&subject=${encodeURIComponent(
+        video.category[0]
+      )}`
+    );
   };
 
   return (
@@ -163,7 +128,7 @@ export default function Homepage() {
       _header={{
         searchTerm: searchTerm,
         suggestions: suggestions,
-        onSearchChange: handleSearchChange,
+        onSearchChange: setSearchTerm,
         onSuggestionClick: handleSuggestionClick,
       }}
     >
@@ -274,42 +239,7 @@ export default function Homepage() {
                       cursor="pointer"
                       onClick={() => handleVideoClick(item, index)}
                     >
-                      <Image
-                        src={item.src}
-                        alt={item.alt}
-                        borderRadius="md"
-                        objectFit="cover"
-                        width="100%"
-                      />
-                      <Box
-                        padding={3}
-                        position="absolute"
-                        bottom={0}
-                        width="100%"
-                        bg="linear-gradient(to top, rgba(0, 0, 0, 1), transparent)"
-                      >
-                        <Text
-                          color="white"
-                          fontSize="sm"
-                          py={1}
-                          textAlign="left"
-                        >
-                          {item.name}
-                        </Text>
-                        {Array.isArray(item.category) &&
-                          item.category.map((cat: any, catIndex: number) => (
-                            <Badge
-                              key={catIndex}
-                              fontSize="10px"
-                              colorScheme="whiteAlpha"
-                              bg="whiteAlpha.300"
-                              color="white"
-                              mx="1"
-                            >
-                              {cat}
-                            </Badge>
-                          ))}
-                      </Box>
+                      <ContentCard item={item} />
                     </GridItem>
                   ))}
                 </Grid>

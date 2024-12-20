@@ -25,7 +25,7 @@ import PrimaryButton from "../../components/common/button/PrimaryButton";
 import CustomHeading from "../../components/common/typography/Heading";
 import Layout from "../../components/common/layout/layout";
 import CustomInput from "../../components/common/input/CustomInput";
-import fieldConfig from '../../utils/constants/fieldConfig';
+import fieldConfig from "../../utils/constants/fieldConfig";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -54,15 +54,19 @@ export default function Login() {
     const translationKey = `LOGIN_${type.toUpperCase()}_EXAMPLE_EXPLANATION_${currentState}`;
     return t(translationKey);
   };
-  
-  const openModal = (title: string, message: string, type: "username" | "password") => {
+
+  const openModal = (
+    title: string,
+    message: string,
+    type: "username" | "password"
+  ) => {
     const modalExample = getModalExample(type);
-  
+
     setModalContent({
       title: title,
       message: message,
       example: modalExample,
-      labels: fieldConfig[type][state || "KA"].labels, 
+      labels: fieldConfig[type][state || "KA"].labels,
     });
     onOpen();
   };
@@ -91,7 +95,7 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    setIsSubmitted(true); 
+    setIsSubmitted(true);
     const telemetryImpression = {
       context: {
         env: "log-in",
@@ -145,33 +149,18 @@ export default function Login() {
     // telemetryFactory.interact(telemetryInteract);
     if (validate()) {
       try {
-      const result = await fetchToken(username, password);
-
-      if (result) {
-        let token = result?.access_token;
-        let refreshToken = result?.refresh_token;
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("token", token);
-
-          const resultTeacher = await getAuthUser();
-
-        localStorage.setItem("id", resultTeacher?.data[0]?.userId);
-        localStorage.setItem("name", resultTeacher?.data[0]?.name);
-        localStorage.setItem("grade", resultTeacher?.data[0]?.grade);
-        localStorage.setItem("medium", resultTeacher?.data[0]?.medium);
-        localStorage.setItem("board", resultTeacher?.data[0]?.board);
-        localStorage.setItem("section", resultTeacher?.data[0]?.section);
-
-        if (resultTeacher?.data[0]?.userId) {
-          navigate(0);
-          navigate("/home");
+        const result = await fetchToken(username, password);
+        if (result) {
+          if (result?.authUser?.userId) {
+            navigate(0);
+            navigate("/home");
+          } else {
+            localStorage.removeItem("token");
+            setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
+          }
         } else {
           localStorage.removeItem("token");
           setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
-        }
-      } else {
-        localStorage.removeItem("token");
-        setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
         }
       } catch (error) {
         setErrors({
@@ -181,7 +170,7 @@ export default function Login() {
       }
     }
   };
-  const handleInputChange = (field : any, value: any) => {
+  const handleInputChange = (field: any, value: any) => {
     setErrors((prevErrors) => ({
       ...prevErrors,
       [field]: value ? "" : t("LOGIN_REQUIRED_FIELD"),
@@ -297,7 +286,7 @@ export default function Login() {
                   onClick={handleLogin}
                   width="100%"
                   color="white"
-                  isDisabled={isLoginDisabled}
+                  disabled={isLoginDisabled}
                   marginTop="20px"
                 >
                   {t("LOGIN")}
@@ -386,7 +375,6 @@ export default function Login() {
                       />
                     </Box>
                   )}
-
                 </PopupModal>
               </VStack>
             </Box>

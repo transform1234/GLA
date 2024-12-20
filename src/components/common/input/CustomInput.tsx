@@ -107,9 +107,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
           _focusVisible={{ borderColor: getHoverAndFocusColor() }}
           _hover={{ borderColor: getHoverAndFocusColor() }}
           color={getBorderColor().color}
-          isDisabled={disabled}
+          disabled={disabled}
           bg={getBorderColor().bg}
           pr="2.5rem"
+          height="46px"
+          borderRadius="8px"
         />
         <InputRightElement width="3rem" cursor="pointer">
           {isPassword && (

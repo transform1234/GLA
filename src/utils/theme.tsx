@@ -43,7 +43,8 @@ const customTheme = extendTheme({
       backgroundHighlight: "#03627C1A",
       backgroundGrey: "#F4F4F4",
       white: "#FFFFFF",
-      borderColor: "#00A745" 
+      borderColor: "#00A745" ,
+      borderGrey : "#C5C5C5"
   },
   components: {
     Center: {

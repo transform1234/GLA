@@ -4,9 +4,11 @@ import React, { useRef, useEffect } from "react";
 import { handleEvent } from "../../pages/videos/utils";
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
+const baseUrl: string = `${import.meta.env.VITE_API_AUTH_URL}/api/v1`;
 
 interface SunbirdPlayerProps {
   public_url: string;
+  adapter: string;
   forwardedRef?: any;
   setTrackData?: (data: any) => void;
   width: number;
@@ -31,6 +33,7 @@ const SunbirdPlayer = ({
   width,
   height,
   forwardedRef,
+  adapter,
   ...props
 }: SunbirdPlayerProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -113,11 +116,11 @@ const SunbirdPlayer = ({
       if (typeof forwardedRef === "function") {
         forwardedRef(ref); // If forwardedRef is a function
       } else {
-        forwardedRef.current = ref; // If forwardedRef is an object ref
+        forwardedRef.current = ref; // If forwardedRef is an object ref obj
       }
     }
   };
-
+  // console.log(adapter);
   if (url) {
     return (
       <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>
@@ -156,8 +159,9 @@ const SunbirdPlayer = ({
           ref={iframeRef}
           name={JSON.stringify({
             ...props,
-            questionListUrl: "https://sunbirdsaas.com/api/question/v1/list",
+            questionListUrl: `${baseUrl}/question/${adapter}/questionList`,
             // questionListUrl: `https://alt-dev.uniteframework.io/course/questionset`,
+            // questionListUrl: `https://sunbirdsaas.com/api/question/v1/list`,
             telemetryBaseUrl: VITE_TELEMETRY_BASE_URL || null,
             telemetryEndpoint: VITE_TELEMETRY_END_POINT || null,
           })}

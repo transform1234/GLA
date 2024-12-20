@@ -1,6 +1,7 @@
 import URL from "../../utils/constants/url-constants.json";
 import { jwtDecode } from "jwt-decode";
 import { uniqueId } from "../utilService"; // generate manually
+import { getProgramId } from "../home";
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
 const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
@@ -11,7 +12,6 @@ const VITE_APP_ENV = import.meta.env.VITE_APP_ENV;
 
 export const fetchToken = async (username: string, password: string) => {
   const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
-
   const response = await fetch(authUrl, {
     method: "POST",
     headers: {
@@ -31,7 +31,45 @@ export const fetchToken = async (username: string, password: string) => {
   }
   const data = await response.json();
   const tokenDecoded: any = jwtDecode(data.access_token);
+  localStorage.setItem("token", data.access_token);
+  localStorage.setItem("refreshToken", data.refresh_token);
   localStorage.setItem("contentSessionId", data?.session_state);
+  const authUser = await checkUserDetails();
+  const { grade, medium, board } =
+    authUser?.data?.GroupMemberships?.[0]?.Group || {};
+  const { udiseCode } = authUser?.data?.Student?.School || {};
+  localStorage.setItem("id", authUser?.data?.userId);
+  localStorage.setItem("name", authUser?.data?.name);
+  localStorage.setItem("grade", grade);
+  localStorage.setItem("medium", medium);
+  localStorage.setItem("board", board);
+  const programID = await getProgramId();
+  const contextData = [
+    {
+      id: grade,
+      type: "grade",
+    },
+    {
+      id: medium,
+      type: "medium",
+    },
+    {
+      id: board,
+      type: "board",
+    },
+    {
+      id: username,
+      type: "username",
+    },
+    {
+      id: udiseCode,
+      type: "school_udise",
+    },
+    {
+      id: programID?.programId,
+      type: "program",
+    },
+  ];
 
   const dataString = JSON.stringify({
     id: "palooza.telemetry",
@@ -57,14 +95,14 @@ export const fetchToken = async (username: string, password: string) => {
           env: VITE_APP_ENV,
           sid: localStorage.getItem("contentSessionId"),
           did: localStorage.getItem("did"),
-          cdata: [],
+          cdata: contextData,
           rollup: {
-            l1: "0134892941899694081",
+            l1: "",
           },
           uid: tokenDecoded?.sub,
         },
         object: {},
-        tags: ["0134892941899694081"],
+        tags: contextData,
         edata: {
           id: "login",
           type: "session",
@@ -90,13 +128,43 @@ export const fetchToken = async (username: string, password: string) => {
   if (!responseTelemetry.ok) {
     throw new Error("Failed to send telemetry");
   }
-  return data;
+  return { ...data, authUser: authUser?.data };
 };
 
 export const logout = async () => {
   const logoutUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.LOGOUT}`;
   const token = localStorage.getItem("token");
-
+  const authUser = await checkUserDetails();
+  const { grade, medium, board } =
+    authUser?.data?.GroupMemberships?.[0]?.Group || {};
+  const { udiseCode } = authUser?.data?.Student?.School || {};
+  const programID = await getProgramId();
+  const contextData = [
+    {
+      id: grade,
+      type: "grade",
+    },
+    {
+      id: medium,
+      type: "medium",
+    },
+    {
+      id: board,
+      type: "board",
+    },
+    {
+      id: authUser?.data?.username,
+      type: "username",
+    },
+    {
+      id: udiseCode,
+      type: "school_udise",
+    },
+    {
+      id: programID?.programId,
+      type: "program",
+    },
+  ];
   if (!token) {
     throw new Error("Token not available in localStorage");
   }
@@ -125,14 +193,14 @@ export const logout = async () => {
           env: VITE_APP_ENV,
           sid: localStorage.getItem("contentSessionId"),
           did: localStorage.getItem("did"),
-          cdata: [],
+          cdata: contextData,
           rollup: {
             l1: "",
           },
           uid: tokenDecoded?.sub,
         },
         object: {},
-        tags: [""],
+        tags: contextData,
         edata: {
           id: "logout",
           type: "session",
@@ -240,7 +308,8 @@ export const checkUserDetails = async () => {
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
+      if (response.status !== 200) {
+        // set != 200 from == 401
         try {
           let refreshToken = await getNewAccessToken();
           const { access_token, refresh_token } = refreshToken;
@@ -286,7 +355,7 @@ export const checkUserDetails = async () => {
     }
 
     const data = await response.json();
-    return { success: true, token };
+    return { success: true, token, data: data?.data?.[0] || {} };
   } catch (error: unknown) {
     return {
       success: false,

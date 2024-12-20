@@ -50,10 +50,12 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   const handleSearchChange = (value: string) => {
     setSearch(value);
     onInputChange?.(value);
+  };
 
-    if (value) {
+  useEffect(() => {
+    if (search) {
       const filtered = suggestions.filter((item: any) =>
-        item.name.toLowerCase().includes(value.toLowerCase())
+        item.name.toLowerCase().includes(search.toLowerCase())
       );
       setFilteredSuggestions(filtered);
       setShowDropdown(filtered.length > 0);
@@ -61,7 +63,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
       setShowDropdown(false);
       setFilteredSuggestions([]);
     }
-  };
+  }, [search, suggestions]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {

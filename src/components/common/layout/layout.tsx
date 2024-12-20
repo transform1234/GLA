@@ -73,6 +73,7 @@ const Layout: React.FC<Props> = ({
           width={width}
           bg="white"
           boxShadow="0px 0px 15px 0px #e1e1e1"
+          overflowY="auto"
         >
           {isHeaderVisible && <Header {..._header} />}
 

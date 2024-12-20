@@ -145,6 +145,10 @@ const VideoItem: React.FC<{
               id: authUser?.username,
               type: "username",
             },
+            {
+              id: adapter,
+              type: "contentSource",
+            },
           ])
         );
         setLesson(resultData);
@@ -191,6 +195,10 @@ const VideoItem: React.FC<{
                 {
                   id: qml_id,
                   type: "question_set",
+                },
+                {
+                  id: lesson?.mimeType,
+                  type: "mimeType",
                 },
               ])}
             />
@@ -252,6 +260,10 @@ const VideoItem: React.FC<{
                     {
                       id,
                       type: "learning_content",
+                    },
+                    {
+                      id: lessonQml?.mimeType,
+                      type: "mimeType",
                     },
                   ])}
                 />

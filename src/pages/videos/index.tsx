@@ -39,10 +39,13 @@ const App = (props: any) => {
   }, [location.search]);
 
   useEffect(() => {
-    const programId = localStorage.getItem("programID");
-    if (programId) {
-      setProgramID(programId);
-    }
+    const init = async () => {
+      const result: any = await getProgramId();
+      if (result?.programId) {
+        setProgramID(result?.programId);
+      }
+    };
+    init();
   }, []);
 
   useEffect(() => {

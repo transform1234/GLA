@@ -425,6 +425,7 @@ const VideoReel: React.FC<{
           right="16px"
         />
         <List
+          overscanCount={1}
           ref={listRef}
           width={width}
           height={itemSize}

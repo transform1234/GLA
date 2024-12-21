@@ -166,6 +166,7 @@ const SunbirdPlayer = ({
             telemetryEndpoint: VITE_TELEMETRY_END_POINT || null,
           })}
           src={`${public_url || process.env.PUBLIC_URL || ""}${url}/index.html`}
+          allow="autoplay"
         />
       </VStack>
     );

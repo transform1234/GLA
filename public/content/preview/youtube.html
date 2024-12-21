@@ -4,7 +4,7 @@
     </body>
     <script type="text/javascript">
         let params = (new URL(document.location)).searchParams;
-        var youtubeSrc = "https://www.youtube.com/embed/"+params.get('id')+"?enablejsapi=1&autoplay=1&rel=0";
+        var youtubeSrc = "https://www.youtube.com/embed/"+params.get('id')+"?enablejsapi=1&autoplay=1&rel=0";// conflcits
         if(params.get('origin')){
             youtubeSrc = youtubeSrc + "&origin=" + params.get('origin');   
         }

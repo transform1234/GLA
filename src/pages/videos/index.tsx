@@ -34,17 +34,27 @@ const App = (props: any) => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const query = params.get("search") || '';
+    const query = params.get("search") || "";
     setSearchTerm(query);
   }, [location.search]);
 
   useEffect(() => {
-    const fetchData = async (search : any) => {
+    const init = async () => {
+      const result: any = await getProgramId();
+      if (result?.programId) {
+        setProgramID(result?.programId);
+      }
+    };
+    init();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async (search: any) => {
       try {
         if (!search) return;
         const payload = {
           searchQuery: search,
-          programId: localStorage.getItem("programID"),
+          programId: programID,
           subject: await getSubject(),
           limit: 100,
         };
@@ -70,7 +80,7 @@ const App = (props: any) => {
     };
 
     fetchData(searchTerm);
-  }, [searchTerm]);
+  }, [searchTerm, programID]);
 
   // Fetch all content when searchTerm is empty
   useEffect(() => {
@@ -78,35 +88,36 @@ const App = (props: any) => {
       const fetchAllContent = async () => {
         try {
           const payload = {
-            programId: localStorage.getItem("programID"),
+            programId: programID,
             subject: await getSubject(),
             limit: 100,
-            searchQuery: '',
+            searchQuery: "",
           };
 
           const result = await fetchSearchResults(payload);
 
           if (result?.paginatedData?.length === 0) {
-            setError('No content available.');
+            setError("No content available.");
           } else {
             setVideos(result?.paginatedData || []);
           }
         } catch (e) {
-          setError('Failed to fetch all content.');
+          setError("Failed to fetch all content.");
         }
       };
 
       fetchAllContent();
     }
-  }, [searchTerm]);
+  }, [searchTerm, programID]);
+
   const onBackClick = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   return error ? (
     <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
-    <VideoReel {...{ programID, videos,activeIndex:index, ...props }}/>
+    <VideoReel {...{ programID, videos, activeIndex: index, ...props }} />
   );
 };
 

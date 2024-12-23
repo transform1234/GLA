@@ -145,6 +145,10 @@ const VideoItem: React.FC<{
               id: authUser?.username,
               type: "username",
             },
+            {
+              id: adapter,
+              type: "contentSource",
+            },
           ])
         );
         setLesson(resultData);
@@ -191,6 +195,10 @@ const VideoItem: React.FC<{
                 {
                   id: qml_id,
                   type: "question_set",
+                },
+                {
+                  id: lesson?.mimeType,
+                  type: "mimeType",
                 },
               ])}
             />
@@ -252,6 +260,10 @@ const VideoItem: React.FC<{
                     {
                       id,
                       type: "learning_content",
+                    },
+                    {
+                      id: lessonQml?.mimeType,
+                      type: "mimeType",
                     },
                   ])}
                 />
@@ -317,6 +329,7 @@ const VideoReel: React.FC<{
   const { height: itemSize, width } = useDeviceSize();
   const navigate = useNavigate();
   // const trackDataRef = useRef<any[]>([]);
+  const [isIndexScroll, setIsIndexScroll] = useState(false);
 
   const handleScroll = useCallback(
     debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
@@ -326,9 +339,17 @@ const VideoReel: React.FC<{
       if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
         // call tracking API here
+        if (isIndexScroll) {
+          const queryParams = new URLSearchParams(location.search);
+          queryParams.set("index", String(newVisibleIndex));
+          navigate({
+            pathname: location.pathname,
+            search: `?${queryParams.toString()}`,
+          });
+        }
       }
     }, 500),
-    [videos, itemSize]
+    [videos, itemSize, visibleIndex]
   );
 
   React.useEffect(() => {
@@ -338,8 +359,11 @@ const VideoReel: React.FC<{
       );
 
       if (listRef?.current && listRef?.current?.scrollToItem) {
-        listRef.current.scrollToItem(activeIndex); 
+        listRef.current.scrollToItem(activeIndex);
+        setIsIndexScroll(true);
       }
+    } else {
+      setIsIndexScroll(true);
     }
   }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
 
@@ -353,7 +377,7 @@ const VideoReel: React.FC<{
     return () => {
       window.removeEventListener("message", handleEventNew);
     };
-  }, [visibleIndex, videos]);
+  }, [visibleIndex, videos?.length]);
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
@@ -368,20 +392,21 @@ const VideoReel: React.FC<{
       //   ...trackDataRef.current,
       //   [result.type]: result?.data,
       // };
-      const { type, data } = result;
+      const { iframeId, data } = result;
       const player = {
         ...data,
         // courseId: videos?.[visibleIndex]?.contentId,
         // moduleId: videos?.[visibleIndex]?.contentId,
         lessonId:
-          type === "assessmet"
-            ? videos?.[visibleIndex]?.contentId
-            : videos?.[visibleIndex]?.lesson_questionset,
+          iframeId === "assessment"
+            ? videos?.[visibleIndex]?.lesson_questionset
+            : videos?.[visibleIndex]?.contentId,
         programId: programID,
         subject:
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
+      console.log("result1", videos?.[visibleIndex], player, result, retult1);
     }
   };
 
@@ -402,16 +427,17 @@ const VideoReel: React.FC<{
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
         <TopIcon
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           icon={"ChevronLeftIcon"}
           left="16px"
         />
-        <TopIcon
+        {/* <TopIcon
           onClick={() => console.log("TopIcon")}
           icon={"ThumbsUpIcon"}
           right="16px"
-        />
+        /> */}
         <List
+          overscanCount={1}
           ref={listRef}
           width={width}
           height={itemSize}
@@ -424,6 +450,8 @@ const VideoReel: React.FC<{
             overflowY: "scroll",
             scrollbarWidth: "none",
             msOverflowStyle: "none",
+            scrollSnapStop: "always",
+            scrollBehavior: "smooth",
             touchAction: "none",
           }}
           className="hide-scrollbar"

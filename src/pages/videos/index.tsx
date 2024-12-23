@@ -109,8 +109,9 @@ const App = (props: any) => {
       fetchAllContent();
     }
   }, [searchTerm, programID]);
+
   const onBackClick = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   return error ? (

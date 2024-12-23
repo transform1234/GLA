@@ -45,13 +45,16 @@ const Watch = () => {
     searchTerm: string;
     subject: string | null;
   }) => {
+    const isSearchTermChange = !!filter.searchTerm;
+    const limit = isSearchTermChange ? 5 : 100;
+  
     const payload = {
       searchQuery: filter.searchTerm,
       programId: localStorage.getItem("programID"),
       subject: filter.subject,
-      limit: 10,
+      limit,
     };
-
+  
     try {
       const response = await fetchSearchResults(payload);
       setSuggestions(response?.paginatedData || []);

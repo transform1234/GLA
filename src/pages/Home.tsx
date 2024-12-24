@@ -44,27 +44,25 @@ export default function Homepage(props:any) {
   const { authUser } = props;
 
   useEffect(() => {
-    const validateAuthUser = () => {
+    const fetchProgramId = async () => {
       if (!authUser?.Student?.School) {
         setError(t("NO_SCHOOL_FOUND"));
-      } else if (!authUser?.GroupMemberships?.[0]?.Group?.board) {
-        setError(t("NO_BOARD_FOUND"));
-      } else if (!authUser?.GroupMemberships?.[0]?.Group?.grade) {
-        setError(t("NO_CLASS_FOUND"));
-      } else {
-        setError(null);
+        return;
       }
-    };
+      if (!authUser?.GroupMemberships?.[0]?.Group?.board) {
+        setError(t("NO_BOARD_FOUND"));
+        return;
+      }
+      if (!authUser?.GroupMemberships?.[0]?.Group?.grade) {
+        setError(t("NO_CLASS_FOUND"));
+        return;
+      }
 
-    validateAuthUser();
-  }, [authUser]);
 
-  useEffect(() => {
-    const fetchProgramId = async () => {
       try {
         let storedSubject = localStorage.getItem("subject") || "";
         const programData = await getProgramId();
-        if (programData) {
+        if (programData?.programId) {
           const res: any = await getSubjectList();
           const subjectR = chunk(res, 4);
           if (!storedSubject && res.length > 0) {
@@ -73,16 +71,17 @@ export default function Homepage(props:any) {
           }
           setSelectedSubject(storedSubject);
           setSubjects(subjectR);
-        } else if (!programData?.programId) {
+        } else {
           setError(t("NO_PROGRAM_FOUND"));
         }
       } catch (error) {
         console.error("Error fetching program data:", error);
+        setError(t("An unexpected error occurred. Please try again later."));
       }
     };
 
     fetchProgramId();
-  }, []);
+  }, [authUser]);
 
   const handleSelectSubject = async (subject: string) => {
     setSelectedSubject(subject);

@@ -31,15 +31,19 @@ const Watch = () => {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>({
     searchTerm: "",
-    subject: localStorage.getItem("subject") || null,
+    subject: localStorage.getItem("language") || null,
   });
   const [subjects, setSubjects] = useState<Array<any>>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(
-    localStorage.getItem("subject") || null
+    localStorage.getItem("language") || null
   );
-
+  const [language, setLanguage] = useState(localStorage.getItem('language') || '');
   const { t } = useTranslation();
+
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
 
   const fetchSuggestions = async (filter: {
     searchTerm: string;
@@ -86,11 +90,11 @@ const Watch = () => {
 
   const handleSelectSubject = (subject: string) => {
     if (subject === "ALL") {
-      localStorage.setItem("subject", "");
+      localStorage.setItem("language", "");
       setSelectedSubject(null);
       setFilter((prevFilter) => ({ ...prevFilter, subject: "" }));
     } else {
-      localStorage.setItem("subject", subject);
+      localStorage.setItem("language", subject);
       setSelectedSubject(subject);
       setFilter((prevFilter) => ({ ...prevFilter, subject }));
     }
@@ -111,12 +115,12 @@ const Watch = () => {
 
   const getSubject = async () => {
     try {
-      let storedSubject = localStorage.getItem("subject") || "";
+      let storedSubject = localStorage.getItem("language") || "";
       const res: any = await getSubjectList();
       const subjectR = chunk(res, 4);
       if (!storedSubject && res.length > 0) {
         storedSubject = res[0]?.subject;
-        localStorage.setItem("subject", storedSubject);
+        localStorage.setItem("language", storedSubject);
       }
       setSelectedSubject(storedSubject);
       setSubjects(subjectR);

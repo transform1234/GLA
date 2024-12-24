@@ -32,7 +32,7 @@ const subjectIcons = {
   kannada: { icon: kannada, label: "Kannada" },
   odia: { icon: odia, label: "Odia" },
 };
-export default function Homepage() {
+export default function Homepage(props:any) {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
@@ -41,6 +41,23 @@ export default function Homepage() {
   const [videos, setVideos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { authUser } = props;
+
+  useEffect(() => {
+    const validateAuthUser = () => {
+      if (!authUser?.Student?.School) {
+        setError(t("NO_SCHOOL_FOUND"));
+      } else if (!authUser?.GroupMemberships?.[0]?.Group?.board) {
+        setError(t("NO_BOARD_FOUND"));
+      } else if (!authUser?.GroupMemberships?.[0]?.Group?.grade) {
+        setError(t("NO_CLASS_FOUND"));
+      } else {
+        setError(null);
+      }
+    };
+
+    validateAuthUser();
+  }, [authUser]);
 
   useEffect(() => {
     const fetchProgramId = async () => {
@@ -56,6 +73,8 @@ export default function Homepage() {
           }
           setSelectedSubject(storedSubject);
           setSubjects(subjectR);
+        } else if (!programData?.programId) {
+          setError(t("NO_PROGRAM_FOUND"));
         }
       } catch (error) {
         console.error("Error fetching program data:", error);
@@ -85,7 +104,6 @@ export default function Homepage() {
         setSuggestions(response?.paginatedData);
       } else {
         setVideos(response?.paginatedData);
-        setError(null);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -133,6 +151,12 @@ export default function Homepage() {
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">
+      {error ? (
+          <Text color="red.500" fontSize="xl" textAlign="center" mt="10">
+            {error}
+          </Text>
+        ) : (
+          <>
         <VStack pt="6" spacing={4}>
           <CustomHeading
             textAlign="center"
@@ -247,6 +271,8 @@ export default function Homepage() {
             </Box>
           </VStack>
         </Box>
+        </>
+      )}
       </VStack>
     </Layout>
   );

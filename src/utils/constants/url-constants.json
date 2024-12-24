@@ -1,11 +1,12 @@
 {
-    "AUTH": "/auth/realms/hasura-app/protocol/openid-connect/token",
-    "USER": "/api/v1/user",
-    "CONTENT_ID": "/hierarchy/contentid", 
-    "GLA_USER_CONTENT" : "/altprogramassociation/glaUserContent",
-    "ALT_LESSON_TRACKING" : "/altlessontracking/altAddLessonTracking",
-    "SUBJECT_LIST" : "/api/v1/altprogramassociation/altsubjectlist",
-    "ALT_PROGRAM_BMGS":"/api/v1/altprogram/bmgs",
-    "USER_VALIDATION" : "/api/v1/user/validateToken",
-    "SEARCH" : "/altprogramassociation/contentSearch"
+  "AUTH": "/auth/realms/hasura-app/protocol/openid-connect/token",
+  "LOGOUT": "/auth/realms/hasura-app/protocol/openid-connect/logout",
+  "USER": "/api/v1/user",
+  "CONTENT_ID": "/hierarchy/contentid",
+  "GLA_USER_CONTENT": "/altprogramassociation/glaUserContent",
+  "ALT_LESSON_TRACKING": "/altlessontracking/altAddLessonTracking",
+  "SUBJECT_LIST": "/api/v1/altprogramassociation/altsubjectlist",
+  "ALT_PROGRAM_BMGS": "/api/v1/altprogram/bmgs",
+  "USER_VALIDATION": "/api/v1/user/validateToken",
+  "SEARCH": "/altprogramassociation/contentSearch"
 }

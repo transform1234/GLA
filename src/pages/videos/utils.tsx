@@ -33,7 +33,7 @@ export const getTrackData = (data: any) => {
       : 0;
     scoreDetails = handleTrackData({ ...data, score }, "ecml");
   }
-  return { ...scoreDetails, type: data.type };
+  return { ...scoreDetails, type: data.type, iframeId: data?.iframeId };
 };
 
 export const handleTrackData = (
@@ -92,6 +92,7 @@ export const handleEvent = ({ data }: any) => {
     trackData = data;
   }
   let telemetry: {
+    iframeId?: string;
     eid?: string;
     edata?: any;
   } = {};
@@ -164,7 +165,7 @@ export const handleEvent = ({ data }: any) => {
     const summaryData = telemetry?.edata;
     if (summaryData?.summary && Array.isArray(summaryData?.summary)) {
       const score = summaryData.summary.find((e: any) => "score" in e);
-      if (score?.score) {
+      if (score?.score || score?.score == 0) {
         trackData = {
           score: score?.score,
           trackData: telemetry?.edata,
@@ -190,5 +191,10 @@ export const handleEvent = ({ data }: any) => {
       trackData = { type: "exit", score: 0, trackData };
     }
   }
-  return getTrackData({ ...trackData, mimeType: data.mimeType });
+
+  return getTrackData({
+    ...trackData,
+    mimeType: data.mimeType,
+    iframeId: telemetry?.iframeId,
+  });
 };

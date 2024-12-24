@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/common/Loading";
-import { getAltUserContent } from "../../services/content";
+import { fetchSearchResults } from "../../services/content";
 import { getProgramId, getSubjectList } from "../../services/home";
 import VideoReel from "./VideoReels";
 
@@ -23,29 +23,52 @@ const getSubject = async () => {
   return localStorage.getItem("subject") || null;
 };
 
-const App = () => {
+const App = (props: any) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Array<any>>([]);
   const [error, setError] = useState<string | null>(null);
+  const query = new URLSearchParams(window.location.search);
+  const index = query.get("index");
+  const [programID, setProgramID] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get("search") || "";
+    setSearchTerm(query);
+  }, [location.search]);
 
   useEffect(() => {
     const init = async () => {
-      try {
-        const result = await getAltUserContent({
-          page: 1,
-          limit: 60,
-          programId: "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
-          subject: await getSubject(),
-        });
+      const result: any = await getProgramId();
+      if (result?.programId) {
+        setProgramID(result?.programId);
+      }
+    };
+    init();
+  }, []);
 
-        if (result?.data?.length === 0) {
+  useEffect(() => {
+    const fetchData = async (search: any) => {
+      try {
+        if (!search) return;
+        const payload = {
+          searchQuery: search,
+          programId: programID,
+          subject: await getSubject(),
+          limit: 100,
+        };
+
+        const result = await fetchSearchResults(payload);
+
+        if (result?.paginatedData?.length === 0) {
           setError(
             `No content available for the subject: ${localStorage.getItem(
               "subject"
             )}.`
           );
         } else {
-          setVideos(result?.data || []);
+          setVideos(result?.paginatedData || []);
         }
       } catch (e) {
         setError(
@@ -55,16 +78,46 @@ const App = () => {
         );
       }
     };
-    init();
-  }, []);
+
+    fetchData(searchTerm);
+  }, [searchTerm, programID]);
+
+  // Fetch all content when searchTerm is empty
+  useEffect(() => {
+    if (!searchTerm) {
+      const fetchAllContent = async () => {
+        try {
+          const payload = {
+            programId: programID,
+            subject: await getSubject(),
+            limit: 100,
+            searchQuery: "",
+          };
+
+          const result = await fetchSearchResults(payload);
+
+          if (result?.paginatedData?.length === 0) {
+            setError("No content available.");
+          } else {
+            setVideos(result?.paginatedData || []);
+          }
+        } catch (e) {
+          setError("Failed to fetch all content.");
+        }
+      };
+
+      fetchAllContent();
+    }
+  }, [searchTerm, programID]);
+
   const onBackClick = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   return error ? (
     <Loading showSpinner={false} message={error} onBackClick={onBackClick} />
   ) : (
-    <VideoReel videos={videos} />
+    <VideoReel {...{ programID, videos, activeIndex: index, ...props }} />
   );
 };
 

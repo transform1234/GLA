@@ -14,6 +14,7 @@ import {
 import close from "../../../assets/icons/close.svg";
 import { useNavigate } from "react-router-dom";
 import backIcon from "../../../assets/icons/arrow_back_ios.svg";
+import { useTranslation } from "react-i18next";
 
 interface CustomInputProps {
   placeholder?: string;
@@ -45,18 +46,24 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const handleSearchChange = (value: string) => {
     setSearch(value);
     onInputChange?.(value);
+  };
 
-    if (value) {
-      const filtered = suggestions.filter((item: any) => item.name);
+  useEffect(() => {
+    if (search) {
+      const filtered = suggestions.filter((item: any) =>
+        item.name.toLowerCase().includes(search.toLowerCase())
+      );
       setFilteredSuggestions(filtered);
       setShowDropdown(filtered.length > 0);
     } else {
       setShowDropdown(false);
+      setFilteredSuggestions([]);
     }
-  };
+  }, [search, suggestions]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
@@ -65,8 +72,16 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   };
 
   const handleSuggestionClick = (item: any) => {
-    navigate(`/watch?search=${encodeURIComponent(item.name)}`);
-    onSuggestionClick?.(item.name);
+    onSuggestionClick?.(item || "");
+    setShowDropdown(false); // Close the dropdown after selection
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && search) {
+      navigate(`/search?search=${encodeURIComponent(search)}`);
+      setShowDropdown(false);
+    }
+    onKeyDown?.(e);
   };
 
   useEffect(() => {
@@ -105,7 +120,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
           borderRadius="8px"
           height="46px"
           bg="white"
-          onKeyDown={onKeyDown}
+          onKeyDown={handleKeyDown}
           pl={isBackButton ? "45px" : "16px"}
         />
         <InputRightElement>
@@ -149,7 +164,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
                 borderBottom="1px solid"
                 borderColor="borderGrey"
                 _hover={{ bg: "gray.100", cursor: "pointer" }}
-                onClick={() => handleSuggestionClick(item)}
+                onClick={() => handleSuggestionClick(item?.name)}
               >
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text fontSize="14px" fontFamily="Inter">
@@ -172,10 +187,10 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
               textAlign="center"
               cursor="pointer"
               _hover={{ bg: "gray.100" }}
-              onClick={() => console.log("See all results")}
+              onClick={(e) => handleSuggestionClick(value)}
             >
               <Text fontSize="14px" fontFamily="Inter" color="primary.500">
-                See all results
+                {t("SEE_ALL_RESULTS")}
               </Text>
             </ListItem>
           </List>

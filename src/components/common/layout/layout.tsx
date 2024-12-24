@@ -9,6 +9,7 @@ import PrimaryButton from "../button/PrimaryButton";
 import { useTranslation } from "react-i18next";
 import CustomHeading from "../typography/Heading";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../../services/auth/auth";
 
 interface Props {
   children: React.ReactNode;
@@ -17,8 +18,8 @@ interface Props {
   isHeaderVisible?: boolean;
   _header?: {
     suggestions?: string[];
-    searchTerm: string;
-    onSearchChange: (value: string) => void;
+    searchTerm?: string;
+    onSearchChange?: (value: string) => void;
     onSuggestionClick?: (suggestion: string) => void;
   };
 }
@@ -39,10 +40,14 @@ const Layout: React.FC<Props> = ({
     message: `${t("POPUP_CONFIRM_MSG")}`,
   });
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-    navigate(0)
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+      navigate(0);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const cancel = () => {
@@ -51,7 +56,6 @@ const Layout: React.FC<Props> = ({
     navigate(0)
 
   };
-
   const menuList = [
     { route: "/home", icon: "HomeIcon", title: "Home" },
     { route: "/leaderboard", icon: "LeaderboardIcon", title: "Leaderboard" },
@@ -75,8 +79,10 @@ const Layout: React.FC<Props> = ({
           width={width}
           bg="white"
           boxShadow="0px 0px 15px 0px #e1e1e1"
+          overflowY="auto"
         >
           {isHeaderVisible && <Header {..._header} />}
+
           {children}
 
           {isFooterVisible && (

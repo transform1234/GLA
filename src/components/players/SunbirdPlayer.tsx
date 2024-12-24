@@ -23,6 +23,7 @@ interface SunbirdPlayerProps {
   _playerStypeHeight?: number;
   handleExitButton?: () => void;
   style?: React.CSSProperties;
+  playerContext?: object;
 }
 
 const SunbirdPlayer = ({
@@ -115,11 +116,11 @@ const SunbirdPlayer = ({
       if (typeof forwardedRef === "function") {
         forwardedRef(ref); // If forwardedRef is a function
       } else {
-        forwardedRef.current = ref; // If forwardedRef is an object ref
+        forwardedRef.current = ref; // If forwardedRef is an object ref obj
       }
     }
   };
-  console.log(adapter);
+  // console.log(adapter);
   if (url) {
     return (
       <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>
@@ -160,10 +161,12 @@ const SunbirdPlayer = ({
             ...props,
             questionListUrl: `${baseUrl}/question/${adapter}/questionList`,
             // questionListUrl: `https://alt-dev.uniteframework.io/course/questionset`,
+            // questionListUrl: `https://sunbirdsaas.com/api/question/v1/list`,
             telemetryBaseUrl: VITE_TELEMETRY_BASE_URL || null,
             telemetryEndpoint: VITE_TELEMETRY_END_POINT || null,
           })}
           src={`${public_url || process.env.PUBLIC_URL || ""}${url}/index.html`}
+          allow="autoplay"
         />
       </VStack>
     );

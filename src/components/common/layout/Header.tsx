@@ -5,6 +5,7 @@ import {
   Image,
   useDisclosure,
   VStack,
+  Text,
 } from "@chakra-ui/react";
 import background from "../../../assets/images/home-bg.png";
 import palooza_logo from "../../../assets/logo/Logo-Large.png";
@@ -23,6 +24,7 @@ interface HeaderProps {
   searchTerm?: string;
   onSearchChange?: (value: string) => void | undefined;
   onSuggestionClick?: (suggestion: string) => void;
+  bottomComponent?: React.ReactNode;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -30,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({
   searchTerm,
   onSearchChange,
   onSuggestionClick,
+  bottomComponent,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState<string | undefined>("");
@@ -37,6 +40,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
 
   useEffect(() => {
@@ -80,8 +84,26 @@ const Header: React.FC<HeaderProps> = ({
       zIndex={10}
       transition="all 0.3s"
     >
-      <VStack align={"stretch"} spacing={3}>
-        {!isSearchPage && (
+      {isWatchPage && (
+        <>
+          <HStack>
+            <IconByName
+              name={"BackIcon"}
+              color="white"
+              alt="Back"
+              cursor="pointer"
+              width="2em"
+              height="2em"
+              onClick={() => navigate("/home")}
+            />
+            <Text fontSize="20px" color="white">
+              {t("HOME_WATCH")}
+            </Text>
+          </HStack>
+        </>
+      )}
+      <VStack align={"stretch"} spacing={3} marginTop="20px">
+        {!isWatchPage && !isSearchPage && (
           <>
             <HStack justifyContent="space-between" align={"stretch"}>
               <Image src={`${palooza_logo}`} height="25px" />
@@ -122,7 +144,7 @@ const Header: React.FC<HeaderProps> = ({
         )}
 
         <Collapse
-          in={isOpen || isSearchPage}
+          in={isOpen || isWatchPage || isSearchPage}
           transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
         >
           <CustomInputWithDropdown
@@ -139,6 +161,7 @@ const Header: React.FC<HeaderProps> = ({
           />
         </Collapse>
       </VStack>
+      {bottomComponent && bottomComponent}
     </Box>
   );
 };

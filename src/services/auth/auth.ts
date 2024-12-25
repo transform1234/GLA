@@ -44,7 +44,10 @@ export const fetchToken = async (username: string, password: string) => {
   localStorage.setItem("grade", grade);
   localStorage.setItem("medium", medium);
   localStorage.setItem("board", board);
+  localStorage.setItem("username", username);
+  localStorage.setItem("school_udise", udiseCode);
   const programID = await getProgramId();
+  localStorage.setItem("program", programID?.programId);
   const contextData = [
     {
       id: grade,

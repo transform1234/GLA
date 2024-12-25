@@ -10,13 +10,39 @@ const VITE_APP_ENV = import.meta.env.VITE_APP_ENV;
 import { merge } from "lodash";
 
 const getDefaultStartEvent = (props: Record<string, any> = {}) => {
+  const cdataNew = [
+    {
+      id: localStorage.getItem("grade") || "",
+      type: "grade",
+    },
+    {
+      id: localStorage.getItem("medium") || "",
+      type: "medium",
+    },
+    {
+      id: localStorage.getItem("board") || "",
+      type: "board",
+    },
+    {
+      id: localStorage.getItem("username"),
+      type: "username",
+    },
+    {
+      id: localStorage.getItem("school_udise") || "",
+      type: "school_udise",
+    },
+    {
+      id: localStorage.getItem("programID") || "",
+      type: "program",
+    },
+  ];
   const defaultEvent = {
     eid: "START",
     ets: Date.now(),
     ver: "3.0",
     mid: `${props.eid || "START"}:${uniqueId()}`,
     actor: {
-      id: "defaultUserId",
+      id: localStorage.getItem("id") || "",
       type: "User",
     },
     context: {
@@ -29,14 +55,14 @@ const getDefaultStartEvent = (props: Record<string, any> = {}) => {
       env: VITE_APP_ENV,
       sid: localStorage.getItem("contentSessionId"),
       did: localStorage.getItem("did"),
-      cdata: [],
+      cdata: cdataNew,
       rollup: {
         l1: "",
       },
-      uid: "defaultUserId",
+      uid: localStorage.getItem("id") || "",
     },
     object: {},
-    tags: [],
+    tags: cdataNew,
     edata: {
       duration: Date.now(),
     },
@@ -67,6 +93,13 @@ export const start = async (props: Record<string, any> = {}) => {
 export const end = async (props: Record<string, any> = {}) => {
   const dataString = JSON.stringify(
     getDefaultStartEvent({ eid: "END", ...props })
+  );
+  return await commonFetchCall(dataString);
+};
+
+export const search = async (props: Record<string, any> = {}) => {
+  const dataString = JSON.stringify(
+    getDefaultStartEvent({ eid: "SEARCH", ...props })
   );
   return await commonFetchCall(dataString);
 };

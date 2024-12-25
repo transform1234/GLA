@@ -32,7 +32,7 @@ const subjectIcons = {
   kannada: { icon: kannada, label: "Kannada" },
   odiya: { icon: odiya, label: "Odia" },
 };
-export default function Homepage() {
+export default function Homepage(props:any) {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
@@ -41,13 +41,28 @@ export default function Homepage() {
   const [videos, setVideos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { authUser } = props;
 
   useEffect(() => {
     const fetchProgramId = async () => {
+      if (!authUser?.Student?.School) {
+        setError(t("NO_SCHOOL_FOUND"));
+        return;
+      }
+      if (!authUser?.GroupMemberships?.[0]?.Group?.board) {
+        setError(t("NO_BOARD_FOUND"));
+        return;
+      }
+      if (!authUser?.GroupMemberships?.[0]?.Group?.grade) {
+        setError(t("NO_CLASS_FOUND"));
+        return;
+      }
+
+
       try {
         let storedSubject = localStorage.getItem("subject") || "";
         const programData = await getProgramId();
-        if (programData) {
+        if (programData?.programId) {
           const res: any = await getSubjectList();
           const subjectR = chunk(res, 4);
           if (!storedSubject && res.length > 0) {
@@ -56,14 +71,17 @@ export default function Homepage() {
           }
           setSelectedSubject(storedSubject);
           setSubjects(subjectR);
+        } else {
+          setError(t("NO_PROGRAM_FOUND"));
         }
       } catch (error) {
         console.error("Error fetching program data:", error);
+        setError(t("An unexpected error occurred. Please try again later."));
       }
     };
 
     fetchProgramId();
-  }, []);
+  }, [authUser]);
 
   const handleSelectSubject = async (subject: string) => {
     setSelectedSubject(subject);
@@ -85,7 +103,6 @@ export default function Homepage() {
         setSuggestions(response?.paginatedData);
       } else {
         setVideos(response?.paginatedData);
-        setError(null);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -133,6 +150,12 @@ export default function Homepage() {
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">
+      {error ? (
+          <Text color="red.500" fontSize="xl" textAlign="center" mt="10">
+            {error}
+          </Text>
+        ) : (
+          <>
         <VStack pt="6" spacing={4}>
           <CustomHeading
             textAlign="center"
@@ -247,6 +270,8 @@ export default function Homepage() {
             </Box>
           </VStack>
         </Box>
+        </>
+      )}
       </VStack>
     </Layout>
   );

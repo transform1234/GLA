@@ -427,7 +427,7 @@ const VideoReel: React.FC<{
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
         <TopIcon
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
           icon={"ChevronLeftIcon"}
           left="16px"
         />

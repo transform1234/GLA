@@ -76,14 +76,6 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
     setShowDropdown(false); // Close the dropdown after selection
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && search) {
-      navigate(`/search?search=${encodeURIComponent(search)}`);
-      setShowDropdown(false);
-    }
-    onKeyDown?.(e);
-  };
-
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -120,7 +112,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
           borderRadius="8px"
           height="46px"
           bg="white"
-          onKeyDown={handleKeyDown}
+          onKeyDown={onKeyDown}
           pl={isBackButton ? "45px" : "16px"}
         />
         <InputRightElement>

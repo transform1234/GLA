@@ -31,16 +31,12 @@ const Watch = () => {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>({
     searchTerm: "",
-    subject: localStorage.getItem("subject") || null,
+    subject: "",
   });
   const [subjects, setSubjects] = useState<Array<any>>([]);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(
-    localStorage.getItem("subject") || null
-  );
-
   const { t } = useTranslation();
 
+  useEffect(() => {
   const fetchSuggestions = async (filter: {
     searchTerm: string;
     subject: string | null;
@@ -57,7 +53,6 @@ const Watch = () => {
   
     try {
       const response = await fetchSearchResults(payload);
-      setSuggestions(response?.paginatedData || []);
       setVideos(
         response?.paginatedData?.map((item: any) => ({
           src: item.img
@@ -76,22 +71,18 @@ const Watch = () => {
     }
   };
 
-  useEffect(() => {
     fetchSuggestions(filter);
   }, [filter]);
 
   useEffect(() => {
     getSubject();
+    setFilter((prevFilter) => ({...prevFilter, subject: localStorage.getItem("subject") }));
   }, []);
 
   const handleSelectSubject = (subject: string) => {
     if (subject === "ALL") {
-      localStorage.setItem("subject", "");
-      setSelectedSubject(null);
       setFilter((prevFilter) => ({ ...prevFilter, subject: "" }));
     } else {
-      localStorage.setItem("subject", subject);
-      setSelectedSubject(subject);
       setFilter((prevFilter) => ({ ...prevFilter, subject }));
     }
   };
@@ -104,21 +95,20 @@ const Watch = () => {
     localStorage.setItem("videos", JSON.stringify([video]));
     navigate(
       `/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(
-        video?.name
+        filter.searchTerm
       )}&subject=${encodeURIComponent(video?.category[0])}`
     );
   };
 
   const getSubject = async () => {
     try {
-      let storedSubject = localStorage.getItem("subject") || "";
+      let storedSubject = localStorage.getItem("language") || "";
       const res: any = await getSubjectList();
       const subjectR = chunk(res, 4);
       if (!storedSubject && res.length > 0) {
         storedSubject = res[0]?.subject;
-        localStorage.setItem("subject", storedSubject);
+        localStorage.setItem("language", storedSubject);
       }
-      setSelectedSubject(storedSubject);
       setSubjects(subjectR);
     } catch (error) {
       console.error("Error fetching program data:", error);
@@ -135,15 +125,13 @@ const Watch = () => {
     <Layout
       _header={{
         searchTerm: filter.searchTerm,
-        suggestions: suggestions,
         onSearchChange: handleSearchChange,
-        onSuggestionClick: (value: string) =>
-          navigate(`/search?search=${value}`),
+        onSuggestionClick: (value: string) => setFilter({...filter, subject: value}),
         onSubjectSelect: handleSelectSubject,
         bottomComponent: (
           <BottomComponent
             subjects={subjects}
-            selectedSubject={selectedSubject}
+            selectedSubject={filter.subject || ''}
             onSelectSubject={handleSelectSubject}
           />
         ),

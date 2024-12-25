@@ -30,12 +30,13 @@ const App = (props: any) => {
   const query = new URLSearchParams(window.location.search);
   const index = query.get("index");
   const [programID, setProgramID] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState({})
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const query = params.get("search") || "";
-    setSearchTerm(query);
+    const subject = params.get("subject") || "";
+    setFilter({searchQuery: query, subject: subject})
   }, [location.search]);
 
   useEffect(() => {
@@ -49,14 +50,12 @@ const App = (props: any) => {
   }, []);
 
   useEffect(() => {
-    const fetchData = async (search: any) => {
+    const fetchData = async () => {
       try {
-        if (!search) return;
         const payload = {
-          searchQuery: search,
           programId: programID,
-          subject: await getSubject(),
           limit: 100,
+          ...filter
         };
 
         const result = await fetchSearchResults(payload);
@@ -79,36 +78,8 @@ const App = (props: any) => {
       }
     };
 
-    fetchData(searchTerm);
-  }, [searchTerm, programID]);
-
-  // Fetch all content when searchTerm is empty
-  useEffect(() => {
-    if (!searchTerm) {
-      const fetchAllContent = async () => {
-        try {
-          const payload = {
-            programId: programID,
-            subject: await getSubject(),
-            limit: 100,
-            searchQuery: "",
-          };
-
-          const result = await fetchSearchResults(payload);
-
-          if (result?.paginatedData?.length === 0) {
-            setError("No content available.");
-          } else {
-            setVideos(result?.paginatedData || []);
-          }
-        } catch (e) {
-          setError("Failed to fetch all content.");
-        }
-      };
-
-      fetchAllContent();
-    }
-  }, [searchTerm, programID]);
+    fetchData();
+  }, [filter, programID]);
 
   const onBackClick = () => {
     navigate("/");

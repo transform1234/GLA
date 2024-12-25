@@ -218,7 +218,10 @@ const VideoItem: React.FC<{
                   rounded="none"
                   roundedLeft="full"
                   size="lg"
-                  _icon={{ width: heightPerItem?.height === 0 ? "100%" : "" }}
+                  _icon={{
+                    width: heightPerItem?.height === 0 ? "100%" : "",
+                    color: "primary.500",
+                  }}
                   p={heightPerItem?.height === 0 ? "5px 16px" : ""}
                   icon={
                     heightPerItem?.height === 0
@@ -284,11 +287,6 @@ const VideoItem: React.FC<{
                   startColor="primary.500"
                   endColor="primary.50"
                 />
-                <SkeletonCircle
-                  size="8"
-                  startColor="primary.500"
-                  endColor="primary.50"
-                />
               </HStack>
               <SkeletonCircle
                 size="8"
@@ -296,6 +294,30 @@ const VideoItem: React.FC<{
                 endColor="primary.50"
               />
             </HStack>
+            <Center
+              position="absolute"
+              top="50%"
+              left="50%"
+              transform="translate(-50%, -50%)"
+            >
+              <HStack gap="10" padding={4} align={"center"}>
+                <SkeletonCircle
+                  size="25px"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+                <SkeletonCircle
+                  size="50px"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+                <SkeletonCircle
+                  size="25px"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+              </HStack>
+            </Center>
             <HStack
               width="full"
               position="absolute"
@@ -502,16 +524,14 @@ const TopIcon: React.FC<{
   return (
     <IconButton
       aria-label="Go back"
-      icon={
-        <IconByName name={icon} boxSize="2rem" color="primary.500" {..._icon} />
-      }
+      icon={<IconByName name={icon} boxSize="2rem" color="white" {..._icon} />}
       size="mg"
       variant="ghost"
       position="absolute"
       top="16px"
       left={left}
       zIndex="10"
-      bg="primary.50"
+      bg="#FFFFFF26"
       rounded={"full"}
       border={"none"}
       _focus={{ boxShadow: "none", outline: "none" }}

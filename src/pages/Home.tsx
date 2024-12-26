@@ -23,6 +23,7 @@ import { chunk } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { fetchSearchResults } from "../services/content";
 import ContentCard from "../components/common/cards/ContentCard";
+import { impression } from "../services/telemetry";
 
 const subjectIcons = {
   science: { icon: physics, label: "Science" },
@@ -123,6 +124,17 @@ export default function Homepage(props: any) {
       if (storedSubject) {
         handleSelectSubject(storedSubject);
       }
+      impression({
+        edata: {
+          type: "Home",
+          pageid: "HOME",
+          uri: "/home",
+          query: Object.fromEntries(
+            new URLSearchParams(location.search).entries()
+          ),
+          visits: [],
+        },
+      });
     };
     init();
   }, []);

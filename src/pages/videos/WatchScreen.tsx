@@ -17,6 +17,7 @@ import defaultImage from "../../assets/images/default-img.png";
 import { useTranslation } from "react-i18next";
 import { getSubjectList } from "../../services/home";
 import ContentCard from "../../components/common/cards/ContentCard";
+import { impression } from "../../services/telemetry";
 
 type Filter = {
   searchTerm: string;
@@ -89,6 +90,17 @@ const Watch = () => {
 
   useEffect(() => {
     const getSubject = async () => {
+      impression({
+        edata: {
+          type: "Watch",
+          pageid: "WATCH",
+          uri: "/watch",
+          query: Object.fromEntries(
+            new URLSearchParams(location.search).entries()
+          ),
+          visits: [],
+        },
+      });
       try {
         let storedSubject = localStorage.getItem("language") || "";
         const res: any = await getSubjectList();

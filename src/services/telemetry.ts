@@ -104,6 +104,13 @@ export const search = async (props: Record<string, any> = {}) => {
   return await commonFetchCall(dataString);
 };
 
+export const impression = async (props: Record<string, any> = {}) => {
+  const dataString = JSON.stringify(
+    getDefaultStartEvent({ eid: "IMPRESSION", ...props })
+  );
+  return await commonFetchCall(dataString);
+};
+
 export const commonFetchCall = async (dataString: string) => {
   return await fetch(`${VITE_TELEMETRY_BASE_URL}${VITE_TELEMETRY_END_POINT}`, {
     method: "POST",

@@ -11,7 +11,7 @@ import background from "../../../assets/images/home-bg.png";
 import palooza_logo from "../../../assets/logo/Logo-Large.png";
 import CustomHeading from "../typography/Heading";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import IconByName from "../icons/Icon";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomInputWithDropdown from "../input/CustomDropDown";
@@ -35,25 +35,26 @@ const Header: React.FC<HeaderProps> = ({
   bottomComponent,
 }: HeaderProps) => {
   const { t } = useTranslation();
-  const [search, setSearch] = useState<string | undefined>("");
   const { isOpen, onToggle } = useDisclosure();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
+  const [ref, setRef] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    setSearch(searchTerm);
-  }, [searchTerm]);
+    if (ref) {
+      ref.value = searchTerm || "";
+    }
+  }, [ref, searchTerm]);
 
   const debouncedSearch = debounce((value: string) => {
     onSearchChange?.(value);
-  }, 500);
+  }, 1000);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearch(value);
     debouncedSearch(value);
   };
 
@@ -148,12 +149,11 @@ const Header: React.FC<HeaderProps> = ({
           transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
         >
           <CustomInputWithDropdown
+            getInputRef={(e) => setRef(e)}
             placeholder={t("HOME_SEARCH")}
-            onInputChange={onSearchChange}
             icon={searchIcon}
             showClearIcon={true}
             isBackButton={isSearchPage}
-            value={search}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions || []}

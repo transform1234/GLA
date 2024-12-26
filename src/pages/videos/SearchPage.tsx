@@ -22,9 +22,13 @@ const SearchPage: React.FC = () => {
   const [videos, setVideos] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
+  const getParameter = (key: string) => {
     const params = new URLSearchParams(location.search);
-    let query = params.get("search") || "";
+    return params.get(key) || "";
+  };
+
+  useEffect(() => {
+    const query = getParameter("search");
     setSearchTerm(query);
   }, [location.search]);
 
@@ -33,11 +37,13 @@ const SearchPage: React.FC = () => {
   }, [searchTerm]);
 
   const fetchData = async (search: any) => {
+    const query = getParameter("search");
     const payload = {
       searchQuery: search || "",
       programId: localStorage.getItem("programID"),
       subject: localStorage.getItem("subject"),
       limit: 100,
+      isTelemetryEnabled: search === query ? false : true,
     };
 
     try {

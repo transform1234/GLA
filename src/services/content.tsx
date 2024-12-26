@@ -245,8 +245,9 @@ export const addLessonTracking = async ({
     return {};
   }
 };
-export const fetchSearchResults = async (payload: any): Promise<any> => {
+export const fetchSearchResults = async (payloadProp: any): Promise<any> => {
   try {
+    const { isTelemetryEnabled, ...payload } = payloadProp || {};
     const response = await fetch(`${baseUrl}${URL.SEARCH}`, {
       method: "POST",
       headers: {
@@ -262,14 +263,20 @@ export const fetchSearchResults = async (payload: any): Promise<any> => {
 
     const result = await response.json();
 
-    if (result?.data && payload?.searchQuery) {
+    if (
+      result?.data &&
+      payload?.searchQuery &&
+      (isTelemetryEnabled === undefined ||
+        isTelemetryEnabled === null ||
+        isTelemetryEnabled !== false)
+    ) {
       search({
         eid: "SEARCH",
         ets: Date.now(),
         edata: {
           type: "Content",
           ...payload,
-          size: result?.count,
+          size: result?.data?.meta?.total,
         },
         context: {
           env: "search",

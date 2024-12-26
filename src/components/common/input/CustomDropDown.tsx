@@ -59,7 +59,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   };
   useEffect(() => {
     if (inputRef.current) {
-      getInputRef(inputRef.current.querySelector("input"));
+      getInputRef?.(inputRef.current.querySelector("input"));
     }
   }, [inputRef.current]);
 

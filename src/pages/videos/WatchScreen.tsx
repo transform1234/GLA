@@ -43,9 +43,7 @@ const Watch = () => {
       searchTerm: string;
       subject: string | null;
     }) => {
-      const isSearchTermChange = !!filter.searchTerm;
-      const limit = isSearchTermChange ? 5 : 100;
-
+      const limit = 100;
       const payload = {
         searchQuery: filter.searchTerm,
         programId: localStorage.getItem("programID"),

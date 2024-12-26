@@ -20,7 +20,7 @@ interface Props {
     suggestions?: string[];
     searchTerm?: string;
     onSearchChange?: (value: string) => void;
-    onSuggestionClick?: (suggestion: string) => void;
+    onSuggestionClick?: (suggestion: any) => void;
     onSubjectSelect?: (subject: string) => void;
     bottomComponent?: React.ReactNode;
   };

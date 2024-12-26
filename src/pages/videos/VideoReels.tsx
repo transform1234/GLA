@@ -345,6 +345,8 @@ const VideoReel: React.FC<{
   authUser: any;
   activeIndex?: string | number | undefined | null;
 }> = ({ videos, programID, authUser, activeIndex }) => {
+  const query = new URLSearchParams(window.location.search);
+  const redirect = query.get("redirect");
   const listRef = useRef<any>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState<number>(0);
@@ -449,7 +451,7 @@ const VideoReel: React.FC<{
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
         <TopIcon
-          onClick={() => navigate(-1)}
+          onClick={() => (redirect ? navigate(redirect) : navigate("/"))}
           icon={"ChevronLeftIcon"}
           left="16px"
         />

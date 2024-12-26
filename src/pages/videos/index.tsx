@@ -30,13 +30,13 @@ const App = (props: any) => {
   const query = new URLSearchParams(window.location.search);
   const index = query.get("index");
   const [programID, setProgramID] = useState<string>("");
-  const [filter, setFilter] = useState({})
+  const [filter, setFilter] = useState({});
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const query = params.get("search") || "";
     const subject = params.get("subject") || "";
-    setFilter({searchQuery: query, subject: subject})
+    setFilter({ searchQuery: query, subject: subject });
   }, [location.search]);
 
   useEffect(() => {
@@ -52,22 +52,24 @@ const App = (props: any) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const payload = {
-          programId: programID,
-          limit: 100,
-          ...filter
-        };
+        if (programID) {
+          const payload = {
+            programId: programID,
+            limit: 100,
+            ...filter,
+          };
 
-        const result = await fetchSearchResults(payload);
+          const result = await fetchSearchResults(payload);
 
-        if (result?.paginatedData?.length === 0) {
-          setError(
-            `No content available for the subject: ${localStorage.getItem(
-              "subject"
-            )}.`
-          );
-        } else {
-          setVideos(result?.paginatedData || []);
+          if (result?.paginatedData?.length === 0) {
+            setError(
+              `No content available for the subject: ${localStorage.getItem(
+                "subject"
+              )}.`
+            );
+          } else {
+            setVideos(result?.paginatedData || []);
+          }
         }
       } catch (e) {
         setError(

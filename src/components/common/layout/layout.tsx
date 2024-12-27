@@ -19,7 +19,7 @@ interface Props {
   _header?: {
     suggestions?: string[];
     searchTerm?: string;
-    onSearchChange?: (value: string) => void;
+    onSearchChange?: (value: any) => void;
     onSuggestionClick?: (suggestion: any) => void;
     onSubjectSelect?: (subject: string) => void;
     bottomComponent?: React.ReactNode;

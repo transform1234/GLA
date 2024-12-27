@@ -47,7 +47,7 @@ const SearchPage: React.FC = () => {
       searchQuery: search || "",
       programId: localStorage.getItem("programID"),
       subject: localStorage.getItem("subject"),
-      limit: 100,
+      limit: 500,
       isTelemetryEnabled: search === query ? false : true,
     };
 

@@ -44,7 +44,7 @@ const Watch = () => {
       searchTerm: string;
       subject: string | null;
     }) => {
-      const limit = 100;
+      const limit = 500;
       const payload = {
         searchQuery: filter.searchTerm,
         programId: localStorage.getItem("programID"),
@@ -102,12 +102,7 @@ const Watch = () => {
         },
       });
       try {
-        let storedSubject = localStorage.getItem("language") || "";
         const res: any = await getSubjectList();
-        if (!storedSubject && res.length > 0) {
-          storedSubject = res[0]?.subject;
-          localStorage.setItem("language", storedSubject);
-        }
         setSubjects(res);
         const filterLocal = getLocalStorageFilter();
         setCustomFilter({

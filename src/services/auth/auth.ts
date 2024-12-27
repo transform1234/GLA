@@ -174,6 +174,7 @@ export const logout = async () => {
 
   localStorage.removeItem("token");
   localStorage.removeItem("refreshToken"); // add
+  localStorage.removeItem("contentSessionId");
   localStorage.removeItem("board");
   localStorage.removeItem("medium");
   localStorage.removeItem("grade");
@@ -184,6 +185,13 @@ export const logout = async () => {
   localStorage.removeItem("mediumName");
   localStorage.removeItem("gradeName");
   localStorage.removeItem("boardMediumGrade");
+  localStorage.removeItem("id");
+  localStorage.removeItem("name");
+  localStorage.removeItem("username");
+  localStorage.removeItem("school_udise");
+  localStorage.removeItem("program");
+  localStorage.removeItem("programID");
+  localStorage.removeItem("subject");
 };
 
 export const getAuthUser = async () => {

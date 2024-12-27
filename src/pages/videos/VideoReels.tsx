@@ -491,7 +491,7 @@ const VideoReel: React.FC<{
               programID={programID}
               id={videos?.[index]?.contentId}
               qml_id={videos?.[index]?.lesson_questionset}
-              isVisible={index === visibleIndex}
+              isVisible={isIndexScroll && index === visibleIndex}
               refQml={qmlRef}
               style={style}
               adapter={videos?.[index]?.contentSource}

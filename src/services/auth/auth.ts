@@ -1,15 +1,8 @@
-import URL from "../../utils/constants/url-constants.json";
 import { jwtDecode } from "jwt-decode";
-import { uniqueId } from "../utilService"; // generate manually
+import URL from "../../utils/constants/url-constants.json";
 import { getProgramId } from "../home";
 import { end, start } from "../telemetry";
-const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
-const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
 const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
-const VITE_APP_ID = import.meta.env.VITE_APP_ID;
-const VITE_APP_VER = import.meta.env.VITE_APP_VER;
-const VITE_APP_PID = import.meta.env.VITE_APP_PID;
-const VITE_APP_ENV = import.meta.env.VITE_APP_ENV;
 
 export const fetchToken = async (username: string, password: string) => {
   const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
@@ -34,7 +27,18 @@ export const fetchToken = async (username: string, password: string) => {
   const tokenDecoded: any = jwtDecode(data.access_token);
   localStorage.setItem("token", data.access_token);
   localStorage.setItem("refreshToken", data.refresh_token);
-  localStorage.setItem("contentSessionId", data?.session_state);
+
+  const date = new Date(
+    Date.now() + new Date().getTimezoneOffset() * 60 * 1000
+  );
+  const contentSessionId = `${tokenDecoded.sub}_${date.getDate()}-${
+    date.getMonth() + 1
+  }-${date.getFullYear()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}_${
+    tokenDecoded.session_state
+  }`;
+  // console.log("contentSessionId", contentSessionId);
+  // return {};
+  localStorage.setItem("contentSessionId", contentSessionId);
   const authUser = await checkUserDetails();
   const { grade, medium, board } =
     authUser?.data?.GroupMemberships?.[0]?.Group || {};
@@ -174,6 +178,7 @@ export const logout = async () => {
 
   localStorage.removeItem("token");
   localStorage.removeItem("refreshToken"); // add
+  localStorage.removeItem("contentSessionId");
   localStorage.removeItem("board");
   localStorage.removeItem("medium");
   localStorage.removeItem("grade");
@@ -184,6 +189,14 @@ export const logout = async () => {
   localStorage.removeItem("mediumName");
   localStorage.removeItem("gradeName");
   localStorage.removeItem("boardMediumGrade");
+  localStorage.removeItem("id");
+  localStorage.removeItem("name");
+  localStorage.removeItem("username");
+  localStorage.removeItem("school_udise");
+  localStorage.removeItem("program");
+  localStorage.removeItem("programID");
+  localStorage.removeItem("subject");
+  localStorage.removeItem("watchFilter");
 };
 
 export const getAuthUser = async () => {

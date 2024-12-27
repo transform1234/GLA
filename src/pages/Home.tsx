@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import english from "../assets/icons/english_icon.svg";
 import kannada from "../assets/icons/kannada_icon.svg";
-import odiya from "../assets/icons/odiya_icon.svg";
+import odia from "../assets/icons/odiya_icon.svg";
 import math from "../assets/icons/maths_icon.svg";
 import physics from "../assets/icons/physics_icon.svg";
 import Layout from "../components/common/layout/layout";
@@ -31,14 +31,14 @@ const subjectIcons = {
   math: { icon: math, label: "Math" },
   english: { icon: english, label: "English" },
   kannada: { icon: kannada, label: "Kannada" },
-  odiya: { icon: odiya, label: "Odia" },
+  odia: { icon: odia, label: "Odia" },
 };
 export default function Homepage(props: any) {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState();
   const [videos, setVideos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -69,6 +69,7 @@ export default function Homepage(props: any) {
             storedSubject = res[0]?.subject;
             localStorage.setItem("subject", storedSubject);
           }
+          handleSelectSubject(storedSubject);
           setSelectedSubject(storedSubject);
           setSubjects(subjectR);
         } else {
@@ -94,7 +95,7 @@ export default function Homepage(props: any) {
       searchQuery: type === "search" ? searchTerm : "",
       programId: localStorage.getItem("programID"),
       subject: localStorage.getItem("subject"),
-      limit: type === "search" ? 5 : 100,
+      limit: type === "search" ? 5 : 500,
     };
 
     try {
@@ -115,28 +116,23 @@ export default function Homepage(props: any) {
   };
 
   useEffect(() => {
-    getVideos();
+    if (searchTerm || searchTerm == "") {
+      getVideos();
+    }
   }, [searchTerm]);
 
   useEffect(() => {
-    const init = async () => {
-      const storedSubject = localStorage.getItem("subject");
-      if (storedSubject) {
-        handleSelectSubject(storedSubject);
-      }
-      impression({
-        edata: {
-          type: "Home",
-          pageid: "HOME",
-          uri: "/home",
-          query: Object.fromEntries(
-            new URLSearchParams(location.search).entries()
-          ),
-          visits: [],
-        },
-      });
-    };
-    init();
+    impression({
+      edata: {
+        type: "Home",
+        pageid: "HOME",
+        uri: "/home",
+        query: Object.fromEntries(
+          new URLSearchParams(location.search).entries()
+        ),
+        visits: [],
+      },
+    });
   }, []);
 
   const handleSuggestionClick = (

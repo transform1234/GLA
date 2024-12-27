@@ -55,7 +55,7 @@ const App = (props: any) => {
         if (programID) {
           const payload = {
             programId: programID,
-            limit: 100,
+            limit: 500,
             ...filter,
           };
 

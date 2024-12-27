@@ -1,14 +1,8 @@
-import URL from "../../utils/constants/url-constants.json";
 import { jwtDecode } from "jwt-decode";
-import { uniqueId } from "../utilService"; // generate manually
+import URL from "../../utils/constants/url-constants.json";
 import { getProgramId } from "../home";
-const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
-const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
+import { end, start } from "../telemetry";
 const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
-const VITE_APP_ID = import.meta.env.VITE_APP_ID;
-const VITE_APP_VER = import.meta.env.VITE_APP_VER;
-const VITE_APP_PID = import.meta.env.VITE_APP_PID;
-const VITE_APP_ENV = import.meta.env.VITE_APP_ENV;
 
 export const fetchToken = async (username: string, password: string) => {
   const authUrl = `${import.meta.env.VITE_API_AUTH_URL}${URL.AUTH}`;
@@ -33,7 +27,18 @@ export const fetchToken = async (username: string, password: string) => {
   const tokenDecoded: any = jwtDecode(data.access_token);
   localStorage.setItem("token", data.access_token);
   localStorage.setItem("refreshToken", data.refresh_token);
-  localStorage.setItem("contentSessionId", data?.session_state);
+
+  const date = new Date(
+    Date.now() + new Date().getTimezoneOffset() * 60 * 1000
+  );
+  const contentSessionId = `${tokenDecoded.sub}_${date.getDate()}-${
+    date.getMonth() + 1
+  }-${date.getFullYear()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}_${
+    tokenDecoded.session_state
+  }`;
+  // console.log("contentSessionId", contentSessionId);
+  // return {};
+  localStorage.setItem("contentSessionId", contentSessionId);
   const authUser = await checkUserDetails();
   const { grade, medium, board } =
     authUser?.data?.GroupMemberships?.[0]?.Group || {};
@@ -43,7 +48,10 @@ export const fetchToken = async (username: string, password: string) => {
   localStorage.setItem("grade", grade);
   localStorage.setItem("medium", medium);
   localStorage.setItem("board", board);
+  localStorage.setItem("username", username);
+  localStorage.setItem("school_udise", udiseCode);
   const programID = await getProgramId();
+  localStorage.setItem("program", programID?.programId);
   const contextData = [
     {
       id: grade,
@@ -71,59 +79,18 @@ export const fetchToken = async (username: string, password: string) => {
     },
   ];
 
-  const dataString = JSON.stringify({
-    id: "palooza.telemetry",
-    ver: "3.0",
-    ets: Date.now(),
-    events: [
-      {
-        eid: "START",
-        ets: Date.now(),
-        ver: "3.0",
-        mid: `START:${uniqueId()}`,
-        actor: {
-          id: tokenDecoded?.sub,
-          type: "User",
-        },
-        context: {
-          channel: "palooza",
-          pdata: {
-            id: VITE_APP_ID || "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
-            ver: VITE_APP_VER || "0.0.1", // version of the App
-            pid: VITE_APP_PID || "palooza.portal.contentplayer", //
-          },
-          env: VITE_APP_ENV,
-          sid: localStorage.getItem("contentSessionId"),
-          did: localStorage.getItem("did"),
-          cdata: contextData,
-          rollup: {
-            l1: "",
-          },
-          uid: tokenDecoded?.sub,
-        },
-        object: {},
-        tags: contextData,
-        edata: {
-          id: "login",
-          type: "session",
-          pageid: "login",
-          duration: new Date().getTime(), // Optional. Time taken to initialize/start
-        },
-      },
-    ],
+  const responseTelemetry = await start({
+    uid: tokenDecoded?.sub,
+    tags: contextData,
+    context: {
+      cdata: contextData,
+    },
+    edata: {
+      id: "login",
+      type: "session",
+      pageid: "login",
+    },
   });
-
-  const responseTelemetry = await fetch(
-    `${VITE_TELEMETRY_BASE_URL}${VITE_TELEMETRY_END_POINT}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${data.access_token}`,
-      },
-      body: dataString,
-    }
-  );
 
   if (!responseTelemetry.ok) {
     throw new Error("Failed to send telemetry");
@@ -169,60 +136,18 @@ export const logout = async () => {
     throw new Error("Token not available in localStorage");
   }
   const tokenDecoded: any = jwtDecode(token);
-  const dataString = JSON.stringify({
-    id: "palooza.telemetry",
-    ver: "3.0",
-    ets: Date.now(),
-    events: [
-      {
-        eid: "END",
-        ets: Date.now(),
-        ver: "3.0",
-        mid: `END:${uniqueId()}`,
-        actor: {
-          id: tokenDecoded?.sub,
-          type: "User",
-        },
-        context: {
-          channel: "palooza",
-          pdata: {
-            id: VITE_APP_ID || "palooza.portal", // Producer ID. For ex: For sunbird it would be "portal" or "genie"
-            ver: VITE_APP_VER || "0.0.1", // version of the App
-            pid: VITE_APP_PID || "palooza.portal.contentplayer", //
-          },
-          env: VITE_APP_ENV,
-          sid: localStorage.getItem("contentSessionId"),
-          did: localStorage.getItem("did"),
-          cdata: contextData,
-          rollup: {
-            l1: "",
-          },
-          uid: tokenDecoded?.sub,
-        },
-        object: {},
-        tags: contextData,
-        edata: {
-          id: "logout",
-          type: "session",
-          pageid: "logout",
-          duration: new Date().getTime(), // Optional. Time taken to initialize/start
-        },
-      },
-    ],
+  const responseTelemetry = await end({
+    uid: tokenDecoded?.sub,
+    tags: contextData,
+    context: {
+      cdata: contextData,
+    },
+    edata: {
+      id: "logout",
+      type: "session",
+      pageid: "logout",
+    },
   });
-
-  const responseTelemetry = await fetch(
-    `${VITE_TELEMETRY_BASE_URL}${VITE_TELEMETRY_END_POINT}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: dataString,
-    }
-  );
-
   if (!responseTelemetry.ok) {
     throw new Error("Failed to send telemetry");
   }
@@ -253,6 +178,7 @@ export const logout = async () => {
 
   localStorage.removeItem("token");
   localStorage.removeItem("refreshToken"); // add
+  localStorage.removeItem("contentSessionId");
   localStorage.removeItem("board");
   localStorage.removeItem("medium");
   localStorage.removeItem("grade");
@@ -263,6 +189,14 @@ export const logout = async () => {
   localStorage.removeItem("mediumName");
   localStorage.removeItem("gradeName");
   localStorage.removeItem("boardMediumGrade");
+  localStorage.removeItem("id");
+  localStorage.removeItem("name");
+  localStorage.removeItem("username");
+  localStorage.removeItem("school_udise");
+  localStorage.removeItem("program");
+  localStorage.removeItem("programID");
+  localStorage.removeItem("subject");
+  localStorage.removeItem("watchFilter");
 };
 
 export const getAuthUser = async () => {

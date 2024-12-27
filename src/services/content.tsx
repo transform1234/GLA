@@ -1,4 +1,5 @@
 import URL from "../utils/constants/url-constants.json";
+import { search } from "./telemetry";
 const baseUrl: string = `${import.meta.env.VITE_API_AUTH_URL}/api/v1`;
 
 interface IGetOneParams {
@@ -244,8 +245,9 @@ export const addLessonTracking = async ({
     return {};
   }
 };
-export const fetchSearchResults = async (payload : any): Promise<any> => {
+export const fetchSearchResults = async (payloadProp: any): Promise<any> => {
   try {
+    const { isTelemetryEnabled, ...payload } = payloadProp || {};
     const response = await fetch(`${baseUrl}${URL.SEARCH}`, {
       method: "POST",
       headers: {
@@ -260,6 +262,31 @@ export const fetchSearchResults = async (payload : any): Promise<any> => {
     }
 
     const result = await response.json();
+
+    if (
+      result?.data &&
+      payload?.searchQuery &&
+      (isTelemetryEnabled === undefined ||
+        isTelemetryEnabled === null ||
+        isTelemetryEnabled !== false)
+    ) {
+      search({
+        eid: "SEARCH",
+        ets: Date.now(),
+        edata: {
+          type: "Content",
+          ...payload,
+          size: result?.data?.meta?.total,
+        },
+        context: {
+          env: "search",
+        },
+      });
+    }
+
+    if (result?.errorCode?.code == "invalid-jwt") {
+      window.location.reload();
+    }
     return result.data;
   } catch (error) {
     console.error("Error fetching search results:", error);

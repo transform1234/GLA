@@ -1,18 +1,11 @@
+import { Box, Grid, GridItem, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Badge,
-  Box,
-  Image,
-  Text,
-  VStack,
-  Grid,
-  GridItem,
-} from "@chakra-ui/react";
+import { useLocation, useNavigate } from "react-router-dom";
+import ContentCard from "../../components/common/cards/ContentCard";
+import Layout from "../../components/common/layout/layout";
 import Loading from "../../components/common/Loading";
 import { fetchSearchResults } from "../../services/content";
-import Layout from "../../components/common/layout/layout";
-import ContentCard from "../../components/common/cards/ContentCard";
+import { impression } from "../../services/telemetry";
 
 const SearchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,9 +15,25 @@ const SearchPage: React.FC = () => {
   const [videos, setVideos] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
+  const getParameter = (key: string) => {
     const params = new URLSearchParams(location.search);
-    let query = params.get("search") || "";
+    return params.get(key) || "";
+  };
+  useEffect(() => {
+    impression({
+      edata: {
+        type: "Search",
+        pageid: "SEARCH",
+        uri: "/search",
+        query: Object.fromEntries(
+          new URLSearchParams(location.search).entries()
+        ),
+        visits: [],
+      },
+    });
+  }, []);
+  useEffect(() => {
+    const query = getParameter("search");
     setSearchTerm(query);
   }, [location.search]);
 
@@ -33,11 +42,13 @@ const SearchPage: React.FC = () => {
   }, [searchTerm]);
 
   const fetchData = async (search: any) => {
+    const query = getParameter("search");
     const payload = {
       searchQuery: search || "",
       programId: localStorage.getItem("programID"),
       subject: localStorage.getItem("subject"),
-      limit: 100,
+      limit: 500,
+      isTelemetryEnabled: search === query ? false : true,
     };
 
     try {

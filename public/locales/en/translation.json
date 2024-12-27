@@ -33,6 +33,10 @@
   "POPUP_CONFIRM_MSG" : "Don’t worry, your progress will be saved the next time you log back in.",
   "POPUP_LOGOUT" : "LOGOUT",
   "HOME_NO_VIDEOS_AVAILABLE" : "No Videos Availabe to show",
-  "SEE_ALL_RESULTS" : "See all results"
+  "SEE_ALL_RESULTS" : "See all results",
+  "NO_PROGRAM_FOUND" : "No active program available at the moment. Please check back later or contact system administrator",
+  "NO_SCHOOL_FOUND" : "Your profile is not mapped to any school. Please contact system administrator.",
+  "NO_BOARD_FOUND" : "Your profile is not mapped to any board. Please contact system administrator.",
+  "NO_CLASS_FOUND" : "Your profile is not mapped to any class. Please contact system administrator."
 
 }

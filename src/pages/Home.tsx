@@ -39,7 +39,7 @@ export default function Homepage(props: any) {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState();
-  const [videos, setVideos] = useState<any[]>([]);
+  const [videos, setVideos] = useState<any>();
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { authUser } = props;
@@ -277,7 +277,7 @@ export default function Homepage(props: any) {
                     </Text>
                   ) : (
                     <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                      {videos?.map((item, index) => (
+                      {videos?.map((item: any, index: number) => (
                         <GridItem
                           key={index}
                           position="relative"

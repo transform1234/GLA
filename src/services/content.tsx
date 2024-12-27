@@ -283,6 +283,10 @@ export const fetchSearchResults = async (payloadProp: any): Promise<any> => {
         },
       });
     }
+
+    if (result?.errorCode?.code == "invalid-jwt") {
+      window.location.reload();
+    }
     return result.data;
   } catch (error) {
     console.error("Error fetching search results:", error);

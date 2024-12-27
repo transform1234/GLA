@@ -1,22 +1,13 @@
+import { Box, Grid, GridItem, HStack, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import defaultImage from "../../assets/images/default-img.png";
+import ContentCard from "../../components/common/cards/ContentCard";
+import Layout from "../../components/common/layout/layout";
 import Loading from "../../components/common/Loading";
 import { fetchSearchResults } from "../../services/content";
-import {
-  Badge,
-  Box,
-  Grid,
-  GridItem,
-  Image,
-  Text,
-  VStack,
-  HStack,
-} from "@chakra-ui/react";
-import Layout from "../../components/common/layout/layout";
-import defaultImage from "../../assets/images/default-img.png";
-import { useTranslation } from "react-i18next";
 import { getSubjectList } from "../../services/home";
-import ContentCard from "../../components/common/cards/ContentCard";
 import { impression } from "../../services/telemetry";
 
 type Filter = {
@@ -26,7 +17,7 @@ type Filter = {
 
 const Watch = () => {
   const navigate = useNavigate();
-  const [videos, setVideos] = useState<Array<any>>([]);
+  const [videos, setVideos] = useState<any>();
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>({
     searchTerm: "",
@@ -174,7 +165,7 @@ const Watch = () => {
               </Text>
             ) : (
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                {videos?.map((item, index) => (
+                {videos?.map((item: any, index: number) => (
                   <GridItem
                     key={index}
                     position="relative"

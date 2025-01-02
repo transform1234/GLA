@@ -19,8 +19,8 @@ interface Props {
   _header?: {
     suggestions?: string[];
     searchTerm?: string;
-    onSearchChange?: (value: string) => void;
-    onSuggestionClick?: (suggestion: string) => void;
+    onSearchChange?: (value: any) => void;
+    onSuggestionClick?: (suggestion: any) => void;
     onSubjectSelect?: (subject: string) => void;
     bottomComponent?: React.ReactNode;
   };
@@ -41,6 +41,7 @@ const Layout: React.FC<Props> = ({
     title: `${t("POPUP_CONFIRM_LOGOUT")}`,
     message: `${t("POPUP_CONFIRM_MSG")}`,
   });
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const handleLogout = async () => {
     try {
@@ -54,8 +55,8 @@ const Layout: React.FC<Props> = ({
 
   const cancel = () => {
     onClose();
-    navigate("/home");
-    navigate(0)
+    setSelectedIndex(0);
+
 
   };
   const menuList = [
@@ -77,6 +78,7 @@ const Layout: React.FC<Props> = ({
         <Loading message="Loading..." />
       ) : (
         <Box
+          id="bodyBox"
           height={height}
           width={width}
           bg="white"
@@ -90,7 +92,10 @@ const Layout: React.FC<Props> = ({
           {isFooterVisible && (
             <>
               <Box minH={"96px"} />
-              <Footer menues={menuList} />
+              <Footer menues={menuList}
+              selectedIndex={selectedIndex}
+              onSelect={(index: number) => setSelectedIndex(index)}
+              />
             </>
           )}
         </Box>

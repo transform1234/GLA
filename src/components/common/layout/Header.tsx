@@ -36,33 +36,26 @@ const Header: React.FC<HeaderProps> = ({
   bottomComponent,
 }: HeaderProps) => {
   const { t } = useTranslation();
-  const [search, setSearch] = useState<string | undefined>("");
-  const { isOpen, onToggle, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
+  const [ref, setRef] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    setSearch(searchTerm);
-  }, [searchTerm]);
-
-  const handleSearchIconClick = () => {
-    if (isOpen) {
-      onClose(); // Close the search field if it's already open
-    } else {
-      onToggle(); // Open the search field
+    if (ref) {
+      ref.value = searchTerm || "";
     }
-  };
+  }, [ref, searchTerm]);
 
   const debouncedSearch = debounce((value: string) => {
     onSearchChange?.(value);
-  }, 500);
+  }, 1000);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearch(value);
     debouncedSearch(value);
   };
 
@@ -75,41 +68,19 @@ const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      // if (window.scrollY > 0 && isOpen) {
-      //   onClose(); // Hide the search field when scrolling
-      // }
-      setIsScrolled(window.scrollY > 0); // Update the scroll state
+      const scrollValues = document.getElementById("bodyBox")?.scrollTop ?? 0;
+      setIsScrolled(scrollValues > 0);
+      if(scrollValues === 0){
+        setIsOpen(false);
+        setIsScrolled(false);
+      }
+
     };
-  
-    window.addEventListener("scroll", handleScroll);
+    document.getElementById("bodyBox")?.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      document.getElementById("bodyBox")?.removeEventListener("scroll", handleScroll);
     };
-  }, [isOpen, onClose]);
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     // Update isScrolled only when search bar is not open
-  //     if (!isOpen) {
-  //       setIsScrolled(window.scrollY > 0);
-  //     }
-  //   };
-  
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [isOpen]);
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     setIsScrolled(window.scrollY > 0);
-  //   };
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, []);
+  }, [isOpen]);
 
   return (
     <Box
@@ -122,7 +93,6 @@ const Header: React.FC<HeaderProps> = ({
       transition="all 0.3s"
     >
       {isWatchPage && (
-        <>
           <HStack>
             <IconByName
               name={"BackIcon"}
@@ -137,38 +107,39 @@ const Header: React.FC<HeaderProps> = ({
               {t("HOME_WATCH")}
             </Text>
           </HStack>
-        </>
       )}
       <VStack align={"stretch"} spacing={3} marginTop="20px">
         {!isWatchPage && !isSearchPage && (
           <>
-             <HStack height="52px"> </HStack>
+             <HStack> </HStack>
             <HStack
               justifyContent="space-between"
               alignItems="center"
               w="100%"
             >
               {/* Left-hand side: Palooza logo */}
+              { !isOpen &&
               <Image src={`${palooza_logo}`} height="25px" />
+              }
 
               {/* Right-hand side: SearchIcon and NotificationIcon */}
               <HStack spacing={4}>
-                <Image
+                {/* <Image
                   src={notificationIcon}
                   alt="Notification"
                   cursor="pointer"
                   boxSize="1.5rem"
                   onClick={() => navigate("/home")}
-                />
+                /> */}
                 {
-                  isScrolled &&
+                  isScrolled && !isOpen &&
                   <IconByName
                   name={"SearchIcon"}
                   width="24px"
                   height="24px"
                   cursor="pointer"
                   color="white"
-                  onClick={onToggle}
+                  onClick={(e:any) => setIsOpen(true)}
                   />
                 }
               </HStack>
@@ -196,6 +167,7 @@ const Header: React.FC<HeaderProps> = ({
                   fontWeight="600"
                   title={localStorage.getItem("name")}
                   color="white"
+                  textTransform="capitalize"
                 />
               </VStack>
             </Collapse>
@@ -207,12 +179,11 @@ const Header: React.FC<HeaderProps> = ({
           transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
         >
           <CustomInputWithDropdown
+            getInputRef={(e) => setRef(e)}
             placeholder={t("HOME_SEARCH")}
-            onInputChange={onSearchChange}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={isSearchPage}
-            value={search}
+            isBackButton={isSearchPage || isWatchPage}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions || []}
@@ -221,14 +192,13 @@ const Header: React.FC<HeaderProps> = ({
         </Collapse>
 
         {
-         !isOpen && !isScrolled && !isWatchPage &&
+         !isOpen && !isScrolled && !isWatchPage && !isSearchPage &&
           <CustomInputWithDropdown
+          getInputRef={(e) => setRef(e)}
           placeholder={t("HOME_SEARCH")}
-          onInputChange={onSearchChange}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={isWatchPage}
-          value={search}
+          isBackButton={isWatchPage || isSearchPage}
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions}

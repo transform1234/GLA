@@ -1,31 +1,29 @@
-import React, { useState } from "react";
 import {
-  VStack,
-  Box,
-  Input,
-  FormControl,
-  FormLabel,
-  Link,
-  Center,
-  IconButton,
-  useDisclosure,
   Alert,
   AlertIcon,
   AlertTitle,
+  Box,
+  Center,
+  FormControl,
+  FormLabel,
   Image,
+  Link,
+  useDisclosure,
+  VStack,
   Text,
 } from "@chakra-ui/react";
-import PopupModal from "../../components/common/PopupModal";
-import transformLogo from "../../assets/logo/TSHeader.png";
-import logo from "../../assets/logo/Logo-Large.png";
-import background from "../../assets/images/bg.png";
-import { fetchToken, getAuthUser } from "../../services/auth/auth";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import background from "../../assets/images/bg.png";
+import logo from "../../assets/logo/Logo-Large.png";
+import transformLogo from "../../assets/logo/TSHeader.png";
 import PrimaryButton from "../../components/common/button/PrimaryButton";
-import CustomHeading from "../../components/common/typography/Heading";
-import Layout from "../../components/common/layout/layout";
 import CustomInput from "../../components/common/input/CustomInput";
+import Layout from "../../components/common/layout/layout";
+import PopupModal from "../../components/common/PopupModal";
+import CustomHeading from "../../components/common/typography/Heading";
+import { fetchToken } from "../../services/auth/auth";
 import fieldConfig from "../../utils/constants/fieldConfig";
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -187,7 +185,7 @@ export default function Login() {
           position="relative"
           width="100vw"
           backgroundImage={`url(${background})`}
-          backgroundRepeat="no-repeat"
+          backgroundRepeat="repeat-x"
         >
           <Box position="absolute" top={["2vh", "3vh"]} left={["2vw", "1vw"]}>
             <Image

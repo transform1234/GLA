@@ -17,6 +17,8 @@ interface FooterProps {
   menues: Array<{ title: string; route?: string; icon?: string; id?: string }>;
   routeDynamics?: boolean;
   setRef?: (ref: HTMLDivElement | null) => void;
+  selectedIndex: number;
+  onSelect: (index: number) => void;
 }
 
 const PressableNew: React.FC<
@@ -48,6 +50,8 @@ const Footer: React.FC<FooterProps> = ({
   menues,
   routeDynamics,
   setRef,
+  selectedIndex,
+  onSelect,
   ...props
 }) => {
   const [selected, setSelected] = React.useState(0);
@@ -57,14 +61,14 @@ const Footer: React.FC<FooterProps> = ({
   const { colors } = useTheme();
 
   useEffect(() => {
-    let path = window?.location?.pathname.toString();
+    const path = window?.location?.pathname.toString();
     const arrData = footerMenus?.map((e) => e?.route);
     const index = arrData?.indexOf(path.split("/").slice(0, 3).join("/"));
-    if (index > 0) {
+    if (index >= 0) {
       setSelected(index);
+      onSelect(index);
     }
-  }, []);
-
+  }, [footerMenus, onSelect]);
   return (
     <Box
       width={width}
@@ -90,7 +94,7 @@ const Footer: React.FC<FooterProps> = ({
             cursor="pointer"
             flex={1}
             onClick={() => {
-              setSelected(index);
+              onSelect(index);
               item?.onClick && item?.onClick();
             }}
           >

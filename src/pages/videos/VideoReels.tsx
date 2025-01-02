@@ -218,7 +218,10 @@ const VideoItem: React.FC<{
                   rounded="none"
                   roundedLeft="full"
                   size="lg"
-                  _icon={{ width: heightPerItem?.height === 0 ? "100%" : "" }}
+                  _icon={{
+                    width: heightPerItem?.height === 0 ? "100%" : "",
+                    color: "primary.500",
+                  }}
                   p={heightPerItem?.height === 0 ? "5px 16px" : ""}
                   icon={
                     heightPerItem?.height === 0
@@ -284,11 +287,6 @@ const VideoItem: React.FC<{
                   startColor="primary.500"
                   endColor="primary.50"
                 />
-                <SkeletonCircle
-                  size="8"
-                  startColor="primary.500"
-                  endColor="primary.50"
-                />
               </HStack>
               <SkeletonCircle
                 size="8"
@@ -296,6 +294,30 @@ const VideoItem: React.FC<{
                 endColor="primary.50"
               />
             </HStack>
+            <Center
+              position="absolute"
+              top="50%"
+              left="50%"
+              transform="translate(-50%, -50%)"
+            >
+              <HStack gap="10" padding={4} align={"center"}>
+                <SkeletonCircle
+                  size="25px"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+                <SkeletonCircle
+                  size="50px"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+                <SkeletonCircle
+                  size="25px"
+                  startColor="primary.500"
+                  endColor="primary.50"
+                />
+              </HStack>
+            </Center>
             <HStack
               width="full"
               position="absolute"
@@ -323,6 +345,8 @@ const VideoReel: React.FC<{
   authUser: any;
   activeIndex?: string | number | undefined | null;
 }> = ({ videos, programID, authUser, activeIndex }) => {
+  const query = new URLSearchParams(window.location.search);
+  const redirect = query.get("redirect");
   const listRef = useRef<any>(null);
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState<number>(0);
@@ -427,7 +451,7 @@ const VideoReel: React.FC<{
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
         <TopIcon
-          onClick={() => navigate("/")}
+          onClick={() => (redirect ? navigate(redirect) : navigate("/"))}
           icon={"ChevronLeftIcon"}
           left="16px"
         />
@@ -467,7 +491,7 @@ const VideoReel: React.FC<{
               programID={programID}
               id={videos?.[index]?.contentId}
               qml_id={videos?.[index]?.lesson_questionset}
-              isVisible={index === visibleIndex}
+              isVisible={isIndexScroll && index === visibleIndex}
               refQml={qmlRef}
               style={style}
               adapter={videos?.[index]?.contentSource}
@@ -502,16 +526,14 @@ const TopIcon: React.FC<{
   return (
     <IconButton
       aria-label="Go back"
-      icon={
-        <IconByName name={icon} boxSize="2rem" color="primary.500" {..._icon} />
-      }
+      icon={<IconByName name={icon} boxSize="2rem" color="white" {..._icon} />}
       size="mg"
       variant="ghost"
       position="absolute"
       top="16px"
       left={left}
       zIndex="10"
-      bg="primary.50"
+      bg="#FFFFFF26"
       rounded={"full"}
       border={"none"}
       _focus={{ boxShadow: "none", outline: "none" }}

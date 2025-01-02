@@ -38,8 +38,7 @@
   .vjs-playback-rate.vjs-menu-button.vjs-menu-button-popup.vjs-control.vjs-button {
   display: none !important;
 }
-.vjs-mute-control.vjs-control.vjs-button.vjs-vol-3,
-.vjs-mute-control.vjs-control.vjs-button.vjs-vol-0 {
+.vjs-mute-control.vjs-control.vjs-button {
   border-radius: 50% !important;
   width: 34px !important;
   height: 34px !important;

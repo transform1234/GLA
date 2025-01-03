@@ -1,11 +1,30 @@
-import { extendTheme } from "@chakra-ui/react";
+import { border, extendTheme } from "@chakra-ui/react";
 
 const customTheme = extendTheme({
   styles: {
     global: {
+      "@font-face": [
+        {
+          fontFamily: "Bebas Neue",
+          src: `url('/src/assets/fonts/BebasNeue-Regular.ttf') format('truetype')`,
+        },
+        {
+          fontFamily: "Inter",
+          src: `url('/src/assets/fonts/Inter-Regular.woff2') format('woff2')`,
+          fontWeight: 400,
+          fontStyle: "normal",
+        },
+        {
+          fontFamily: "Inter",
+          src: `url('/src/assets/fonts/Inter-Italic.woff2') format('woff2')`,
+          fontWeight: 400,
+          fontStyle: "italic",
+        },
+      ],
       body: {
         bg: "gray.50",
         color: "black",
+        fontFamily: "Inter, sans-serif", // Default font is Inter
       },
     },
   },
@@ -21,30 +40,30 @@ const customTheme = extendTheme({
       700: "#074458",
       800: "#093646",
       900: "#0b2835",
-    }, 
+    },
     red: {
       50: "#fff0f0",
-      100: "#ffb8b8",   
-      200: "#ff8a8a", 
+      100: "#ffb8b8",
+      200: "#ff8a8a",
       300: "#ff5b5b",
-      400: "#ff2d2d", 
-      500: "#db0000", 
-      600: "#a80017", 
-      700: "#7f0013", 
-      800: "#56000e", 
-      900: "#2d0007",  
+      400: "#ff2d2d",
+      500: "#db0000",
+      600: "#a80017",
+      700: "#7f0013",
+      800: "#56000e",
+      900: "#2d0007",
     },
-      backgroundLight: "#f7fafc",
-      backgroundDark: "#1a202c",
-      primaryLight: "#39AED8",
-      textPrimary: "#10162E",
-      textSecondary: "#4F4F4F",
-      divider: "#3182ce",
-      backgroundHighlight: "#03627C1A",
-      backgroundGrey: "#F4F4F4",
-      white: "#FFFFFF",
-      borderColor: "#00A745" ,
-      borderGrey : "#C5C5C5"
+    backgroundLight: "#f7fafc",
+    backgroundDark: "#1a202c",
+    primaryLight: "#39AED8",
+    textPrimary: "#10162E",
+    textSecondary: "#4F4F4F",
+    divider: "#3182ce",
+    backgroundHighlight: "#03627C1A",
+    backgroundGrey: "#F4F4F4",
+    white: "#FFFFFF",
+    borderColor: "#00A745",
+    borderGrey: "#C5C5C5",
   },
   components: {
     Center: {
@@ -67,13 +86,17 @@ const customTheme = extendTheme({
 
     Text: {
       baseStyle: {
-        fontSize: "24px",
-        fontWeight: 400,
-        lineHeight: "28px",
+        fontSize: "14px",
+        lineHeight: "24px",
         textAlign: "center",
-        fontFamily: "Bebas Neue",
-        color: "textPrimary"
-
+        fontFamily: "Inter",
+        color: "textPrimary",
+      },
+      variants: {
+        italicText: {
+          fontFamily: "Inter",
+          fontStyle: "italic",
+        },
       },
     },
     FormLabel: {
@@ -91,8 +114,7 @@ const customTheme = extendTheme({
         fontSize: "14px",
         fontWeight: 400,
         lineHeight: "14px",
-        color: "textPrimary"
-
+        color: "textPrimary",
       },
     },
     Link: {
@@ -103,26 +125,40 @@ const customTheme = extendTheme({
         lineHeight: "16px",
         color: "primary.500",
         float: "right",
+        padding: "4px",
         mt: 1,
+        borderRadius: "4px",
+        textDecoration: "none",
+        _hover: {
+          color: "primary.500",
+          textDecoration: "none",
+          backgroundColor: "backgroundHighlight",
+        },
+        _active: {
+          backgroundColor: "backgroundHighlight",
+        },
       },
     },
     Button: {
       baseStyle: {
         fontWeight: "bold",
+        borderRadius: "8px",
       },
       sizes: {
         md: {
-          h: "48px",
-          fontSize: "lg",
-          px: "24px",
+          padding: "16px 166px",
         },
       },
       variants: {
         solid: {
           bg: "primary.500", 
           color: "white",
+          boxShadow:
+            "0px 1px 1px 0px #0A5C701A, 0px 2px 2px 0px #0A5C7017, 0px 5px 3px 0px #0A5C700D, 0px 9px 4px 0px #0A5C7003, 0px 14px 4px 0px #0A5C7000",
           _hover: {
             bg: "primary.600", 
+            boxShadow: "none",
+            outline: "none",
           },
           _active: {
             bg: "primary.700",
@@ -132,9 +168,14 @@ const customTheme = extendTheme({
             color: "white",
             cursor: "not-allowed",
           },
+          _focus: {
+            outline: "none",
+            boxShadow: "none",
+          },
         },
       },
       defaultProps: {
+        size: "md",
         variant: "solid",
       },
     },

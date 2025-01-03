@@ -293,3 +293,50 @@ export const fetchSearchResults = async (payloadProp: any): Promise<any> => {
     throw error;
   }
 };
+
+export const contentLike = async (payload: any): Promise<any> => {
+  try {
+    const response = await fetch(`${baseUrl}${URL.CONTENT_LIKE}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    throw error;
+  }
+};
+
+
+export const isContentLiked = async (payload: any): Promise<any> => {
+  try {
+    const response = await fetch(`${baseUrl}${URL.CONTENT_IS_LIKED}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    throw error;
+  }
+};

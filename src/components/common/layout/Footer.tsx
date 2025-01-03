@@ -17,6 +17,8 @@ interface FooterProps {
   menues: Array<{ title: string; route?: string; icon?: string; id?: string }>;
   routeDynamics?: boolean;
   setRef?: (ref: HTMLDivElement | null) => void;
+  selectedIndex: number;
+  onSelect: (index: number) => void;
 }
 
 const PressableNew: React.FC<
@@ -48,6 +50,8 @@ const Footer: React.FC<FooterProps> = ({
   menues,
   routeDynamics,
   setRef,
+  selectedIndex,
+  onSelect,
   ...props
 }) => {
   const [selected, setSelected] = React.useState(0);
@@ -57,14 +61,14 @@ const Footer: React.FC<FooterProps> = ({
   const { colors } = useTheme();
 
   useEffect(() => {
-    let path = window?.location?.pathname.toString();
+    const path = window?.location?.pathname.toString();
     const arrData = footerMenus?.map((e) => e?.route);
     const index = arrData?.indexOf(path.split("/").slice(0, 3).join("/"));
-    if (index > 0) {
+    if (index >= 0) {
       setSelected(index);
+      onSelect(index);
     }
-  }, []);
-
+  }, [footerMenus, onSelect]);
   return (
     <Box
       width={width}
@@ -90,7 +94,7 @@ const Footer: React.FC<FooterProps> = ({
             cursor="pointer"
             flex={1}
             onClick={() => {
-              setSelected(index);
+              onSelect(index);
               item?.onClick && item?.onClick();
             }}
           >
@@ -112,7 +116,7 @@ const Footer: React.FC<FooterProps> = ({
                       rounded: "full",
                       width: "80px",
                       height: "80px",
-                      border: "3px solid white",
+                      border: "5px solid #e3f2f7",
                       py: "0px",
                       justifyContent: "center",
                     })}
@@ -129,6 +133,9 @@ const Footer: React.FC<FooterProps> = ({
                       <IconByName
                         name={item?.icon || "HomeIcon"}
                         disabled
+                        height="24px"
+                        width="24px"
+                        isSelected={selected === index}
                         _icon={{
                           size: "24px",
                           color:

@@ -6,6 +6,7 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  Flex,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import IconButton from "./button/IconButton";
@@ -17,6 +18,8 @@ interface InfoModalProps {
   showIcon: boolean;
   children: React.ReactNode;
   footerContent?: React.ReactNode;
+  maxWidth?: string;
+  height?: string; 
 }
 
 const PopupModal: React.FC<InfoModalProps> = ({
@@ -26,6 +29,8 @@ const PopupModal: React.FC<InfoModalProps> = ({
   showIcon,
   children,
   footerContent,
+  maxWidth = "380px",
+  height = "460px",
   ...props
 }) => {
   const { t } = useTranslation();
@@ -39,37 +44,43 @@ const PopupModal: React.FC<InfoModalProps> = ({
       isCentered
     >
       <AlertDialogOverlay>
-        <AlertDialogContent borderRadius="16px">
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            <CustomHeading
-              variant="h2"
-              fontSize="1.25rem"
-              fontWeight="bold"
-              title={title}
-              color="primary.500"
-            />
-            {showIcon && (
-            <IconButton
-              onClick={onClose}
-              style={{
-                position: "absolute",
-                top: "14px",
-                right: "10px",
-                fontSize: "28px",
-                cursor: "pointer",
-              }}
-              color="primary.500"
-            >
-              &times;
-            </IconButton>
-            )}
-          </AlertDialogHeader>
+        <AlertDialogContent
+          maxWidth={maxWidth} 
+          height={height}
+          borderRadius="16px"
+          >
+            <AlertDialogHeader>
+      <Flex justifyContent="space-between" alignItems="center">
+        <CustomHeading
+          fontSize="24px"
+          fontFamily="Bebas Neue"
+          lineHeight="28px"
+          fontWeight="400"
+          title={title}
+          color="primary.500"
+        />
+        {showIcon && (
+          <IconButton
+            onClick={onClose}
+            style={{
+              fontSize: "28px",
+              cursor: "pointer",
+            }}
+            color="primary.500"
+            aria-label="Close"
+          >
+            &times;
+          </IconButton>
+        )}
+      </Flex>
+    </AlertDialogHeader>
 
-          <AlertDialogBody>
+
+          <AlertDialogBody >
           {children} 
           </AlertDialogBody>
 
-          <AlertDialogFooter>
+          <AlertDialogFooter paddingTop={0}>
             {footerContent}
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -11,11 +11,12 @@ import background from "../../../assets/images/home-bg.png";
 import palooza_logo from "../../../assets/logo/Logo-Large.png";
 import CustomHeading from "../typography/Heading";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import IconByName from "../icons/Icon";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomInputWithDropdown from "../input/CustomDropDown";
 import searchIcon from "../../../assets/icons/search.svg";
+import notificationIcon from "../../../assets/icons/icn-notification.svg";
 import { debounce } from "lodash";
 
 interface HeaderProps {
@@ -35,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({
   bottomComponent,
 }: HeaderProps) => {
   const { t } = useTranslation();
-  const { isOpen, onToggle } = useDisclosure();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -67,13 +68,19 @@ const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      const scrollValues = document.getElementById("bodyBox")?.scrollTop ?? 0;
+      setIsScrolled(scrollValues > 0);
+      if(scrollValues === 0){
+        setIsOpen(false);
+        setIsScrolled(false);
+      }
+
     };
-    window.addEventListener("scroll", handleScroll);
+    document.getElementById("bodyBox")?.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      document.getElementById("bodyBox")?.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [isOpen]);
 
   return (
     <Box
@@ -86,7 +93,6 @@ const Header: React.FC<HeaderProps> = ({
       transition="all 0.3s"
     >
       {isWatchPage && (
-        <>
           <HStack>
             <IconByName
               name={"BackIcon"}
@@ -101,22 +107,45 @@ const Header: React.FC<HeaderProps> = ({
               {t("HOME_WATCH")}
             </Text>
           </HStack>
-        </>
       )}
       <VStack align={"stretch"} spacing={3} marginTop="20px">
         {!isWatchPage && !isSearchPage && (
           <>
-            <HStack justifyContent="space-between" align={"stretch"}>
+             <HStack> </HStack>
+            <HStack
+              justifyContent="space-between"
+              alignItems="center"
+              w="100%"
+            >
+              {/* Left-hand side: Palooza logo */}
+              { !isOpen &&
               <Image src={`${palooza_logo}`} height="25px" />
-              <IconByName
-                name={"SearchIcon"}
-                boxSize="1.5rem"
-                color="white"
-                onClick={onToggle}
-              />
+              }
+
+              {/* Right-hand side: SearchIcon and NotificationIcon */}
+              <HStack spacing={4}>
+                {/* <Image
+                  src={notificationIcon}
+                  alt="Notification"
+                  cursor="pointer"
+                  boxSize="1.5rem"
+                  onClick={() => navigate("/home")}
+                /> */}
+                {
+                  isScrolled && !isOpen &&
+                  <IconByName
+                  name={"SearchIcon"}
+                  width="24px"
+                  height="24px"
+                  cursor="pointer"
+                  color="white"
+                  onClick={(e:any) => setIsOpen(true)}
+                  />
+                }
+              </HStack>
             </HStack>
 
-            <Collapse
+              <Collapse
               in={!isScrolled && !isOpen}
               transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
             >
@@ -138,6 +167,7 @@ const Header: React.FC<HeaderProps> = ({
                   fontWeight="600"
                   title={localStorage.getItem("name")}
                   color="white"
+                  textTransform="capitalize"
                 />
               </VStack>
             </Collapse>
@@ -153,13 +183,29 @@ const Header: React.FC<HeaderProps> = ({
             placeholder={t("HOME_SEARCH")}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={isSearchPage}
+            isBackButton={isSearchPage || isWatchPage}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions || []}
             onSuggestionClick={onSuggestionClick}
           />
         </Collapse>
+
+        {
+         !isOpen && !isScrolled && !isWatchPage && !isSearchPage &&
+          <CustomInputWithDropdown
+          getInputRef={(e) => setRef(e)}
+          placeholder={t("HOME_SEARCH")}
+          icon={searchIcon}
+          showClearIcon={true}
+          isBackButton={isWatchPage || isSearchPage}
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
+          suggestions={suggestions}
+          onSuggestionClick={onSuggestionClick}
+        />
+        }
+       
       </VStack>
       {bottomComponent && bottomComponent}
     </Box>

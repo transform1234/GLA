@@ -41,6 +41,7 @@ const Layout: React.FC<Props> = ({
     title: `${t("POPUP_CONFIRM_LOGOUT")}`,
     message: `${t("POPUP_CONFIRM_MSG")}`,
   });
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const handleLogout = async () => {
     try {
@@ -52,12 +53,18 @@ const Layout: React.FC<Props> = ({
     }
   };
 
+  const cancel = () => {
+    onClose();
+    setSelectedIndex(0);
+
+
+  };
   const menuList = [
     { route: "/home", icon: "HomeIcon", title: "Home" },
     { route: "/leaderboard", icon: "LeaderboardIcon", title: "Leaderboard" },
     { route: "/watch", icon: "WatchIcon", title: "Watch", isOutOFBox: true },
     { route: "/guide", icon: "QuestionIcon", title: "Guide" },
-    { icon: "LogoutIcon", title: "Logout", onClick: onOpen }, // Opens the modal on Logout click
+    { icon: "LogoutIcon", title: "Logout", onClick: onOpen },
   ];
 
   return (
@@ -71,6 +78,7 @@ const Layout: React.FC<Props> = ({
         <Loading message="Loading..." />
       ) : (
         <Box
+          id="bodyBox"
           height={height}
           width={width}
           bg="white"
@@ -84,33 +92,43 @@ const Layout: React.FC<Props> = ({
           {isFooterVisible && (
             <>
               <Box minH={"96px"} />
-              <Footer menues={menuList} />
+              <Footer menues={menuList}
+              selectedIndex={selectedIndex}
+              onSelect={(index: number) => setSelectedIndex(index)}
+              />
             </>
           )}
         </Box>
       )}
       <PopupModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={cancel}
         title={modalContent.title}
         showIcon={true}
+        maxWidth="380px" 
+        height="182px"
         footerContent={
           <PrimaryButton
             onClick={() => {
-              onClose();
+              cancel();
               handleLogout();
             }}
             width="100%"
             color="white"
             bg="primary.500"
+            fontFamily="Inter"
+            fontWeight="700"
+            fontSize="16px"
+            lineHeight="24px"
+
           >
             {t("POPUP_LOGOUT")}
           </PrimaryButton>
         }
       >
         <CustomHeading
-          variant="p"
           fontSize="14px"
+          fontWeight="400"
           title={modalContent.message}
           color="textSecondary"
         />

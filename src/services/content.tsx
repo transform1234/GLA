@@ -294,6 +294,42 @@ export const fetchSearchResults = async (payloadProp: any): Promise<any> => {
   }
 };
 
+export interface IGetProgramProgressPayload {
+  programId: string;
+  [key: string]: any;
+}
+export const getProgramProgress = async ({
+  programId,
+  ...payload
+}: IGetProgramProgressPayload): Promise<any> => {
+  const url = `${baseUrl}/student/glaProgramProgress?program=${programId}`;
+  const headers = {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    if (result?.errorCode?.code == "invalid-jwt") {
+      window.location.reload();
+    }
+    return result.data;
+  } catch (error) {
+    console.error("Error fetching program progress:", error);
+    throw error;
+  }
+};
+
 export const contentLike = async (payload: any): Promise<any> => {
   try {
     const response = await fetch(`${baseUrl}${URL.CONTENT_LIKE}`, {
@@ -316,7 +352,6 @@ export const contentLike = async (payload: any): Promise<any> => {
     throw error;
   }
 };
-
 
 export const isContentLiked = async (payload: any): Promise<any> => {
   try {

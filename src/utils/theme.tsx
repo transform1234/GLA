@@ -55,6 +55,12 @@ const customTheme = extendTheme({
       800: "#56000e",
       900: "#2d0007",
     },
+    progressBarGreen: {
+      500: "#00A745",
+    },
+    progressDarkBG: "#023B4A",
+    progressLightBG: "#03627C2B",
+    progressCircaleDarkBG: "#355F6A",
     backgroundLight: "#f7fafc",
     backgroundDark: "#1a202c",
     primaryLight: "#39AED8",
@@ -153,12 +159,12 @@ const customTheme = extendTheme({
       },
       variants: {
         solid: {
-          bg: "primary.500", 
+          bg: "primary.500",
           color: "white",
           boxShadow:
             "0px 1px 1px 0px #0A5C701A, 0px 2px 2px 0px #0A5C7017, 0px 5px 3px 0px #0A5C700D, 0px 9px 4px 0px #0A5C7003, 0px 14px 4px 0px #0A5C7000",
           _hover: {
-            bg: "primary.600", 
+            bg: "primary.600",
             boxShadow: "none",
             outline: "none",
           },
@@ -166,7 +172,7 @@ const customTheme = extendTheme({
             bg: "primary.700",
           },
           _disabled: {
-            bg: "primary.300", 
+            bg: "primary.300",
             color: "white",
             cursor: "not-allowed",
           },

@@ -1,5 +1,7 @@
 import {
   Box,
+  CircularProgress,
+  CircularProgressLabel,
   Collapse,
   HStack,
   Image,
@@ -123,6 +125,22 @@ const Header: React.FC<HeaderProps> = ({
 
               {/* Right-hand side: SearchIcon and NotificationIcon */}
               <HStack spacing={4}>
+                {isScrolled && progress !== "" && (
+                  <CircularProgress
+                    value={Math.round(Number(progress) || 0)}
+                    color="progressBarGreen.500"
+                    size="26px"
+                    thickness="5px"
+                    trackColor={"progressCircaleDarkBG"}
+                  >
+                    <CircularProgressLabel
+                      color="white"
+                      fontSize={"8px"}
+                    >{`${Math.round(
+                      Number(progress) || 0
+                    )}%`}</CircularProgressLabel>
+                  </CircularProgress>
+                )}
                 {/* <Image
                   src={notificationIcon}
                   alt="Notification"
@@ -133,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({
                 {isScrolled && !isOpen && (
                   <IconByName
                     name={"SearchIcon"}
-                    width="24px"
+                    minW="24px"
                     height="24px"
                     cursor="pointer"
                     color="white"

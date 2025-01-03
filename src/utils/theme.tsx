@@ -58,6 +58,7 @@ const customTheme = extendTheme({
     },
     progressDarkBG: "#023B4A",
     progressLightBG: "#03627C2B",
+    progressCircaleDarkBG: "#355F6A",
     backgroundLight: "#f7fafc",
     backgroundDark: "#1a202c",
     primaryLight: "#39AED8",

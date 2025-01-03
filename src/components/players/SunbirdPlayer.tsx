@@ -24,6 +24,7 @@ interface SunbirdPlayerProps {
   handleExitButton?: () => void;
   style?: React.CSSProperties;
   playerContext?: object;
+  batchsize?: number;
 }
 
 const SunbirdPlayer = ({

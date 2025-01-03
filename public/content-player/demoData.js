@@ -172,6 +172,7 @@ const playerConfig = {
     host: metadata.telemetryBaseUrl || "",
     endpoint: metadata.telemetryEndpoint || "/data/v1/telemetry",
     apislug: metadata.apislug || "",
+    batchsize: metadata.batchsize || "",
     userData: metadata?.userData ? metadata?.userData : {},
     cdata: metadata?.playerContext?.cdata || [],
   },

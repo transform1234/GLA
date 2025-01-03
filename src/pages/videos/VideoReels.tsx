@@ -23,10 +23,18 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { handleEvent } from "./utils";
 import Loading from "../../components/common/Loading";
+import { commonFetchCall } from "../../services/telemetry";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
 const VITE_APP_PID = import.meta.env.VITE_APP_PID;
+
+/*
+Comment telemetry in all Sunbird players; to undo, find this function and uncomment.
+TelemetrySyncManager.syncFailedBatch();
+TelemetrySyncManager.syncEvents()
+this.sendTelemetry(e)
+*/
 
 const contextData = {
   sid: localStorage.getItem("contentSessionId"),
@@ -201,6 +209,7 @@ const VideoItem: React.FC<{
                   type: "mimeType",
                 },
               ])}
+              batchsize={5}
             />
             {qml_id && (
               <VStack>
@@ -269,6 +278,7 @@ const VideoItem: React.FC<{
                       type: "mimeType",
                     },
                   ])}
+                  batchsize={5}
                 />
               </VStack>
             )}
@@ -351,10 +361,10 @@ const VideoReel: React.FC<{
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState<number>(0);
   const { height: itemSize, width } = useDeviceSize();
+  const telemetryListRef = useRef<any[]>([]);
   const navigate = useNavigate();
-  // const trackDataRef = useRef<any[]>([]);
   const [isIndexScroll, setIsIndexScroll] = useState(false);
-
+  const [isLiked, setIsLiked] = useState(false);
   const handleScroll = useCallback(
     debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
       const itemCount = videos.length;
@@ -364,6 +374,14 @@ const VideoReel: React.FC<{
         setVisibleIndex(newVisibleIndex);
         // call tracking API here
         if (isIndexScroll) {
+          if (telemetryListRef.current.length > 0) {
+            console.log(
+              "call telemetry api remaining on scroll",
+              telemetryListRef.current
+            );
+            await commonFetchCall(JSON.stringify(telemetryListRef.current));
+            telemetryListRef.current = [];
+          }
           const queryParams = new URLSearchParams(location.search);
           queryParams.set("index", String(newVisibleIndex));
           navigate({
@@ -375,6 +393,26 @@ const VideoReel: React.FC<{
     }, 500),
     [videos, itemSize, visibleIndex]
   );
+
+  React.useEffect(() => {
+    const fetchLikeStatus = async () => {
+      if (!programID) return;
+      try {
+        const player = {
+          programId: programID,
+          subject: videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+          contentId: videos?.[visibleIndex]?.contentId,
+        };
+
+        const response = await content.isContentLiked(player);
+        setIsLiked(!response[0]?.like || false);
+      } catch (error) {
+        console.error("Error fetching like status:", error);
+      }
+    };
+
+    fetchLikeStatus();
+  }, [activeIndex,programID,videos?.length]);
 
   React.useEffect(() => {
     if (activeIndex || activeIndex === 0) {
@@ -405,6 +443,21 @@ const VideoReel: React.FC<{
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
+    if (
+      data?.data?.iframeId &&
+      telemetryListRef.current.length > 0 &&
+      telemetryListRef.current.length >= 5
+    ) {
+      console.log(
+        "Call the telemetry API based on batch length",
+        telemetryListRef.current
+      );
+      await commonFetchCall(JSON.stringify(telemetryListRef.current));
+      telemetryListRef.current = [];
+    } else if (data?.data?.iframeId) {
+      telemetryListRef.current = [...telemetryListRef.current, data?.data];
+    }
+
     if (!result || !result?.type) return;
     if (result?.type === "height") {
       const he = itemSize / result?.data;
@@ -412,10 +465,6 @@ const VideoReel: React.FC<{
         qmlRef.current.style.height = `${he}px`;
       }
     } else {
-      // trackDataRef.current = {
-      //   ...trackDataRef.current,
-      //   [result.type]: result?.data,
-      // };
       const { iframeId, data } = result;
       const player = {
         ...data,
@@ -430,6 +479,11 @@ const VideoReel: React.FC<{
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
+      if (telemetryListRef.current.length > 0) {
+        console.log("call telemetry api remaining", telemetryListRef.current);
+        await commonFetchCall(JSON.stringify(telemetryListRef.current));
+        telemetryListRef.current = [];
+      }
       console.log("result1", videos?.[visibleIndex], player, result, retult1);
     }
   };
@@ -447,6 +501,24 @@ const VideoReel: React.FC<{
       );
     }
   }
+
+  const handleLikeToggle = async () => {
+    try {
+      const likeStatus = isLiked;
+      const player = {
+        programId: programID,
+        subject: videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+        userId: authUser?.userId,
+        contentId: videos?.[visibleIndex]?.contentId,
+        like: likeStatus,
+      };
+      const result = await content.contentLike(player);
+      console.log(result);
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("Error toggling like status:", error);
+    }
+  };
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
@@ -455,11 +527,11 @@ const VideoReel: React.FC<{
           icon={"ChevronLeftIcon"}
           left="16px"
         />
-        {/* <TopIcon
-          onClick={() => console.log("TopIcon")}
-          icon={"ThumbsUpIcon"}
-          right="16px"
-        /> */}
+        <TopIcon
+        onClick={handleLikeToggle}
+        icon={isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
+        right="16px"
+      />
         <List
           overscanCount={1}
           ref={listRef}

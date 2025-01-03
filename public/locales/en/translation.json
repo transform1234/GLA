@@ -14,8 +14,8 @@
   "LOGIN_USERNAME": "Username",
   "LOGIN_PASSWORD": "Password",
   "LOGIN": "LOGIN",
-  "LOGIN_INVALID_PASSWORD" : "Invalid Password",
-  "LOGIN_INVALID_USER_NAME" : "Invalid User Name",
+  "LOGIN_INVALID_PASSWORD" : "Incorrect password",
+  "LOGIN_INVALID_USER_NAME" : "Incorrect username",
   "LOGIN_REQUIRED_FIELD" : "This is Required Field",
 
   "POPUP_FIRST_TWO_LETTERS_OF_YOUR_FIRST_NAME": "First 2 letters of your first name",

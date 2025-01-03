@@ -23,6 +23,7 @@ interface Props {
     onSuggestionClick?: (suggestion: any) => void;
     onSubjectSelect?: (subject: string) => void;
     bottomComponent?: React.ReactNode;
+    progress?: string;
   };
 }
 
@@ -56,8 +57,6 @@ const Layout: React.FC<Props> = ({
   const cancel = () => {
     onClose();
     setSelectedIndex(0);
-
-
   };
   const menuList = [
     { route: "/home", icon: "HomeIcon", title: "Home" },
@@ -92,9 +91,10 @@ const Layout: React.FC<Props> = ({
           {isFooterVisible && (
             <>
               <Box minH={"96px"} />
-              <Footer menues={menuList}
-              selectedIndex={selectedIndex}
-              onSelect={(index: number) => setSelectedIndex(index)}
+              <Footer
+                menues={menuList}
+                selectedIndex={selectedIndex}
+                onSelect={(index: number) => setSelectedIndex(index)}
               />
             </>
           )}
@@ -105,7 +105,7 @@ const Layout: React.FC<Props> = ({
         onClose={cancel}
         title={modalContent.title}
         showIcon={true}
-        maxWidth="380px" 
+        maxWidth="380px"
         height="182px"
         footerContent={
           <PrimaryButton
@@ -120,7 +120,6 @@ const Layout: React.FC<Props> = ({
             fontWeight="700"
             fontSize="16px"
             lineHeight="24px"
-
           >
             {t("POPUP_LOGOUT")}
           </PrimaryButton>

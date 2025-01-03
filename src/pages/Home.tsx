@@ -1,28 +1,27 @@
 import {
-  Badge,
   Box,
   Grid,
   GridItem,
   HStack,
   Image,
-  StackDivider,
+  Progress,
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { chunk } from "lodash";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import english from "../assets/icons/english_icon.svg";
 import kannada from "../assets/icons/kannada_icon.svg";
-import odia from "../assets/icons/odiya_icon.svg";
 import math from "../assets/icons/maths_icon.svg";
+import odia from "../assets/icons/odiya_icon.svg";
 import physics from "../assets/icons/physics_icon.svg";
+import ContentCard from "../components/common/cards/ContentCard";
 import Layout from "../components/common/layout/layout";
 import CustomHeading from "../components/common/typography/Heading";
+import { fetchSearchResults, getProgramProgress } from "../services/content";
 import { getProgramId, getSubjectList } from "../services/home";
-import { chunk } from "lodash";
-import { useNavigate } from "react-router-dom";
-import { fetchSearchResults } from "../services/content";
-import ContentCard from "../components/common/cards/ContentCard";
 import { impression } from "../services/telemetry";
 
 const subjectIcons = {
@@ -43,6 +42,7 @@ export default function Homepage(props: any) {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { authUser } = props;
+  const [progress, setProgress] = useState<string>("");
 
   useEffect(() => {
     const fetchProgramId = async () => {
@@ -63,7 +63,20 @@ export default function Homepage(props: any) {
         let storedSubject = localStorage.getItem("subject") || "";
         const programData = await getProgramId();
         if (programData?.programId) {
-          const res: any = await getSubjectList();
+          const result = await getProgramProgress({
+            programId: programData?.programId,
+          });
+          setProgress(result?.percentage || "0");
+          const resultSubject: any = await getSubjectList();
+          const res = await Promise.all(
+            resultSubject?.map(async (e: any) => {
+              const progress = await getProgramProgress({
+                programId: programData?.programId,
+                subject: e?.subject,
+              });
+              return { ...e, progress };
+            })
+          );
           const subjectR = chunk(res, 4);
           if (!storedSubject && res.length > 0) {
             storedSubject = res[0]?.subject;
@@ -173,6 +186,7 @@ export default function Homepage(props: any) {
         suggestions: suggestions,
         onSearchChange: setSearchTerm,
         onSuggestionClick: handleSuggestionClick,
+        progress: progress,
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">
@@ -193,6 +207,7 @@ export default function Homepage(props: any) {
                 title={t("HOME_LEARN_SOMETHING_NOW")}
                 color="textPrimary"
               />
+
               {subjects &&
                 subjects?.map((subject, index) => (
                   <HStack
@@ -205,7 +220,7 @@ export default function Homepage(props: any) {
                       subject.map((sub: any) => (
                         <VStack
                           key={sub.subject}
-                          spacing={3}
+                          spacing={"2.5"}
                           p="2.5"
                           onClick={() => handleSelectSubject(sub.subject)}
                           cursor="pointer"
@@ -227,34 +242,46 @@ export default function Homepage(props: any) {
                               ? "primary.500"
                               : "borderColor"
                           }
-                          width="75px"
-                          height="85px"
+                          width="77px"
+                          height="87px"
                           justifyContent="center"
                           alignItems="center"
                         >
                           {/* Render the specific image for each subject */}
-                          <Image
-                            boxSize="32px"
-                            src={
-                              subjectIcons[
-                                sub.subject?.toLowerCase() as keyof typeof subjectIcons
-                              ]?.icon || kannada
-                            }
-                            alt={`${sub.subject} icon`}
-                          />
-                          <CustomHeading
-                            marginBottom="0"
-                            textAlign="center"
-                            lineHeight="11px"
-                            fontSize="12px"
-                            fontWeight="700"
-                            textTransform="uppercase"
-                            title={
-                              subjectIcons[
-                                sub.subject?.toLowerCase() as keyof typeof subjectIcons
-                              ]?.label || sub.subject
-                            }
-                            color={"primary.500"}
+                          <VStack spacing={1}>
+                            <Image
+                              boxSize="32px"
+                              src={
+                                subjectIcons[
+                                  sub.subject?.toLowerCase() as keyof typeof subjectIcons
+                                ]?.icon || kannada
+                              }
+                              alt={`${sub.subject} icon`}
+                            />
+                            <CustomHeading
+                              marginBottom="0"
+                              textAlign="center"
+                              lineHeight="9px"
+                              fontSize="12px"
+                              fontWeight="700"
+                              textTransform="uppercase"
+                              title={
+                                subjectIcons[
+                                  sub.subject?.toLowerCase() as keyof typeof subjectIcons
+                                ]?.label || sub.subject
+                              }
+                              color={"primary.500"}
+                            />
+                          </VStack>
+                          <Progress
+                            w={"100%"}
+                            colorScheme="progressBarGreen"
+                            bg="progressLightBG"
+                            color={"white"}
+                            size="xs"
+                            value={sub?.progress?.percentage || 0}
+                            rounded={"full"}
+                            isAnimated
                           />
                         </VStack>
                       ))}

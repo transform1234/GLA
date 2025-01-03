@@ -3,20 +3,20 @@ import {
   Collapse,
   HStack,
   Image,
-  useDisclosure,
-  VStack,
+  Progress,
   Text,
+  VStack,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import searchIcon from "../../../assets/icons/search.svg";
 import background from "../../../assets/images/home-bg.png";
 import palooza_logo from "../../../assets/logo/Logo-Large.png";
-import CustomHeading from "../typography/Heading";
-import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
 import IconByName from "../icons/Icon";
-import { useLocation, useNavigate } from "react-router-dom";
 import CustomInputWithDropdown from "../input/CustomDropDown";
-import searchIcon from "../../../assets/icons/search.svg";
-import notificationIcon from "../../../assets/icons/icn-notification.svg";
+import CustomHeading from "../typography/Heading";
+// import notificationIcon from "../../../assets/icons/icn-notification.svg";
 import { debounce } from "lodash";
 
 interface HeaderProps {
@@ -26,6 +26,7 @@ interface HeaderProps {
   onSearchChange?: (value: string) => void | undefined;
   onSuggestionClick?: (suggestion: string) => void;
   bottomComponent?: React.ReactNode;
+  progress?: string | undefined;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -34,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({
   onSearchChange,
   onSuggestionClick,
   bottomComponent,
+  progress,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -70,15 +72,18 @@ const Header: React.FC<HeaderProps> = ({
     const handleScroll = () => {
       const scrollValues = document.getElementById("bodyBox")?.scrollTop ?? 0;
       setIsScrolled(scrollValues > 0);
-      if(scrollValues === 0){
+      if (scrollValues === 0) {
         setIsOpen(false);
         setIsScrolled(false);
       }
-
     };
-    document.getElementById("bodyBox")?.addEventListener("scroll", handleScroll);
+    document
+      .getElementById("bodyBox")
+      ?.addEventListener("scroll", handleScroll);
     return () => {
-      document.getElementById("bodyBox")?.removeEventListener("scroll", handleScroll);
+      document
+        .getElementById("bodyBox")
+        ?.removeEventListener("scroll", handleScroll);
     };
   }, [isOpen]);
 
@@ -93,34 +98,28 @@ const Header: React.FC<HeaderProps> = ({
       transition="all 0.3s"
     >
       {isWatchPage && (
-          <HStack>
-            <IconByName
-              name={"BackIcon"}
-              color="white"
-              alt="Back"
-              cursor="pointer"
-              width="2em"
-              height="2em"
-              onClick={() => navigate("/home")}
-            />
-            <Text fontSize="20px" color="white">
-              {t("HOME_WATCH")}
-            </Text>
-          </HStack>
+        <HStack>
+          <IconByName
+            name={"BackIcon"}
+            color="white"
+            alt="Back"
+            cursor="pointer"
+            width="2em"
+            height="2em"
+            onClick={() => navigate("/home")}
+          />
+          <Text fontSize="20px" color="white">
+            {t("HOME_WATCH")}
+          </Text>
+        </HStack>
       )}
       <VStack align={"stretch"} spacing={3} marginTop="20px">
         {!isWatchPage && !isSearchPage && (
           <>
-             <HStack> </HStack>
-            <HStack
-              justifyContent="space-between"
-              alignItems="center"
-              w="100%"
-            >
+            <HStack> </HStack>
+            <HStack justifyContent="space-between" alignItems="center" w="100%">
               {/* Left-hand side: Palooza logo */}
-              { !isOpen &&
-              <Image src={`${palooza_logo}`} height="25px" />
-              }
+              {!isOpen && <Image src={`${palooza_logo}`} height="25px" />}
 
               {/* Right-hand side: SearchIcon and NotificationIcon */}
               <HStack spacing={4}>
@@ -131,45 +130,87 @@ const Header: React.FC<HeaderProps> = ({
                   boxSize="1.5rem"
                   onClick={() => navigate("/home")}
                 /> */}
-                {
-                  isScrolled && !isOpen &&
+                {isScrolled && !isOpen && (
                   <IconByName
-                  name={"SearchIcon"}
-                  width="24px"
-                  height="24px"
-                  cursor="pointer"
-                  color="white"
-                  onClick={(e:any) => setIsOpen(true)}
+                    name={"SearchIcon"}
+                    width="24px"
+                    height="24px"
+                    cursor="pointer"
+                    color="white"
+                    onClick={(e: any) => setIsOpen(true)}
                   />
-                }
+                )}
               </HStack>
             </HStack>
 
-              <Collapse
+            <Collapse
               in={!isScrolled && !isOpen}
               transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
             >
-              <VStack align="flex-start" spacing={1}>
-                <CustomHeading
-                  lineHeight="21px"
-                  fontFamily="Inter"
-                  variant="h2"
-                  fontSize="12px"
-                  fontWeight="400"
-                  title={t("HOME_HELLO")}
-                  color="white"
-                />
-                <CustomHeading
-                  lineHeight="21px"
-                  fontFamily="Inter"
-                  variant="h2"
-                  fontSize="20px"
-                  fontWeight="600"
-                  title={localStorage.getItem("name")}
-                  color="white"
-                  textTransform="capitalize"
-                />
-              </VStack>
+              <HStack align={"stretch"}>
+                <VStack align="flex-start" spacing={1} flex={10}>
+                  <CustomHeading
+                    lineHeight="21px"
+                    fontFamily="Inter"
+                    variant="h2"
+                    fontSize="12px"
+                    fontWeight="400"
+                    title={t("HOME_HELLO")}
+                    color="white"
+                  />
+                  <CustomHeading
+                    lineHeight="21px"
+                    fontFamily="Inter"
+                    variant="h2"
+                    fontSize="20px"
+                    fontWeight="600"
+                    title={localStorage.getItem("name")}
+                    color="white"
+                    textTransform="capitalize"
+                  />
+                </VStack>
+                {progress !== "" && (
+                  <Box
+                    w={"100%"}
+                    flex={15}
+                    rounded={"8"}
+                    p="2.5"
+                    bg={"#355F6A"}
+                  >
+                    <HStack align={"center"}>
+                      <VStack align={"stretch"} w={"100%"}>
+                        <CustomHeading
+                          lineHeight="12px"
+                          fontFamily="Inter"
+                          variant="h2"
+                          fontSize="12px"
+                          fontWeight="600"
+                          title={"Your Progress"}
+                          color="white"
+                          textTransform="uppercase"
+                        />
+                        <Progress
+                          colorScheme="progressBarGreen"
+                          size="sm"
+                          value={Math.round(Number(progress) || 0)}
+                          rounded={"full"}
+                          bg="progressDarkBG"
+                        />
+                      </VStack>
+                      <CustomHeading
+                        fontFamily="Inter"
+                        variant="h2"
+                        fontSize="20px"
+                        lineHeight="20px"
+                        textAlign={"center"}
+                        fontWeight="500"
+                        title={`${Math.round(Number(progress) || 0)}%`}
+                        color="white"
+                      />
+                    </HStack>
+                  </Box>
+                )}
+              </HStack>
             </Collapse>
           </>
         )}
@@ -191,21 +232,19 @@ const Header: React.FC<HeaderProps> = ({
           />
         </Collapse>
 
-        {
-         !isOpen && !isScrolled && !isWatchPage && !isSearchPage &&
+        {!isOpen && !isScrolled && !isWatchPage && !isSearchPage && (
           <CustomInputWithDropdown
-          getInputRef={(e) => setRef(e)}
-          placeholder={t("HOME_SEARCH")}
-          icon={searchIcon}
-          showClearIcon={true}
-          isBackButton={isWatchPage || isSearchPage}
-          onChange={handleSearchChange}
-          onKeyDown={handleKeyDown}
-          suggestions={suggestions}
-          onSuggestionClick={onSuggestionClick}
-        />
-        }
-       
+            getInputRef={(e) => setRef(e)}
+            placeholder={t("HOME_SEARCH")}
+            icon={searchIcon}
+            showClearIcon={true}
+            isBackButton={isWatchPage || isSearchPage}
+            onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
+            suggestions={suggestions}
+            onSuggestionClick={onSuggestionClick}
+          />
+        )}
       </VStack>
       {bottomComponent && bottomComponent}
     </Box>

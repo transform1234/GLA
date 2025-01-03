@@ -23,7 +23,7 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { handleEvent } from "./utils";
 import Loading from "../../components/common/Loading";
-import { commonFetchCall } from "../../services/telemetry";
+import { callBatch } from "../../services/telemetry";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -374,14 +374,7 @@ const VideoReel: React.FC<{
         setVisibleIndex(newVisibleIndex);
         // call tracking API here
         if (isIndexScroll) {
-          if (telemetryListRef.current.length > 0) {
-            console.log(
-              "call telemetry api remaining on scroll",
-              telemetryListRef.current
-            );
-            await commonFetchCall(JSON.stringify(telemetryListRef.current));
-            telemetryListRef.current = [];
-          }
+          await callReaminigTelemetry("call telemetry api remaining on scroll");
           const queryParams = new URLSearchParams(location.search);
           queryParams.set("index", String(newVisibleIndex));
           navigate({
@@ -400,7 +393,8 @@ const VideoReel: React.FC<{
       try {
         const player = {
           programId: programID,
-          subject: videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+          subject:
+            videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
           contentId: videos?.[visibleIndex]?.contentId,
         };
 
@@ -412,7 +406,7 @@ const VideoReel: React.FC<{
     };
 
     fetchLikeStatus();
-  }, [activeIndex,programID,videos?.length]);
+  }, [activeIndex, programID, videos?.length]);
 
   React.useEffect(() => {
     if (activeIndex || activeIndex === 0) {
@@ -428,6 +422,17 @@ const VideoReel: React.FC<{
       setIsIndexScroll(true);
     }
   }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
+
+  const callReaminigTelemetry = async (message: string | undefined) => {
+    if (telemetryListRef.current.length > 0) {
+      console.log(
+        message || "call telemetry api remaining",
+        telemetryListRef.current
+      );
+      await callBatch(telemetryListRef.current);
+      telemetryListRef.current = [];
+    }
+  };
 
   React.useEffect(() => {
     const handleEventNew = (event: any) => {
@@ -452,7 +457,7 @@ const VideoReel: React.FC<{
         "Call the telemetry API based on batch length",
         telemetryListRef.current
       );
-      await commonFetchCall(JSON.stringify(telemetryListRef.current));
+      await callBatch(telemetryListRef.current);
       telemetryListRef.current = [];
     } else if (data?.data?.iframeId) {
       telemetryListRef.current = [...telemetryListRef.current, data?.data];
@@ -479,11 +484,9 @@ const VideoReel: React.FC<{
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
-      if (telemetryListRef.current.length > 0) {
-        console.log("call telemetry api remaining", telemetryListRef.current);
-        await commonFetchCall(JSON.stringify(telemetryListRef.current));
-        telemetryListRef.current = [];
-      }
+      await callReaminigTelemetry(
+        "call telemetry api remaining before tracking"
+      );
       console.log("result1", videos?.[visibleIndex], player, result, retult1);
     }
   };
@@ -507,7 +510,8 @@ const VideoReel: React.FC<{
       const likeStatus = isLiked;
       const player = {
         programId: programID,
-        subject: videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+        subject:
+          videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
         userId: authUser?.userId,
         contentId: videos?.[visibleIndex]?.contentId,
         like: likeStatus,
@@ -519,19 +523,21 @@ const VideoReel: React.FC<{
       console.error("Error toggling like status:", error);
     }
   };
+
+  const handleBack = async () => {
+    await callReaminigTelemetry("call telemetry api remaining on back");
+    redirect ? navigate(redirect) : navigate("/");
+  };
+
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
+        <TopIcon onClick={handleBack} icon={"ChevronLeftIcon"} left="16px" />
         <TopIcon
-          onClick={() => (redirect ? navigate(redirect) : navigate("/"))}
-          icon={"ChevronLeftIcon"}
-          left="16px"
+          onClick={handleLikeToggle}
+          icon={isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
+          right="16px"
         />
-        <TopIcon
-        onClick={handleLikeToggle}
-        icon={isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
-        right="16px"
-      />
         <List
           overscanCount={1}
           ref={listRef}

@@ -121,3 +121,14 @@ export const commonFetchCall = async (dataString: string) => {
     body: dataString,
   });
 };
+
+export const callBatch = async (dataString: Array<any>) => {
+  return await commonFetchCall(
+    JSON.stringify({
+      id: "palooza.telemetry",
+      ver: "3.0",
+      ets: Date.now(),
+      events: dataString,
+    })
+  );
+};

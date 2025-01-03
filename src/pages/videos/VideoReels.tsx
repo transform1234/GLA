@@ -23,10 +23,18 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { handleEvent } from "./utils";
 import Loading from "../../components/common/Loading";
+import { commonFetchCall } from "../../services/telemetry";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
 const VITE_APP_PID = import.meta.env.VITE_APP_PID;
+
+/*
+Comment telemetry in all Sunbird players; to undo, find this function and uncomment.
+TelemetrySyncManager.syncFailedBatch();
+TelemetrySyncManager.syncEvents()
+this.sendTelemetry(e)
+*/
 
 const contextData = {
   sid: localStorage.getItem("contentSessionId"),
@@ -201,6 +209,7 @@ const VideoItem: React.FC<{
                   type: "mimeType",
                 },
               ])}
+              batchsize={5}
             />
             {qml_id && (
               <VStack>
@@ -269,6 +278,7 @@ const VideoItem: React.FC<{
                       type: "mimeType",
                     },
                   ])}
+                  batchsize={5}
                 />
               </VStack>
             )}
@@ -351,8 +361,8 @@ const VideoReel: React.FC<{
   const qmlRef = useRef<HTMLDivElement>(null);
   const [visibleIndex, setVisibleIndex] = useState<number>(0);
   const { height: itemSize, width } = useDeviceSize();
+  const telemetryListRef = useRef<any[]>([]);
   const navigate = useNavigate();
-  // const trackDataRef = useRef<any[]>([]);
   const [isIndexScroll, setIsIndexScroll] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const handleScroll = useCallback(
@@ -364,6 +374,14 @@ const VideoReel: React.FC<{
         setVisibleIndex(newVisibleIndex);
         // call tracking API here
         if (isIndexScroll) {
+          if (telemetryListRef.current.length > 0) {
+            console.log(
+              "call telemetry api remaining on scroll",
+              telemetryListRef.current
+            );
+            await commonFetchCall(JSON.stringify(telemetryListRef.current));
+            telemetryListRef.current = [];
+          }
           const queryParams = new URLSearchParams(location.search);
           queryParams.set("index", String(newVisibleIndex));
           navigate({
@@ -425,6 +443,21 @@ const VideoReel: React.FC<{
 
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
+    if (
+      data?.data?.iframeId &&
+      telemetryListRef.current.length > 0 &&
+      telemetryListRef.current.length >= 5
+    ) {
+      console.log(
+        "Call the telemetry API based on batch length",
+        telemetryListRef.current
+      );
+      await commonFetchCall(JSON.stringify(telemetryListRef.current));
+      telemetryListRef.current = [];
+    } else if (data?.data?.iframeId) {
+      telemetryListRef.current = [...telemetryListRef.current, data?.data];
+    }
+
     if (!result || !result?.type) return;
     if (result?.type === "height") {
       const he = itemSize / result?.data;
@@ -432,10 +465,6 @@ const VideoReel: React.FC<{
         qmlRef.current.style.height = `${he}px`;
       }
     } else {
-      // trackDataRef.current = {
-      //   ...trackDataRef.current,
-      //   [result.type]: result?.data,
-      // };
       const { iframeId, data } = result;
       const player = {
         ...data,
@@ -450,6 +479,11 @@ const VideoReel: React.FC<{
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
+      if (telemetryListRef.current.length > 0) {
+        console.log("call telemetry api remaining", telemetryListRef.current);
+        await commonFetchCall(JSON.stringify(telemetryListRef.current));
+        telemetryListRef.current = [];
+      }
       console.log("result1", videos?.[visibleIndex], player, result, retult1);
     }
   };

@@ -1,22 +1,24 @@
 import { border, extendTheme } from "@chakra-ui/react";
-
+import BebasNeue from '../assets/fonts/BebasNeue-Regular.ttf';
+import InterRegular from '../assets/fonts/Inter_18pt-Regular.ttf';
+import InterItalic from '../assets/fonts/Inter-Italic.woff2';
 const customTheme = extendTheme({
   styles: {
     global: {
       "@font-face": [
         {
           fontFamily: "Bebas Neue",
-          src: `url('/src/assets/fonts/BebasNeue-Regular.ttf') format('truetype')`,
+          src: `url(${BebasNeue}) format('truetype')`
         },
         {
           fontFamily: "Inter",
-          src: `url('/src/assets/fonts/Inter-Regular.woff2') format('woff2')`,
+          src: `url(${InterRegular}) format('woff2')`,
           fontWeight: 400,
           fontStyle: "normal",
         },
         {
           fontFamily: "Inter",
-          src: `url('/src/assets/fonts/Inter-Italic.woff2') format('woff2')`,
+          src: `url(${InterItalic}) format('woff2')`,
           fontWeight: 400,
           fontStyle: "italic",
         },

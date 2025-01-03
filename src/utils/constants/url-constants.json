@@ -8,5 +8,7 @@
   "SUBJECT_LIST": "/api/v1/altprogramassociation/altsubjectlist",
   "ALT_PROGRAM_BMGS": "/api/v1/altprogram/bmgs",
   "USER_VALIDATION": "/api/v1/user/validateToken",
-  "SEARCH": "/altprogramassociation/contentSearch"
+  "SEARCH": "/altprogramassociation/contentSearch",
+  "CONTENT_LIKE" : "/altprogramassociation/contentLike",
+  "CONTENT_IS_LIKED" : "/altprogramassociation/isContentLiked"
 }

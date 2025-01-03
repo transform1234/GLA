@@ -115,7 +115,7 @@ const Header: React.FC<HeaderProps> = ({
           </Text>
         </HStack>
       )}
-      <VStack align={"stretch"} spacing={3} marginTop="20px">
+      <VStack align={"stretch"} spacing={3}>
         {!isWatchPage && !isSearchPage && (
           <>
             <HStack> </HStack>

@@ -354,7 +354,7 @@ const VideoReel: React.FC<{
   const navigate = useNavigate();
   // const trackDataRef = useRef<any[]>([]);
   const [isIndexScroll, setIsIndexScroll] = useState(false);
-
+  const [isLiked, setIsLiked] = useState(false);
   const handleScroll = useCallback(
     debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
       const itemCount = videos.length;
@@ -375,6 +375,26 @@ const VideoReel: React.FC<{
     }, 500),
     [videos, itemSize, visibleIndex]
   );
+
+  React.useEffect(() => {
+    const fetchLikeStatus = async () => {
+      if (!programID) return;
+      try {
+        const player = {
+          programId: programID,
+          subject: videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+          contentId: videos?.[visibleIndex]?.contentId,
+        };
+
+        const response = await content.isContentLiked(player);
+        setIsLiked(!response[0]?.like || false);
+      } catch (error) {
+        console.error("Error fetching like status:", error);
+      }
+    };
+
+    fetchLikeStatus();
+  }, [activeIndex,programID,videos?.length]);
 
   React.useEffect(() => {
     if (activeIndex || activeIndex === 0) {
@@ -447,6 +467,24 @@ const VideoReel: React.FC<{
       );
     }
   }
+
+  const handleLikeToggle = async () => {
+    try {
+      const likeStatus = isLiked;
+      const player = {
+        programId: programID,
+        subject: videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+        userId: authUser?.userId,
+        contentId: videos?.[visibleIndex]?.contentId,
+        like: likeStatus,
+      };
+      const result = await content.contentLike(player);
+      console.log(result);
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("Error toggling like status:", error);
+    }
+  };
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
@@ -455,11 +493,11 @@ const VideoReel: React.FC<{
           icon={"ChevronLeftIcon"}
           left="16px"
         />
-        {/* <TopIcon
-          onClick={() => console.log("TopIcon")}
-          icon={"ThumbsUpIcon"}
-          right="16px"
-        /> */}
+        <TopIcon
+        onClick={handleLikeToggle}
+        icon={isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
+        right="16px"
+      />
         <List
           overscanCount={1}
           ref={listRef}

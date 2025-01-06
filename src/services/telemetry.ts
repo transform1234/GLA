@@ -1,4 +1,4 @@
-import { uniqueId } from "./utilService"; // generate manually
+import { getSid, uniqueId } from "./utilService"; // generate manually
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
 const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
@@ -53,7 +53,7 @@ const getDefaultStartEvent = (props: Record<string, any> = {}) => {
         pid: VITE_APP_PID || "palooza.portal.contentplayer",
       },
       env: VITE_APP_ENV,
-      sid: localStorage.getItem("contentSessionId"),
+      sid: getSid(),
       did: localStorage.getItem("did"),
       cdata: cdataNew,
       rollup: {

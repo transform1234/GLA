@@ -97,6 +97,7 @@ const VideoItem: React.FC<{
   ({ id, qml_id, isVisible, adapter, programID, authUser, refQml, style }) => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isQUMLLoading, setIsQUMLLoading] = useState<boolean>(false);
     const [playerContext, setPlayerContext] = useState<any>(contextData);
     const { width, height } = useDeviceSize();
     const [lesson, setLesson] = React.useState<{ mimeType: string }>({
@@ -126,41 +127,43 @@ const VideoItem: React.FC<{
       if (!isVisible) return;
       const inti = async () => {
         setIsLoading(true);
-        let resultData = await content.getOne({
-          id,
-          adapter,
-          type: "course",
-        });
-        if (qml_id) {
-          let qmlResult = await content.getOne({
-            id: qml_id,
+        if (adapter) {
+          let resultData = await content.getOne({
+            id,
             adapter,
-            type: "assessment",
+            type: "course",
           });
-          setLessonQml(qmlResult);
+          if (qml_id) {
+            let qmlResult = await content.getOne({
+              id: qml_id,
+              adapter,
+              type: "assessment",
+            });
+            setLessonQml(qmlResult);
+          }
+          setPlayerContext(
+            updateCdataTag([
+              {
+                id: programID,
+                type: "program",
+              },
+              {
+                id: authUser?.Student?.School?.udiseCode,
+                type: "school_udise",
+              },
+              {
+                id: authUser?.username,
+                type: "username",
+              },
+              {
+                id: adapter,
+                type: "contentSource",
+              },
+            ])
+          );
+          setLesson(resultData);
+          setIsLoading(false);
         }
-        setPlayerContext(
-          updateCdataTag([
-            {
-              id: programID,
-              type: "program",
-            },
-            {
-              id: authUser?.Student?.School?.udiseCode,
-              type: "school_udise",
-            },
-            {
-              id: authUser?.username,
-              type: "username",
-            },
-            {
-              id: adapter,
-              type: "contentSource",
-            },
-          ])
-        );
-        setLesson(resultData);
-        setIsLoading(false);
       };
       inti();
     }, [id, isVisible]);
@@ -223,12 +226,17 @@ const VideoItem: React.FC<{
                     } else {
                       setHeightPerItem({ height: 0, width: 0 });
                     }
+                    if (!isQUMLLoading) {
+                      setIsQUMLLoading(true);
+                    }
                   }}
                   rounded="none"
                   roundedLeft="full"
                   size="lg"
                   _icon={{
                     width: heightPerItem?.height === 0 ? "100%" : "",
+                    height: "",
+                    fontWeight: "600",
                     color: "primary.500",
                   }}
                   p={heightPerItem?.height === 0 ? "5px 16px" : ""}
@@ -251,35 +259,37 @@ const VideoItem: React.FC<{
                   transition="right 0.5s,bottom 0.5s"
                   top="auto"
                 />
-                <SunbirdPlayer
-                  forwardedRef={isVisible ? refQml : false}
-                  style={{ border: "none", borderRadius: "16px" }}
-                  _vstack={{
-                    position: "absolute",
-                    bottom: "16px",
-                    transition: "right 0.5s,width 0.5s, height 0.5s",
-                    right: "16px",
-                  }}
-                  {...heightPerItem}
-                  {...{ ...lessonQml, iframeId: "assessment" }}
-                  userData={{
-                    firstName: localStorage.getItem("name"),
-                    lastName: "",
-                  }}
-                  public_url={VITE_PLAYER_URL}
-                  adapter={adapter}
-                  playerContext={updateCdataTag([
-                    {
-                      id,
-                      type: "learning_content",
-                    },
-                    {
-                      id: lessonQml?.mimeType,
-                      type: "mimeType",
-                    },
-                  ])}
-                  batchsize={5}
-                />
+                {isQUMLLoading && (
+                  <SunbirdPlayer
+                    forwardedRef={isVisible ? refQml : false}
+                    style={{ border: "none", borderRadius: "16px" }}
+                    _vstack={{
+                      position: "absolute",
+                      bottom: "16px",
+                      transition: "right 0.5s,width 0.5s, height 0.5s",
+                      right: "16px",
+                    }}
+                    {...heightPerItem}
+                    {...{ ...lessonQml, iframeId: "assessment" }}
+                    userData={{
+                      firstName: localStorage.getItem("name"),
+                      lastName: "",
+                    }}
+                    public_url={VITE_PLAYER_URL}
+                    adapter={adapter}
+                    playerContext={updateCdataTag([
+                      {
+                        id,
+                        type: "learning_content",
+                      },
+                      {
+                        id: lessonQml?.mimeType,
+                        type: "mimeType",
+                      },
+                    ])}
+                    batchsize={5}
+                  />
+                )}
               </VStack>
             )}
           </Box>

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body style="margin: 0%">
+  <body style="margin: 0%; display: flex">
     <iframe
       id="content-player"
       src="./preview.html"
@@ -37,7 +37,9 @@
         const messageData = {
           iframeId, // Include unique iframeId here
           mimeType,
-          ...(typeof data?.data === "string" ? JSON.parse(data.data) : data?.data || data?.detail || {}),
+          ...(typeof data?.data === "string"
+            ? JSON.parse(data.data)
+            : data?.data || data?.detail || {}),
         };
         window?.parent?.postMessage(messageData, "*");
       }

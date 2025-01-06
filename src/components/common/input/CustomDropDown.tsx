@@ -104,7 +104,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
         <Input
           type="text"
           placeholder={placeholder}
-          value={inputValue}
+          value={value}
           onChange={handleInputChange}
           borderWidth="2px"
           borderRadius="8px"

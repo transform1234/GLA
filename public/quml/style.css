@@ -158,8 +158,28 @@
   .scoreboard-sections li.section.relative ul li.showFeedBack-progressBar {
     padding-top: 5px !important;
   }
+  .quml-container {
+    overflow: initial !important;
+  }
   .quml-alert__container {
     bottom: 2rem !important;
+
+    position: absolute !important;
+    top: -45px !important;
+    z-index: 8 !important;
+    background: #fff0f0 !important;
+    width: 100% !important;
+    height: 40px !important;
+    padding: 10px 0px !important;
+    margin: 0px !important;
+    border-radius: 100px;
+    border: 2px solid #db0000;
+  }
+  .quml-alert__solution-container {
+    width: auto !important;
+  }
+  .quml-alert__body {
+    justify-content: space-between !important;
   }
   .quml-header__metadata.quml-header__metadata--portrait {
     padding-top: 5px !important;
@@ -219,5 +239,10 @@
   }
   .main-container {
     transition: height 0.2s !important;
+  }
+  .landscape-mode,
+  .quml-header__container,
+  .main-container {
+    border-radius: 16px !important;
   }
 }

@@ -221,7 +221,7 @@ const VideoItem: React.FC<{
                   onClick={() => {
                     if (heightPerItem?.height === 0) {
                       setHeightPerItem({
-                        height: height / 3,
+                        height: height / 2.5,
                         width: width - 31,
                       });
                     } else {
@@ -255,7 +255,7 @@ const VideoItem: React.FC<{
                   bottom={
                     heightPerItem?.height === 0
                       ? "32px"
-                      : `${heightPerItem?.height - 32}`
+                      : `${heightPerItem?.height - 84}`
                   }
                   transition="right 0.5s,bottom 0.5s"
                   top="auto"
@@ -434,16 +434,19 @@ const VideoReel: React.FC<{
     }
   }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
 
-  const callReaminigTelemetry = async (message: string | undefined) => {
-    if (telemetryListRef.current.length > 0) {
-      console.log(
-        message || "call telemetry api remaining",
-        telemetryListRef.current
-      );
-      await callBatch(telemetryListRef.current);
-      telemetryListRef.current = [];
-    }
-  };
+  const callReaminigTelemetry = debounce(
+    async (message: string | undefined) => {
+      if (telemetryListRef.current.length > 0) {
+        console.log(
+          message || "call telemetry api remaining",
+          telemetryListRef.current
+        );
+        await callBatch(telemetryListRef.current);
+        telemetryListRef.current = [];
+      }
+    },
+    300
+  );
 
   React.useEffect(() => {
     const handleEventNew = (event: any) => {

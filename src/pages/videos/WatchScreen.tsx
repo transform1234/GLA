@@ -129,7 +129,11 @@ const Watch = () => {
     navigate(
       `/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(
         filter.searchTerm
-      )}&subject=${encodeURIComponent(video?.category[0])}&redirect=/watch`
+      )}&subject=${
+        filter.subject === "all"
+          ? ""
+          : encodeURIComponent(filter?.subject || "")
+      }&redirect=/watch`
     );
   };
 

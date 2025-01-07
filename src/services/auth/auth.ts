@@ -27,18 +27,6 @@ export const fetchToken = async (username: string, password: string) => {
   const tokenDecoded: any = jwtDecode(data.access_token);
   localStorage.setItem("token", data.access_token);
   localStorage.setItem("refreshToken", data.refresh_token);
-
-  const date = new Date(
-    Date.now() + new Date().getTimezoneOffset() * 60 * 1000
-  );
-  const contentSessionId = `${tokenDecoded.sub}_${date.getDate()}-${
-    date.getMonth() + 1
-  }-${date.getFullYear()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}_${
-    tokenDecoded.session_state
-  }`;
-  // console.log("contentSessionId", contentSessionId);
-  // return {};
-  localStorage.setItem("contentSessionId", contentSessionId);
   const authUser = await checkUserDetails();
   const { grade, medium, board } =
     authUser?.data?.GroupMemberships?.[0]?.Group || {};
@@ -178,7 +166,6 @@ export const logout = async () => {
 
   localStorage.removeItem("token");
   localStorage.removeItem("refreshToken"); // add
-  localStorage.removeItem("contentSessionId");
   localStorage.removeItem("board");
   localStorage.removeItem("medium");
   localStorage.removeItem("grade");

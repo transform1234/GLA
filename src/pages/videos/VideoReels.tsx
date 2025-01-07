@@ -24,6 +24,7 @@ import * as content from "../../services/content";
 import { handleEvent } from "./utils";
 import Loading from "../../components/common/Loading";
 import { callBatch } from "../../services/telemetry";
+import { getSid } from "../../services/utilService";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -37,7 +38,7 @@ this.sendTelemetry(e)
 */
 
 const contextData = {
-  sid: localStorage.getItem("contentSessionId"),
+  sid: getSid(),
   uid: localStorage.getItem("id"),
   did: localStorage.getItem("did"), // send for ifram data
   cdata: [

@@ -41,102 +41,118 @@ export const getOne = async ({ id, adapter, type, header }: IGetOneParams) => {
   }
 };
 
-// interface IGetAllParams {
-//   page?: number;
-//   limit?: number;
-//   programId?: string;
-//   subject?: string;
-//   header?: Record<string, string>;
-// }
+interface IGetAllParams {
+  page?: number;
+  limit?: number;
+  programId?: string;
+  subject?: string;
+  header?: Record<string, string>;
+}
 
-// export const getAll = async ({
-//   page = 1,
-//   limit = 6,
-//   programId = "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
-//   subject = "Science",
-//   header,
-// }: IGetAllParams) => {
-//   try {
-//     const response = await fetch(`${baseUrl}/course/progress/contentid`, {
-//       method: "GET",
-//       headers: {
-//         ...header,
-//         Authorization: `Bearer ${localStorage.getItem("token")}`,
-//       },
-//     });
+export const getAll = async ({
+  page = 1,
+  limit = 6,
+  programId = "e5fe89b2-cbc6-473a-99ba-83313d2e4072",
+  subject = "Science",
+  header,
+}: IGetAllParams) => {
+  try {
+    // const response = await fetch(`${baseUrl}/course/progress/contentid`, {
+    //   method: "GET",
+    //   headers: {
+    //     ...header,
+    //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //   },
+    // });
 
-//     const result = await response.json();
-//     if (true) {
-//       // Simulating the response structure based on the provided data
-//       const result = {
-//         data: [
-//           {
-//             courseId: "do_11368734744569330713",
-//             contentId: "do_114180173374537728144",
-//             contentType: "lesson",
-//             order: "1",
-//             allowedAttempts: "0",
-//             criteria: {},
-//             lesson_questionset: "do_11418009890504704015",
-//           },
-//           {
-//             courseId: "do_11368734744569330713",
-//             contentId: "do_114180174687789056146",
-//             contentType: "lesson",
-//             order: "2",
-//             allowedAttempts: "0",
-//             criteria: {},
-//             lesson_questionset: "do_114180110019608576116",
-//           },
-//           {
-//             courseId: "do_11368734744569330713",
-//             contentId: "do_113748995608870912150",
-//             contentType: "lesson",
-//             order: "2",
-//             allowedAttempts: "0",
-//             criteria: {},
-//             lesson_questionset: "do_114180203897585664193",
-//           },
-//           {
-//             courseId: "do_11368734744569330713",
-//             contentId: "do_1138907470163394561521",
-//             contentType: "lesson",
-//             order: "1",
-//             allowedAttempts: "0",
-//             criteria: {},
-//             lesson_questionset: "do_11389370198275686412930",
-//           },
-//           {
-//             courseId: "do_11368734744569330713",
-//             contentId: "do_11389554198553395211183",
-//             contentType: "lesson",
-//             order: "2",
-//             allowedAttempts: "0",
-//             criteria: {},
-//             lesson_questionset: "do_114180110019608576116",
-//           },
-//           {
-//             courseId: "do_11368734744569330713",
-//             contentId: "do_11389370079255756811114",
-//             contentType: "lesson",
-//             order: "3",
-//             allowedAttempts: "0",
-//             criteria: {},
-//             lesson_questionset: "do_11389370198275686412930",
-//           },
-//         ],
-//       };
+    // const result = await response.json();
+    if (true) {
+      // Simulating the response structure based on the provided data
+      const result = {
+        paginatedData: [
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_31252959704483430423953",
+            contentType: "lesson",
+            contentSource: "diksha",
+            order: "1",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_3138432083331399681455",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_114180173374537728144",
+            contentType: "lesson",
+            contentSource: "sunbird",
+            order: "1",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_11418009890504704015",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_114180174687789056146",
+            contentType: "lesson",
+            contentSource: "sunbird",
+            order: "2",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_114180110019608576116",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_113748995608870912150",
+            contentType: "lesson",
+            contentSource: "sunbird",
+            order: "2",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_114180203897585664193",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_1138907470163394561521",
+            contentType: "lesson",
+            contentSource: "sunbird",
+            order: "1",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_11389370198275686412930",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_11389554198553395211183",
+            contentType: "lesson",
+            contentSource: "sunbird",
+            order: "2",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_114180110019608576116",
+          },
+          {
+            courseId: "do_11368734744569330713",
+            contentId: "do_11389370079255756811114",
+            contentType: "lesson",
+            contentSource: "sunbird",
+            order: "3",
+            allowedAttempts: "0",
+            criteria: {},
+            lesson_questionset: "do_11389370198275686412930",
+          },
+        ],
+      };
 
-//       return result;
-//     } else {
-//       console.log("Failed to fetch course progress");
-//       return {};
-//     }
-//   } catch (e) {
-//     console.log("course/progress/contentid", e.message);
-//     return {};
-//   }
-// };
+      return result;
+    } else {
+      console.log("Failed to fetch course progress");
+      return {};
+    }
+  } catch (e: any) {
+    console.log("course/progress/contentid", e?.message);
+    return {};
+  }
+};
 
 export const getAltUserContent = async ({
   page = 1,

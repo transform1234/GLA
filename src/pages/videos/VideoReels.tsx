@@ -231,9 +231,13 @@ const VideoItem: React.FC<{
                       setIsQUMLLoading(true);
                     }
                   }}
-                  rounded="none"
-                  roundedLeft="full"
-                  size="lg"
+                  {...(heightPerItem?.height === 0
+                    ? {
+                        rounded: "none",
+                        roundedLeft: "full",
+                      }
+                    : {})}
+                  size={heightPerItem?.height === 0 ? "lg" : "sm"}
                   _icon={{
                     width: heightPerItem?.height === 0 ? "100%" : "",
                     height: "",
@@ -244,18 +248,14 @@ const VideoItem: React.FC<{
                   icon={
                     heightPerItem?.height === 0
                       ? "TakeAQuizIcon"
-                      : "ChevronRightIcon"
+                      : "ChevronDownIcon"
                   }
                   bg={heightPerItem?.width === 0 ? "white" : "transparent"}
-                  right={
-                    heightPerItem?.width === 0
-                      ? "0px"
-                      : `${heightPerItem?.width - 32}`
-                  }
+                  right={heightPerItem?.width === 0 ? "0px" : `${32}px`}
                   bottom={
                     heightPerItem?.height === 0
                       ? "32px"
-                      : `${heightPerItem?.height - 84}`
+                      : `${heightPerItem?.height - 82}`
                   }
                   transition="right 0.5s,bottom 0.5s"
                   top="auto"

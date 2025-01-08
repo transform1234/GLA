@@ -5,10 +5,11 @@
     /* display: none !important; */
   }
   .quml-header__container {
-    justify-content: space-between !important;
+    justify-content: end !important;
     min-height: 2.5rem !important;
-    padding: 1rem 1rem 0 3.5rem !important;
+    padding: 1rem 1rem 0 1rem !important;
     height: 43px !important;
+    gap: 26px;
   }
   .quml-header__features {
     padding-left: 0 !important;
@@ -27,8 +28,31 @@
   }
   .lanscape-mode-right ul .section label.active::after,
   .lanscape-mode-right ul .section ul li.progressBar-border::after {
-    width: 1.25rem !important;
-    height: 1.25rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    /* border: none !important; */
+    z-index: -1 !important;
+  }
+  .showFeedBack-progressBar.progressBar-border {
+    color: white !important;
+  }
+  .lanscape-mode-right
+    ul
+    .section
+    ul
+    li:not(.wrong):not(.correct).progressBar-border::after {
+    background: #03627c !important;
+  }
+  .showFeedBack-progressBar.progressBar-border.wrong::after {
+    padding: 10px !important;
+    border: 1px solid #db0000 !important;
+  }
+  .showFeedBack-progressBar.progressBar-border.correct::after {
+    padding: 10px !important;
+    border: 1px solid #219653 !important;
+  }
+  .lanscape-mode-right ul .showFeedBack-progressBar.correct {
+    background: #219653 !important;
   }
   .quml-question .mcq-title {
     margin-top: 5px !important;
@@ -41,25 +65,11 @@
     padding-right: 8px !important;
   }
   .quml-header__features img,
-  .showFeedBack-progressBar.info-page.hover-effect.att-color.progressBar-border {
-    width: 15px !important;
-    height: 15px !important;
-  }
   .quml-header__features img {
     margin: 0 !important;
   }
-  .showFeedBack-progressBar.info-page.hover-effect.att-color.progressBar-border::after {
-    width: 1.2rem !important;
-    height: 1.2rem !important;
-  }
   .landscape-center {
     margin-top: 20px !important;
-  }
-
-  .quml-header__features img::after,
-  .showFeedBack-progressBar.info-page.hover-effect.att-color.progressBar-border::after {
-    width: 12px !important;
-    height: 12px !important;
   }
 
   .scoreboard-sections label.progressBar-border {
@@ -68,7 +78,10 @@
   .showFeedBack-progressBar {
     width: 15px !important;
     height: 15px !important;
-    margin: 0 1rem 0 0 !important;
+    margin: 0 !important;
+  }
+  .lanscape-mode-right ul li:empty {
+    display: none;
   }
   .nonFeedback {
     top: -1.45rem !important;
@@ -78,7 +91,9 @@
     margin: 0 !important;
     padding: 0 1rem !important;
     top: 40px !important;
+    width: 100% !important;
     height: 2rem !important;
+    /* margin: auto !important; */
   }
   .lanscape-mode-right > ul {
     flex: auto !important;
@@ -158,8 +173,34 @@
   .scoreboard-sections li.section.relative ul li.showFeedBack-progressBar {
     padding-top: 5px !important;
   }
+  .quml-container {
+    overflow: initial !important;
+  }
   .quml-alert__container {
     bottom: 2rem !important;
+
+    position: absolute !important;
+    top: -45px !important;
+    z-index: 8 !important;
+    background: #fff0f0 !important;
+    width: 100% !important;
+    height: 40px !important;
+    padding: 0 !important;
+    margin: 0px !important;
+    border-radius: 100px !important;
+    border: 2px solid #db0000;
+  }
+  [ng-reflect-alert-type="correct"] .quml-alert__container {
+    border-color: #219653 !important;
+    background: #e1fbec !important;
+    width: 100% !important;
+  }
+  .quml-alert__solution-container {
+    width: calc(100% - 75%) !important;
+  }
+  .quml-alert__body {
+    justify-content: space-between !important;
+    width: 100% !important;
   }
   .quml-header__metadata.quml-header__metadata--portrait {
     padding-top: 5px !important;
@@ -219,5 +260,119 @@
   }
   .main-container {
     transition: height 0.2s !important;
+    background: transparent !important;
   }
+  .player-endpage,
+  .landscape-mode,
+  .quml-alert__overlay,
+  .quml-header__container,
+  .scoreboard {
+    border-radius: 16px 16px 0 0 !important;
+    overflow: hidden !important;
+  }
+  .quml-alert__icon-container,
+  .quml-alert__icon-empty,
+  .quml-alert__banner {
+    display: none !important;
+  }
+  .quml-alert__image.quml-alert__image--correct,
+  .quml-alert__image.quml-alert__image--wrong {
+    width: 100% !important;
+  }
+  .quml-alert__image.quml-alert__image--correct::before {
+    content: "That’s the right answer!";
+    /* padding: 10px !important; */
+    font-size: 14px !important;
+    font-family: Inter !important;
+    top: 7px !important;
+    left: 30px !important;
+    position: absolute !important;
+    color: #219653 !important;
+    font-weight: 500 !important;
+    /* width: 100% !important; */
+  }
+
+  .quml-alert__image.quml-alert__image--wrong::before {
+    content: "That’s incorrect!";
+    /* padding: 10px !important; */
+    font-size: 14px !important;
+    font-family: Inter !important;
+    top: 7px !important;
+    left: 30px !important;
+    position: absolute !important;
+    color: #db0000 !important;
+    font-weight: 500 !important;
+  }
+  .quml-alert__try-again {
+    background: #db0000 !important;
+    color: white !important;
+    height: 36px !important;
+    width: 112px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .scoreboard {
+    background: white !important;
+  }
+
+  .showFeedBack-progressBar.info-page {
+    display: none !important;
+  }
+  /* .showFeedBack-progressBar.info-page::after {
+    width: 12px !important;
+    height: 12px !important;
+    left: -7px !important;
+    padding: 7px !important;
+    border-color: green !important;
+  } */
+  /* .showFeedBack-progressBar.info-page.hover-effect.att-color.progressBar-border::after {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+  } */
+  /* .showFeedBack-progressBar.info-page.hover-effect.att-color.progressBar-border {
+    width: 15px !important;
+    height: 15px !important;
+  }
+  .showFeedBack-progressBar.info-page {
+    flex: auto !important;
+    background: transparent !important;
+    border: none !important;
+    justify-content: start !important;
+    color: black !important;
+    padding: 0 !important;
+  } */
+  /* .showFeedBack-progressBar.info-page {
+    color: white !important;
+  } */
+  /* .showFeedBack-progressBar.info-page.hover-effect.att-color::after {
+    border: 1px solid #219653 !important;
+    background: #219653 !important;
+    content: "" !important;
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    border-radius: 50% !important;
+    padding: 0.25rem !important;
+    position: absolute !important;
+    z-index: -1 !important;
+  } */
+  /* .quml-option--selected {
+    background: #219653 !important;
+  } */
+  .quml-mcq-option-card .container {
+    display: none !important;
+  }
+  .quml-mcq-option-card.quml-option--selected {
+  }
+}
+quml-header:not(.main-header) {
+  display: none !important;
+}
+.quml-option--selected.wrong {
+  border: 2px solid #db0000 !important;
+  background: #fff0f0 !important;
+}
+.quml-option--selected.correct {
+  border: 2px solid #219653 !important;
+  background: #e1fbec !important;
 }

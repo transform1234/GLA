@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="./styles.css?version=1.0.0" />
     <link rel="stylesheet" href="./style.css?version=1.0.0" />
   </head>
-  <body>
-    <div class="player-grid" id="my-player"></div>
+  <body style="background: transparent; overflow: hidden">
+    <div class="player-grid" id="my-player" style="padding-top: 52px"></div>
 
     <script type="text/javascript" src="sunbird-quml-player.min.js"></script>
     <script type="text/javascript" src="demoData.js"></script>
@@ -55,6 +55,38 @@
         JSON.stringify(playerConfig)
       );
       qumlPlayerElement.addEventListener("telemetryEvent", (event) => {
+        if (
+          event.detail.eid === "ASSESS" &&
+          event.detail.edata?.resvalues?.[0].label
+        ) {
+          const className =
+            event.detail.edata.pass === "Yes" ? "correct" : "wrong";
+          /*************  Codeium Command  *************/
+          let list = document.querySelectorAll(".quml-option--selected");
+          let redBorderList = document.querySelectorAll(".correct");
+          redBorderList.forEach((element) => {
+            element.classList.remove(className);
+          });
+          let redBorderListwrong = document.querySelectorAll(".wrong");
+          redBorderListwrong.forEach((element) => {
+            element.classList.remove(className);
+          });
+          if (list.length > 0) {
+            list.forEach((element) => {
+              element.classList.add(className);
+            });
+          } else {
+            // setTimeout(() => {
+            //   list = document.querySelectorAll(".quml-option--selected");
+            //   console.log(list.length, "list.length 2");
+            //   list.forEach((element) => {
+            //     element.classList.add(className);
+            //   });
+            // }, 1000);
+          }
+
+          /******  c99d4c1f-d2a4-41fa-b02e-99772949133b  *******/
+        }
         postMessage(event);
       });
 

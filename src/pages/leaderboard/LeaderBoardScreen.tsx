@@ -61,13 +61,6 @@ const LeaderboardScreen: React.FC = () => {
   }, [selectedView]);
 
 
-
-  const handleSelectionChange = (newValue: string) => {
-    console.log("Selected View Changed:", newValue);
-    setSelectedView(newValue); // Update the selected view in the parent component
-  };
-
-
   const handleCollapseToggle = (collapse: "history" | "view") => {
     setActiveCollapse((prevState) =>
       prevState === collapse ? "none" : collapse
@@ -131,6 +124,9 @@ const LeaderboardScreen: React.FC = () => {
     }
   };
 
+  const handleSelectedViewChange = (newSelectedView: string) => {
+    setSelectedView(newSelectedView);
+  };
 
 
   return (
@@ -150,7 +146,6 @@ const LeaderboardScreen: React.FC = () => {
             ),
             onFilterClick: () => handleCollapseToggle("view"),
             selectedView: selectedView,
-           onSelectionChange : handleSelectionChange
           }}
         >
           {activeCollapse !== "none" && (
@@ -166,7 +161,7 @@ const LeaderboardScreen: React.FC = () => {
             />
           )}
 
-          <Box mx="auto" my="4" px="4" bg="white" boxShadow="sm">
+          <Box mx="auto" my="4" px="4" bg="white">
             <TableContainer>
               <Table variant="simple" size="md">
                 <Thead>
@@ -230,7 +225,6 @@ const LeaderboardScreen: React.FC = () => {
           <Box
             position="fixed"
             bottom="0"
-            boxShadow="lg"
             zIndex="10"
             borderTopLeftRadius="16px"
             borderTopRightRadius="16px"
@@ -242,7 +236,13 @@ const LeaderboardScreen: React.FC = () => {
                 bg="yellow.500"
                 position="fixed"
                 bottom="0"
-                boxShadow="lg"
+                boxShadow="0px -1px 3px 0px #0000000D"
+                _hover={{
+                  boxShadow: '0px -5px 5px 0px #0000000A',
+                }}
+                _active={{
+                  boxShadow: '0px -11px 6px 0px #00000005',
+                }}
                 p="4"
                 zIndex="10"
                 borderTopLeftRadius="16px"
@@ -399,11 +399,8 @@ const LeaderboardScreen: React.FC = () => {
             <Box
               p="4"
               bg="white"
-              border="1px solid"
-              borderColor="gray.200"
               borderRadius="8px"
               mt="2"
-              boxShadow="md"
               width={width}
             >
               <Flex alignItems="center" justifyContent="space-between">
@@ -484,7 +481,7 @@ const LeaderboardScreen: React.FC = () => {
                 onClick={() => {
                   setSelectedView(radioSelection);
                   setActiveCollapse("none");
-                  handleSelectionChange
+                  handleSelectedViewChange(radioSelection); 
                 }}
                 width="100%"
               >
@@ -500,7 +497,13 @@ const LeaderboardScreen: React.FC = () => {
                 bg="yellow.500"
                 position="fixed"
                 bottom="0"
-                boxShadow="lg"
+                boxShadow="0px -1px 3px 0px #0000000D"
+                _hover={{
+                  boxShadow: '0px -5px 5px 0px #0000000A',
+                }}
+                _active={{
+                  boxShadow: '0px -11px 6px 0px #00000005',
+                }}
                 p="4"
                 zIndex="10"
                 borderTopLeftRadius="16px"
@@ -598,6 +601,12 @@ const LeaderboardScreen: React.FC = () => {
                         lineHeight="24px"
                         px="6"
                         onClick={() => handleCollapseToggle("history")}
+                        _hover={{
+                          borderColor: "transparent",
+                          bg: "yellow.300",
+                          boxShadow: "0px -5px 5px 0px #0000000A",
+                        }}
+                      
                       >
                         {t("LEADERBOARD_VIEW_HISTORY")}
                       </Button>

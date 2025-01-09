@@ -6,7 +6,6 @@ import {
   HStack,
   Image,
   Progress,
-  Select,
   Spacer,
   Text,
   VStack,
@@ -33,7 +32,6 @@ interface HeaderProps {
   progress?: string;
   onFilterClick?: (filter: string) => void;
   selectedView?: any;
-  onSelectionChange?: (value: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -45,7 +43,6 @@ const Header: React.FC<HeaderProps> = ({
   progress,
   onFilterClick,
   selectedView,
-  onSelectionChange,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -68,16 +65,6 @@ const Header: React.FC<HeaderProps> = ({
     onSearchChange?.(value);
   }, 1000);
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = event.target.value;
-    setSelectedView(selectedValue);
-    localStorage.setItem("dropdownFilter", selectedValue);
-    
-    // Notify the parent component via the callback
-    if (onSelectionChange) {
-      onSelectionChange(selectedValue); // Call the parent callback
-    }
-  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -150,30 +137,30 @@ const Header: React.FC<HeaderProps> = ({
               fontWeight="400"
               fontSize="10px"
               lineHeight="12.1px"
-              onClick={() => onFilterClick && onFilterClick("view")}
-              cursor="pointer"
+              cursor="default"
             >
               VIEW
             </Text>
-            <Select
-            value={value}
-            onChange={handleSelectChange} // Update the select change handler
-            size="sm"
-            width="105px"
-            minWidth="105px"
-            height="38px"
-            bg="white"
-            color="black"
-            padding="7px 6px 7px 10px"
-            borderRadius="8px"
-            border="1px solid borderGrey"
-            gap="6px"
-            icon={<IconByName name="ChevronDownIcon" color="primary.500" />}
-          >
-            <option value="School">School</option>
-            <option value="Class">Class</option>
-            <option value="Board">Board</option>
-          </Select>
+            <Box
+              width="90px"
+            minWidth="90px"
+              height="38px"
+              bg="white"
+              color="black"
+              padding="7px 6px 7px 10px"
+              borderRadius="8px"
+              border="1px solid borderGrey"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              onClick={() => onFilterClick && onFilterClick("dropdown")}
+              cursor="pointer"
+            >
+              <Text fontSize="14px" color="black">
+                {selectedView || value || "Select"}{" "}
+              </Text>
+              <IconByName name="ChevronDownIcon" color="primary.500" />
+            </Box>
           </HStack>
         </>
       )}

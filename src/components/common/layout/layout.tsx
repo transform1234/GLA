@@ -26,7 +26,6 @@ interface Props {
     progress?: string;
     onFilterClick?: (filter: string) => void;
     selectedView?: any;
-    onSelectionChange?: (value: string) => void;
   };
 }
 

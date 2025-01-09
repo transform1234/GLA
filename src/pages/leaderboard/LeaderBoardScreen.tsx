@@ -31,7 +31,7 @@ import IconByName from "../../components/common/icons/Icon";
 interface UserData {
   rank: number;
   coins: number;
-  coinsHistory: number[];
+  UserPoints: number[];
   winTime: string;
   recentWinCoins:number;
 }
@@ -42,6 +42,8 @@ const LeaderboardScreen: React.FC = () => {
 
   const [data, setData] = useState([]);
   const [userData, setUserData] = useState<UserData>();
+  const [myData, setMyData] = useState<UserData>();
+
   const [daysFilter, setDaysFilter] = useState([]);
   const [filter, setFilter] = useState({ searchTerm: "", days: null });
   const { t } = useTranslation();
@@ -91,6 +93,7 @@ const LeaderboardScreen: React.FC = () => {
     const fetchUserStats = async () => {
       try {
         const stats = await getAllUserData();
+        setMyData(stats);
         setData(stats);
       } catch (error) {
         console.error("Error fetching user stats:", error);
@@ -291,7 +294,7 @@ const LeaderboardScreen: React.FC = () => {
                             fontWeight="700"
                             textAlign="left"
                           >
-                            {userData?.rank}
+                            {myData?.rank}
                           </Text>
                         </Box>
 
@@ -310,7 +313,7 @@ const LeaderboardScreen: React.FC = () => {
                             fontSize="20px"
                             fontWeight="700"
                           >
-                            {userData?.coins}
+                            {myData?.coins}
                           </Text>
                         </Box>
 
@@ -342,7 +345,7 @@ const LeaderboardScreen: React.FC = () => {
                         borderBottom="1px solid"
                         borderColor="yellow.500"
                       >
-                        {userData && userData?.coinsHistory && userData?.coinsHistory?.map(
+                        {userData && userData?.UserPoints && userData?.UserPoints?.map(
                           (item: any, index: number) => (
                             <Box
                               key={index}
@@ -360,7 +363,7 @@ const LeaderboardScreen: React.FC = () => {
                                   fontSize="16px"
                                   fontWeight="700"
                                 >
-                                  {item.coins} {t("LEADERBOARD_COINS")}
+                                  {item?.points} {t("LEADERBOARD_COINS")}
                                 </Text>
                                 <Text
                                   fontWeight="400"
@@ -369,7 +372,7 @@ const LeaderboardScreen: React.FC = () => {
                                   color="lightGrey"
                                   variant="italicText"
                                 >
-                                  {item.date}
+                                  {item?.created_at}
                                 </Text>
                               </Box>
 
@@ -381,7 +384,7 @@ const LeaderboardScreen: React.FC = () => {
                                   fontWeight="700"
                                   textAlign="center"
                                 >
-                                  {item.winBy}
+                                  {item?.identifier}
                                 </Text>
                               </Box>
                             </Box>
@@ -530,7 +533,7 @@ const LeaderboardScreen: React.FC = () => {
                           color="yellow.900"
                           textAlign="start"
                         >
-                          {userData?.rank}
+                          {myData?.rank}
                         </Text>
                       </Flex>
 
@@ -561,7 +564,7 @@ const LeaderboardScreen: React.FC = () => {
                           color="yellow.900"
                           textAlign="start"
                         >
-                          {userData?.coins}
+                          {myData?.coins}
                         </Text>
                       </Flex>
 
@@ -576,7 +579,7 @@ const LeaderboardScreen: React.FC = () => {
                           color="yellow.900"
                           whiteSpace="nowrap"
                         >
-                          +{userData?.recentWinCoins}{" "}
+                          +{myData?.recentWinCoins}{" "}
                           {t("LEADERBOARD_CONIS_FOR_QUIZ")}
                         </Text>
                         <Text
@@ -585,7 +588,7 @@ const LeaderboardScreen: React.FC = () => {
                           color="yellow.900"
                           textAlign="start"
                         >
-                          {userData?.winTime}
+                          {myData?.winTime}
                         </Text>
                       </Flex>
 

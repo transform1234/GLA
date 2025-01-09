@@ -276,9 +276,7 @@ export const getAllUserData = async () => {
 
 export const getCurrentUserdetail = async () => {
   try {
-    const programData = await getProgramId();
-
-    if (programData?.programId) {
+   
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
@@ -287,16 +285,11 @@ export const getCurrentUserdetail = async () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_API_AUTH_URL
-        }${URL.LEADERBOARD_FILTER_LIST}`,
+        }${URL.LEADERBOARD_USER_DATA}`,
         {
-          method: "POST",
+          method: "GET",
           headers: headers,
-          body: JSON.stringify({
-            board: localStorage.getItem("board"),
-            medium: localStorage.getItem("medium"),
-            grade: localStorage.getItem("grade"),
-            programId: programData.programId,
-          }),
+          
         }
       );
 
@@ -304,85 +297,13 @@ export const getCurrentUserdetail = async () => {
         throw new Error("Failed to fetch subject list");
       }
 
-      const datas: any = {
-        rank : 2,
-        coins : 63,
-        recentWinCoins : 33 , 
-        winTime : "2 days ago",
-        coinsHistory : [
-          {
-            coins : 63,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          },
-          {
-            coins : 63,
-            date : "2022-08-14",
-            winBy : "Completing chapter"
 
-          },
-          {
-            coins : 10,
-            date : "2022-08-13",
-            winBy : "Watching video"
+      const userData = await response.json();
 
-          },
-          {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          },
-          {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          },
-          {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          }, {
-            coins : 32,
-            date : "2022-08-15",
-            winBy : "Completing quiz"
-          },
-        ]
+      if (userData?.data) {
+        return userData?.data
       }
-
-      const subjectList = await response.json();
-
-      if (subjectList?.data) {
-        return datas;
-      }
-    } else {
+    else {
       return [];
     }
   } catch (error) {

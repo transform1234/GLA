@@ -46,6 +46,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   const inputRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [inputValue, setInputValue] = useState(value || "");
 
   useEffect(() => {
     setShowDropdown(suggestions.length > 0);
@@ -73,7 +74,14 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    onChange?.(e);
+  };
+
   const handleClear = () => {
+    setInputValue("");
+    onChange?.({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
     setFilteredSuggestions([]);
     setShowDropdown(false);
   };
@@ -97,7 +105,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
           type="text"
           placeholder={placeholder}
           value={value}
-          onChange={onChange}
+          onChange={handleInputChange}
           borderWidth="2px"
           borderRadius="8px"
           height="46px"
@@ -106,7 +114,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
           pl={isBackButton ? "45px" : "16px"}
         />
         <InputRightElement>
-          {value && showClearIcon ? (
+          {inputValue && showClearIcon ? (
             <Image
               src={close}
               alt="close"

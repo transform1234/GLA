@@ -24,6 +24,7 @@ import * as content from "../../services/content";
 import { handleEvent } from "./utils";
 import Loading from "../../components/common/Loading";
 import { callBatch } from "../../services/telemetry";
+import { getSid } from "../../services/utilService";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -37,7 +38,7 @@ this.sendTelemetry(e)
 */
 
 const contextData = {
-  sid: localStorage.getItem("contentSessionId"),
+  sid: getSid(),
   uid: localStorage.getItem("id"),
   did: localStorage.getItem("did"), // send for ifram data
   cdata: [
@@ -97,6 +98,7 @@ const VideoItem: React.FC<{
   ({ id, qml_id, isVisible, adapter, programID, authUser, refQml, style }) => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isQUMLLoading, setIsQUMLLoading] = useState<boolean>(false);
     const [playerContext, setPlayerContext] = useState<any>(contextData);
     const { width, height } = useDeviceSize();
     const [lesson, setLesson] = React.useState<{ mimeType: string }>({
@@ -126,41 +128,43 @@ const VideoItem: React.FC<{
       if (!isVisible) return;
       const inti = async () => {
         setIsLoading(true);
-        let resultData = await content.getOne({
-          id,
-          adapter,
-          type: "course",
-        });
-        if (qml_id) {
-          let qmlResult = await content.getOne({
-            id: qml_id,
+        if (adapter) {
+          let resultData = await content.getOne({
+            id,
             adapter,
-            type: "assessment",
+            type: "course",
           });
-          setLessonQml(qmlResult);
+          if (qml_id) {
+            let qmlResult = await content.getOne({
+              id: qml_id,
+              adapter,
+              type: "assessment",
+            });
+            setLessonQml(qmlResult);
+          }
+          setPlayerContext(
+            updateCdataTag([
+              {
+                id: programID,
+                type: "program",
+              },
+              {
+                id: authUser?.Student?.School?.udiseCode,
+                type: "school_udise",
+              },
+              {
+                id: authUser?.username,
+                type: "username",
+              },
+              {
+                id: adapter,
+                type: "contentSource",
+              },
+            ])
+          );
+          setLesson(resultData);
+          setIsLoading(false);
         }
-        setPlayerContext(
-          updateCdataTag([
-            {
-              id: programID,
-              type: "program",
-            },
-            {
-              id: authUser?.Student?.School?.udiseCode,
-              type: "school_udise",
-            },
-            {
-              id: authUser?.username,
-              type: "username",
-            },
-            {
-              id: adapter,
-              type: "contentSource",
-            },
-          ])
-        );
-        setLesson(resultData);
-        setIsLoading(false);
       };
       inti();
     }, [id, isVisible]);
@@ -217,69 +221,76 @@ const VideoItem: React.FC<{
                   onClick={() => {
                     if (heightPerItem?.height === 0) {
                       setHeightPerItem({
-                        height: height / 3,
+                        height: height / 2.5,
                         width: width - 31,
                       });
                     } else {
                       setHeightPerItem({ height: 0, width: 0 });
                     }
+                    if (!isQUMLLoading) {
+                      setIsQUMLLoading(true);
+                    }
                   }}
-                  rounded="none"
-                  roundedLeft="full"
-                  size="lg"
+                  {...(heightPerItem?.height === 0
+                    ? {
+                        rounded: "none",
+                        roundedLeft: "full",
+                      }
+                    : {})}
+                  size={heightPerItem?.height === 0 ? "lg" : "sm"}
                   _icon={{
                     width: heightPerItem?.height === 0 ? "100%" : "",
+                    height: "",
+                    fontWeight: "600",
                     color: "primary.500",
                   }}
                   p={heightPerItem?.height === 0 ? "5px 16px" : ""}
                   icon={
                     heightPerItem?.height === 0
                       ? "TakeAQuizIcon"
-                      : "ChevronRightIcon"
+                      : "ChevronDownIcon"
                   }
                   bg={heightPerItem?.width === 0 ? "white" : "transparent"}
-                  right={
-                    heightPerItem?.width === 0
-                      ? "0px"
-                      : `${heightPerItem?.width - 32}`
-                  }
+                  right={heightPerItem?.width === 0 ? "0px" : `${32}px`}
                   bottom={
                     heightPerItem?.height === 0
                       ? "32px"
-                      : `${heightPerItem?.height - 32}`
+                      : `${heightPerItem?.height - 82}`
                   }
                   transition="right 0.5s,bottom 0.5s"
                   top="auto"
                 />
-                <SunbirdPlayer
-                  forwardedRef={isVisible ? refQml : false}
-                  style={{ border: "none", borderRadius: "16px" }}
-                  _vstack={{
-                    position: "absolute",
-                    bottom: "16px",
-                    transition: "right 0.5s,width 0.5s, height 0.5s",
-                    right: "16px",
-                  }}
-                  {...heightPerItem}
-                  {...{ ...lessonQml, iframeId: "assessment" }}
-                  userData={{
-                    firstName: localStorage.getItem("name"),
-                    lastName: "",
-                  }}
-                  public_url={VITE_PLAYER_URL}
-                  adapter={adapter}
-                  playerContext={updateCdataTag([
-                    {
-                      id,
-                      type: "learning_content",
-                    },
-                    {
-                      id: lessonQml?.mimeType,
-                      type: "mimeType",
-                    },
-                  ])}
-                  batchsize={5}
-                />
+                {isQUMLLoading && (
+                  <SunbirdPlayer
+                    forwardedRef={isVisible ? refQml : false}
+                    style={{ border: "none", borderRadius: "16px" }}
+                    _vstack={{
+                      position: "absolute",
+                      bottom: "16px",
+                      transition: "right 0.5s,width 0.5s, height 0.5s",
+                      right: "16px",
+                    }}
+                    {...heightPerItem}
+                    {...{ ...lessonQml, iframeId: "assessment" }}
+                    userData={{
+                      firstName: localStorage.getItem("name"),
+                      lastName: "",
+                    }}
+                    public_url={VITE_PLAYER_URL}
+                    adapter={adapter}
+                    playerContext={updateCdataTag([
+                      {
+                        id,
+                        type: "learning_content",
+                      },
+                      {
+                        id: lessonQml?.mimeType,
+                        type: "mimeType",
+                      },
+                    ])}
+                    batchsize={5}
+                  />
+                )}
               </VStack>
             )}
           </Box>
@@ -423,16 +434,19 @@ const VideoReel: React.FC<{
     }
   }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
 
-  const callReaminigTelemetry = async (message: string | undefined) => {
-    if (telemetryListRef.current.length > 0) {
-      console.log(
-        message || "call telemetry api remaining",
-        telemetryListRef.current
-      );
-      await callBatch(telemetryListRef.current);
-      telemetryListRef.current = [];
-    }
-  };
+  const callReaminigTelemetry = debounce(
+    async (message: string | undefined) => {
+      if (telemetryListRef.current.length > 0) {
+        console.log(
+          message || "call telemetry api remaining",
+          telemetryListRef.current
+        );
+        await callBatch(telemetryListRef.current);
+        telemetryListRef.current = [];
+      }
+    },
+    300
+  );
 
   React.useEffect(() => {
     const handleEventNew = (event: any) => {

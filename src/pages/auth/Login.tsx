@@ -34,7 +34,7 @@ export default function Login() {
     alert?: string;
   }>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const isLoginDisabled = !(username && password);
+  const [isLoginDisabled, setIsLoginButtonDisabled] = useState(false);
   const navigate = useNavigate();
   const [modalContent, setModalContent] = useState({
     title: "",
@@ -95,68 +95,14 @@ export default function Login() {
 
   const handleLogin = async () => {
     setIsSubmitted(true);
-    const telemetryImpression = {
-      context: {
-        env: "log-in",
-        cdata: [],
-      },
-      edata: {
-        type: "edit",
 
-        subtype: "Scroll",
-
-        pageid: "log-in",
-
-        uid: id,
-
-        studentid: "student-id",
-
-        userName: userName,
-
-        grade: grade,
-
-        medium: medium,
-
-        board: board,
-      },
-    };
-    // telemetryFactory.impression(telemetryImpression);
-
-    const telemetryInteract = {
-      context: {
-        env: "sign-in",
-        cdata: [],
-      },
-      edata: {
-        id: "login-button",
-        type: "CLICK",
-        subtype: "",
-        pageid: "sign-in",
-        uid: id,
-
-        studentid: "student-id",
-
-        userName: userName,
-
-        grade: grade,
-
-        medium: medium,
-
-        board: board,
-      },
-    };
-    // telemetryFactory.interact(telemetryInteract);
     if (validate()) {
+      setIsLoginButtonDisabled(true);
       try {
         const result = await fetchToken(username, password);
-        if (result) {
-          if (result?.authUser?.userId) {
-            navigate(0);
-            navigate("/home");
-          } else {
-            localStorage.removeItem("token");
-            setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
-          }
+        if (result && result?.authUser?.userId) {
+          navigate(0);
+          navigate("/home");
         } else {
           localStorage.removeItem("token");
           setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
@@ -174,6 +120,7 @@ export default function Login() {
       ...prevErrors,
       [field]: value ? "" : t("LOGIN_REQUIRED_FIELD"),
     }));
+    setIsLoginButtonDisabled(false);
     if (field === "username") setUsername(value);
     if (field === "password") setPassword(value);
   };

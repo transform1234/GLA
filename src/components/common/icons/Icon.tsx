@@ -119,6 +119,28 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Text>
     );
   },
+  ChevronDownIcon: ({ color, isSelected, ...props }) => {
+    return (
+      <Icon viewBox="0 0 24 24" fill="currentColor" color={color} {...props}>
+        <path 
+            d="M12 15L7 10H17L12 15Z"
+        
+         fill="currentColor"
+         />
+      </Icon>
+    );
+  },
+  CloseIcon: ({ color, isSelected, ...props }) => {
+    return (
+      <Icon viewBox="0 0 14 14" fill="currentColor" color={color} {...props}>
+        <path 
+            d="M1.4 14L0 12.6L5.6 7L0 1.4L1.4 0L7 5.6L12.6 0L14 1.4L8.4 7L14 12.6L12.6 14L7 8.4L1.4 14Z"
+        
+         fill="currentColor"
+         />
+      </Icon>
+    );
+  },
    BackIcon : ({ color, width = "32px", height = "32px", ...props }) => {
     return (
       <Icon
@@ -132,11 +154,11 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
         <path d="M12.5208 16.8333L17.1875 21.4999L16 22.6666L9.33334 15.9999L16 9.33325L17.1875 10.4999L12.5208 15.1666H22.6667V16.8333H12.5208Z" />
       </Icon>
     );
+    
   },
   
   ChevronRightIcon,
   ChevronLeftIcon,
-  ChevronDownIcon,
   ChevronUpIcon,
   SearchIcon,
 };

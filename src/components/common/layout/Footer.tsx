@@ -129,6 +129,7 @@ const Footer: React.FC<FooterProps> = ({
                       })}
                       bg={selected === index ? "primary.100" : "transparent"}
                       rounded="16px"
+                      textAlign="center"
                     >
                       <IconByName
                         name={item?.icon || "HomeIcon"}

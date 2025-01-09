@@ -24,6 +24,8 @@ interface Props {
     onSubjectSelect?: (subject: string) => void;
     bottomComponent?: React.ReactNode;
     progress?: string;
+    onFilterClick?: (filter: string) => void;
+    selectedView?: any;
   };
 }
 
@@ -84,7 +86,7 @@ const Layout: React.FC<Props> = ({
           boxShadow="0px 0px 15px 0px #e1e1e1"
           overflowY="auto"
         >
-          {isHeaderVisible && <Header {..._header} />}
+          {isHeaderVisible && <Header {..._header}/>}
 
           {children}
 

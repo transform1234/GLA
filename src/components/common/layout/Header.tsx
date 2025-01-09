@@ -1,16 +1,21 @@
 import {
   Box,
+  Button,
   CircularProgress,
   CircularProgressLabel,
   Collapse,
+  Flex,
   HStack,
+  Icon,
   Image,
+  List,
+  ListItem,
   Progress,
   Spacer,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import searchIcon from "../../../assets/icons/search.svg";
@@ -54,6 +59,26 @@ const Header: React.FC<HeaderProps> = ({
   const isLeaderboardPage = location.pathname === "/leaderboard";
   const [ value, setSelectedView] = useState("School");
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
+  const RECENT_SEARCH_KEY = "recentSearches";
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+    useEffect(() => {
+      try {
+        const savedSearches = JSON.parse(
+          localStorage.getItem(RECENT_SEARCH_KEY) || "[]"
+        );
+        if (Array.isArray(savedSearches)) {
+          setRecentSearches(savedSearches);
+        }
+      } catch (error) {
+        console.error("Error parsing recent searches:", error);
+        setRecentSearches([]);
+      }
+    }, []);
+    
+
+  
 
   useEffect(() => {
     if (ref) {
@@ -62,7 +87,27 @@ const Header: React.FC<HeaderProps> = ({
   }, [ref, searchTerm]);
 
   const debouncedSearch = debounce((value: string) => {
-    onSearchChange?.(value);
+    const trimmedValue = value.trim();
+    if (!trimmedValue) return;
+  
+    onSearchChange?.(trimmedValue);
+  
+    try {
+      const savedSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || "[]");
+  
+      if (Array.isArray(savedSearches)) {
+        let updatedSearches = [trimmedValue, ...savedSearches];
+        updatedSearches = [...new Set(updatedSearches)];
+        if (updatedSearches.length > 5) {
+          updatedSearches = updatedSearches.slice(0, 5);
+        }
+        
+        localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updatedSearches));
+        setRecentSearches(updatedSearches);
+      }
+    } catch (error) {
+      console.error("Error managing recent searches:", error);
+    }
   }, 1000);
 
 
@@ -97,10 +142,18 @@ const Header: React.FC<HeaderProps> = ({
     };
   }, [isOpen]);
 
-  // const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSelectedView(event.target.value);
-  //   localStorage.setItem("dropdownFilter", event.target.value);
-  // };
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+  };
+  
+  const handleInputBlur = () => {
+    setIsInputFocused(false);
+  };
+
+  const handleRecentSearchClick = (search: string) => {
+    console.log("Navigating to search with:", search);
+    navigate(`/search?search=${encodeURIComponent(search.trim())}`);
+  };
 
   return (
     <Box
@@ -112,59 +165,6 @@ const Header: React.FC<HeaderProps> = ({
       zIndex={10}
       transition="all 0.3s"
     >
-      {isLeaderboardPage && (
-        <>
-          <HStack alignItems="center" w="100%" mb={4}>
-            {/* Back Icon */}
-            <IconByName
-              name={"BackIcon"}
-              color="white"
-              alt="Back"
-              cursor="pointer"
-              width="2em"
-              height="2em"
-              onClick={() => navigate("/home")}
-            />
-
-            <Text fontSize="20px" color="white" fontFamily="Bebas Neue" ml={2}>
-              {t("LEADERBOARD")}
-            </Text>
-
-            <Spacer />
-
-            <Text
-              color="white"
-              fontWeight="400"
-              fontSize="10px"
-              lineHeight="12.1px"
-              cursor="default"
-            >
-              VIEW
-            </Text>
-            <Box
-              width="90px"
-            minWidth="90px"
-              height="38px"
-              bg="white"
-              color="black"
-              padding="7px 6px 7px 10px"
-              borderRadius="8px"
-              border="1px solid borderGrey"
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              onClick={() => onFilterClick && onFilterClick("dropdown")}
-              cursor="pointer"
-            >
-              <Text fontSize="14px" color="black">
-                {selectedView || value || "Select"}{" "}
-              </Text>
-              <IconByName name="ChevronDownIcon" color="primary.500" />
-            </Box>
-          </HStack>
-        </>
-      )}
-
       {isWatchPage && (
         <HStack>
           <IconByName
@@ -298,7 +298,9 @@ const Header: React.FC<HeaderProps> = ({
             </Collapse>
           </>
         )}
-
+        </VStack>
+       <VStack align={"stretch"} spacing={0}>
+        <Box mt="12px">
         <Collapse
           in={isOpen || isWatchPage || isSearchPage}
           transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
@@ -308,11 +310,13 @@ const Header: React.FC<HeaderProps> = ({
             placeholder={t("HOME_SEARCH")}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={isSearchPage || isWatchPage}
+            isBackButton={true}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions || []}
             onSuggestionClick={onSuggestionClick}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
           />
         </Collapse>
 
@@ -326,13 +330,71 @@ const Header: React.FC<HeaderProps> = ({
               placeholder={t("HOME_SEARCH")}
               icon={searchIcon}
               showClearIcon={true}
-              isBackButton={isWatchPage || isSearchPage}
+              isBackButton={true}
               onChange={handleSearchChange}
               onKeyDown={handleKeyDown}
               suggestions={suggestions}
               onSuggestionClick={onSuggestionClick}
-            />
-          )}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+          />
+        )}
+         {isInputFocused && suggestions?.length === 0 &&  !isScrolled  && (
+        <Box
+          p="4"
+          bg="white"
+          borderBottomLeftRadius="8px"
+          borderBottomRightRadius="8px"
+          border="2px solid #C5C5C5"
+        >
+          <Text
+            marginBottom="10px"
+            textAlign="left"
+            fontSize="12px"
+            fontWeight="600"
+            lineHeight="16px"
+            color="primary.500"
+          >
+            RECENTLY SEARCHED
+          </Text>
+          <Flex wrap="wrap" gap="4">
+            {recentSearches.map((search, index) => (
+              <Box
+                key={index}
+                display="flex"
+                alignItems="center"
+                cursor="pointer"
+                border="1px solid #C5C5C5"
+                borderRadius="90px"
+                _hover={{ bg: "gray.100" }}
+                onClick={() => handleRecentSearchClick(search)}
+              >
+                <IconByName
+                  name={"HistoryIcon"}
+                  color="textprimary"
+                  alt="history"
+                  cursor="pointer"
+                  width="16px"
+                  height="16px"
+                  marginTop="8px"
+                  marginLeft="10px"
+                />
+                <Text
+                  textTransform="capitalize"
+                  pb="8px"
+                  pt="8px"
+                  pr="10px"
+                  fontSize="14px"
+                  fontWeight="400"
+                >
+                  {search}
+                </Text>
+              </Box>
+            ))}
+          </Flex>
+        </Box>
+      )}
+      </Box>
       </VStack>
       {bottomComponent && bottomComponent}
     </Box>

@@ -6,6 +6,8 @@ import {
   HStack,
   Image,
   Progress,
+  Select,
+  Spacer,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -25,10 +27,13 @@ interface HeaderProps {
   children?: React.ReactNode;
   suggestions?: string[];
   searchTerm?: string;
-  onSearchChange?: (value: string) => void | undefined;
+  onSearchChange?: (value: string) => void;
   onSuggestionClick?: (suggestion: string) => void;
   bottomComponent?: React.ReactNode;
-  progress?: string | undefined;
+  progress?: string;
+  onFilterClick?: (filter: string) => void;
+  selectedView?: any;
+  onSelectionChange?: (value: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -38,6 +43,9 @@ const Header: React.FC<HeaderProps> = ({
   onSuggestionClick,
   bottomComponent,
   progress,
+  onFilterClick,
+  selectedView,
+  onSelectionChange,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -46,6 +54,8 @@ const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
   const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
+  const isLeaderboardPage = location.pathname === "/leaderboard";
+  const [ value, setSelectedView] = useState("School");
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -57,6 +67,17 @@ const Header: React.FC<HeaderProps> = ({
   const debouncedSearch = debounce((value: string) => {
     onSearchChange?.(value);
   }, 1000);
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = event.target.value;
+    setSelectedView(selectedValue);
+    localStorage.setItem("dropdownFilter", selectedValue);
+    
+    // Notify the parent component via the callback
+    if (onSelectionChange) {
+      onSelectionChange(selectedValue); // Call the parent callback
+    }
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -89,6 +110,11 @@ const Header: React.FC<HeaderProps> = ({
     };
   }, [isOpen]);
 
+  // const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedView(event.target.value);
+  //   localStorage.setItem("dropdownFilter", event.target.value);
+  // };
+
   return (
     <Box
       backgroundImage={`url(${background})`}
@@ -99,6 +125,59 @@ const Header: React.FC<HeaderProps> = ({
       zIndex={10}
       transition="all 0.3s"
     >
+      {isLeaderboardPage && (
+        <>
+          <HStack alignItems="center" w="100%" mb={4}>
+            {/* Back Icon */}
+            <IconByName
+              name={"BackIcon"}
+              color="white"
+              alt="Back"
+              cursor="pointer"
+              width="2em"
+              height="2em"
+              onClick={() => navigate("/home")}
+            />
+
+            <Text fontSize="20px" color="white" fontFamily="Bebas Neue" ml={2}>
+              {t("LEADERBOARD")}
+            </Text>
+
+            <Spacer />
+
+            <Text
+              color="white"
+              fontWeight="400"
+              fontSize="10px"
+              lineHeight="12.1px"
+              onClick={() => onFilterClick && onFilterClick("view")}
+              cursor="pointer"
+            >
+              VIEW
+            </Text>
+            <Select
+            value={value}
+            onChange={handleSelectChange} // Update the select change handler
+            size="sm"
+            width="105px"
+            minWidth="105px"
+            height="38px"
+            bg="white"
+            color="black"
+            padding="7px 6px 7px 10px"
+            borderRadius="8px"
+            border="1px solid borderGrey"
+            gap="6px"
+            icon={<IconByName name="ChevronDownIcon" color="primary.500" />}
+          >
+            <option value="School">School</option>
+            <option value="Class">Class</option>
+            <option value="Board">Board</option>
+          </Select>
+          </HStack>
+        </>
+      )}
+
       {isWatchPage && (
         <HStack>
           <IconByName
@@ -110,13 +189,13 @@ const Header: React.FC<HeaderProps> = ({
             height="2em"
             onClick={() => navigate("/home")}
           />
-          <Text fontSize="20px" color="white">
+          <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
             {t("HOME_WATCH")}
           </Text>
         </HStack>
       )}
       <VStack align={"stretch"} spacing={3}>
-        {!isWatchPage && !isSearchPage && (
+        {!isWatchPage && !isSearchPage && !isLeaderboardPage && (
           <>
             <HStack> </HStack>
             <HStack justifyContent="space-between" alignItems="center" w="100%">
@@ -250,19 +329,23 @@ const Header: React.FC<HeaderProps> = ({
           />
         </Collapse>
 
-        {!isOpen && !isScrolled && !isWatchPage && !isSearchPage && (
-          <CustomInputWithDropdown
-            getInputRef={(e) => setRef(e)}
-            placeholder={t("HOME_SEARCH")}
-            icon={searchIcon}
-            showClearIcon={true}
-            isBackButton={isWatchPage || isSearchPage}
-            onChange={handleSearchChange}
-            onKeyDown={handleKeyDown}
-            suggestions={suggestions}
-            onSuggestionClick={onSuggestionClick}
-          />
-        )}
+        {!isOpen &&
+          !isScrolled &&
+          !isWatchPage &&
+          !isSearchPage &&
+          !isLeaderboardPage && (
+            <CustomInputWithDropdown
+              getInputRef={(e) => setRef(e)}
+              placeholder={t("HOME_SEARCH")}
+              icon={searchIcon}
+              showClearIcon={true}
+              isBackButton={isWatchPage || isSearchPage}
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+              suggestions={suggestions}
+              onSuggestionClick={onSuggestionClick}
+            />
+          )}
       </VStack>
       {bottomComponent && bottomComponent}
     </Box>

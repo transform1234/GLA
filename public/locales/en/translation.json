@@ -37,6 +37,23 @@
   "NO_PROGRAM_FOUND" : "No active program available at the moment. Please check back later or contact system administrator",
   "NO_SCHOOL_FOUND" : "Your profile is not mapped to any school. Please contact system administrator.",
   "NO_BOARD_FOUND" : "Your profile is not mapped to any board. Please contact system administrator.",
-  "NO_CLASS_FOUND" : "Your profile is not mapped to any class. Please contact system administrator."
+  "NO_CLASS_FOUND" : "Your profile is not mapped to any class. Please contact system administrator.",
+  "LEADERBOARD" : "LEADERBOARD",
+  "LEADERBOARD_NAME" : "NAME",
+  "LEADERBOARD_RANK": "RANK",
+  "LEADERBOARD_COINS" : "COINS",
+  "LEADERBOARD_YOUR_COINS" : "YOUR COINS",
+  "LEADERBOARD_YOUR_RANK" : "YOUR RANK",
+  "LEADERBOARD_VIEW_HISTORY" : "View History",
+  "LEADERBOARD_COINS_HISTORY" : "Coins History",
+  "LEADERBOARD_CLOSE" : "Close",
+  "LEADERBOARD_CONIS_FOR_QUIZ" : "coins for quiz",
+  "LEADERBOARD_VIEW" : "View",
+  "LEADERBOARD_HOW_YOU_STAND_WITH_OTHER": "See how you stand with others",
+  "LEADERBOARD_SCHOOL" : "School",
+  "LEADERBOARD_CLASS" : "Class",
+  "LEADERBOARD_BOARD" : "Board",
+  "LEADERBOARD_DEFAULT" : "(default)",
+  "LEADERBOARD_APPLY" : "Apply"
 
 }

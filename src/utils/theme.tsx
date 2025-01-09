@@ -55,6 +55,18 @@ const customTheme = extendTheme({
       800: "#56000e",
       900: "#2d0007",
     },
+    yellow : {
+      50: "#fff59d",
+      100: "#ffec6f",
+      200: "#ffe94d",
+      300: "#FFEC8B",
+      400: "#ffdf07",
+      500: "#FFD500",
+      600: "#c2b500",
+      700: "#8c8900",
+      800: "#565b00",
+      900: "#483E09",
+    },
     progressBarGreen: {
       500: "#00A745",
     },
@@ -72,6 +84,7 @@ const customTheme = extendTheme({
     white: "#FFFFFF",
     borderColor: "#00A745",
     borderGrey: "#C5C5C5",
+    lightGrey: "#828282",
   },
   components: {
     Center: {
@@ -96,7 +109,6 @@ const customTheme = extendTheme({
       baseStyle: {
         fontSize: "14px",
         lineHeight: "24px",
-        textAlign: "center",
         fontFamily: "Inter",
         color: "textPrimary",
       },

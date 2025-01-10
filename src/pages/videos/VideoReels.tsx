@@ -508,11 +508,15 @@ const VideoReel: React.FC<{
       <Box position={"relative"}>
         <TopIcon onClick={handleBack} icon={"ChevronLeftIcon"} left="16px" />
         <LikeButton
-        programID={programID}
-        videos={videos}
-        visibleIndex={visibleIndex}
-        authUser={authUser}
-      />
+          playerPayload={{
+            programId: programID,
+            subject:
+              videos?.[visibleIndex]?.subject ||
+              localStorage.getItem("subject"),
+            contentId: videos?.[visibleIndex]?.contentId,
+            userId: authUser?.userId,
+          }}
+        />
         <List
           overscanCount={1}
           ref={listRef}
@@ -597,54 +601,37 @@ const TopIcon: React.FC<{
 };
 
 const LikeButton: React.FC<any> = ({
-  programID,
-  videos,
-  visibleIndex,
-  authUser,
+  playerPayload
 }) => {
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     const fetchLikeStatus = async () => {
-      if (!programID) return;
+      if (!playerPayload?.programId) return;
       try {
-        if (videos?.length > 0 && programID && authUser) {
-          const player = {
-            programId: programID,
-            subject:
-              videos?.[visibleIndex]?.subject ||
-              localStorage.getItem("subject"),
-            contentId: videos?.[visibleIndex]?.contentId,
-          };
-          const response = await content.isContentLiked(player);
-          if (response) {
-            setIsLiked(response[0]?.like || false);
+        if (playerPayload?.contentId) {
+        const response = await content.isContentLiked(playerPayload);
+        if (response && response[0]?.like !== undefined) {
+          setIsLiked(response[0]?.like || false);
+                }  
           }
-        }
       } catch (error) {
         console.error("Error fetching like status:", error);
       }
     };
 
     fetchLikeStatus();
-  }, [programID, videos?.length, visibleIndex]);
+  }, [playerPayload]);
 
   const handleLikeToggle = async () => {
     try {
-      const likeStatus = isLiked;
-      if (videos?.length > 0 && programID && authUser) {
-        const player = {
-          programId: programID,
-          subject:
-            videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-          userId: authUser?.userId,
-          contentId: videos?.[visibleIndex]?.contentId,
-          like: likeStatus,
-        };
-
-        const result = await content.contentLike(player);
-        setIsLiked(isLiked);
-      }
+      const likeStatus = !isLiked;
+      const payloadWithLikeStatus = {
+        ...playerPayload,
+        like: likeStatus,
+      };
+      await content.contentLike(payloadWithLikeStatus);
+      setIsLiked(!isLiked);
     } catch (error) {
       console.error("Error toggling like status:", error);
     }

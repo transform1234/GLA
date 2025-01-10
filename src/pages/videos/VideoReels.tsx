@@ -399,27 +399,6 @@ const VideoReel: React.FC<{
   );
 
   React.useEffect(() => {
-    const fetchLikeStatus = async () => {
-      if (!programID) return;
-      try {
-        const player = {
-          programId: programID,
-          subject:
-            videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-          contentId: videos?.[visibleIndex]?.contentId,
-        };
-
-        const response = await content.isContentLiked(player);
-        setIsLiked(!response[0]?.like || false);
-      } catch (error) {
-        console.error("Error fetching like status:", error);
-      }
-    };
-
-    fetchLikeStatus();
-  }, [activeIndex, programID, videos?.length]);
-
-  React.useEffect(() => {
     if (activeIndex || activeIndex === 0) {
       setVisibleIndex(
         typeof activeIndex === "string" ? Number(activeIndex) : activeIndex
@@ -519,25 +498,6 @@ const VideoReel: React.FC<{
     }
   }
 
-  const handleLikeToggle = async () => {
-    try {
-      const likeStatus = isLiked;
-      const player = {
-        programId: programID,
-        subject:
-          videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-        userId: authUser?.userId,
-        contentId: videos?.[visibleIndex]?.contentId,
-        like: likeStatus,
-      };
-      const result = await content.contentLike(player);
-      console.log(result);
-      setIsLiked(!isLiked);
-    } catch (error) {
-      console.error("Error toggling like status:", error);
-    }
-  };
-
   const handleBack = async () => {
     await callReaminigTelemetry("call telemetry api remaining on back");
     redirect ? navigate(redirect) : navigate("/");
@@ -547,11 +507,12 @@ const VideoReel: React.FC<{
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
         <TopIcon onClick={handleBack} icon={"ChevronLeftIcon"} left="16px" />
-        <TopIcon
-          onClick={handleLikeToggle}
-          icon={isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
-          right="16px"
-        />
+        <LikeButton
+        programID={programID}
+        videos={videos}
+        visibleIndex={visibleIndex}
+        authUser={authUser}
+      />
         <List
           overscanCount={1}
           ref={listRef}
@@ -631,6 +592,69 @@ const TopIcon: React.FC<{
       _focus={{ boxShadow: "none", outline: "none" }}
       onClick={onClick}
       {...props}
+    />
+  );
+};
+
+const LikeButton: React.FC<any> = ({
+  programID,
+  videos,
+  visibleIndex,
+  authUser,
+}) => {
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      if (!programID) return;
+      try {
+        if (videos?.length > 0 && programID && authUser) {
+          const player = {
+            programId: programID,
+            subject:
+              videos?.[visibleIndex]?.subject ||
+              localStorage.getItem("subject"),
+            contentId: videos?.[visibleIndex]?.contentId,
+          };
+          const response = await content.isContentLiked(player);
+          if (response) {
+            setIsLiked(response[0]?.like || false);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching like status:", error);
+      }
+    };
+
+    fetchLikeStatus();
+  }, [programID, videos?.length, visibleIndex]);
+
+  const handleLikeToggle = async () => {
+    try {
+      const likeStatus = isLiked;
+      if (videos?.length > 0 && programID && authUser) {
+        const player = {
+          programId: programID,
+          subject:
+            videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+          userId: authUser?.userId,
+          contentId: videos?.[visibleIndex]?.contentId,
+          like: likeStatus,
+        };
+
+        const result = await content.contentLike(player);
+        setIsLiked(isLiked);
+      }
+    } catch (error) {
+      console.error("Error toggling like status:", error);
+    }
+  };
+
+  return (
+    <TopIcon
+      onClick={handleLikeToggle}
+      icon={!isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
+      right="16px"
     />
   );
 };

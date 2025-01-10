@@ -7,9 +7,15 @@ interface OverlayProps {
   width?: number;
   height?: number;
   thumbnailUrl?: string;
+  setVideoEndId: any;
 }
 
-const Overlay: React.FC<OverlayProps> = ({ width, height, thumbnailUrl }) => {
+const Overlay: React.FC<OverlayProps> = ({
+  width,
+  height,
+  thumbnailUrl,
+  setVideoEndId,
+}) => {
   return (
     <Box
       width={width}
@@ -28,7 +34,7 @@ const Overlay: React.FC<OverlayProps> = ({ width, height, thumbnailUrl }) => {
         zIndex="10"
         bg="transparent"
         _focus={{ boxShadow: "none", outline: "none" }}
-        onClick={() => console.log("Replay button clicked")}
+        onClick={() => setVideoEndId(undefined)}
         spacing={2}
       >
         <IconButton

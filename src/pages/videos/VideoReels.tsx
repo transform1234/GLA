@@ -97,6 +97,7 @@ const VideoItem: React.FC<{
   adapter: string;
   authUser?: any;
   videoEndId?: string | number | undefined;
+  setVideoEndId?: any;
   thumbnailUrl?: string;
 }> = memo(
   ({
@@ -109,6 +110,7 @@ const VideoItem: React.FC<{
     refQml,
     style,
     videoEndId,
+    setVideoEndId,
     thumbnailUrl,
   }) => {
     const { t } = useTranslation();
@@ -210,7 +212,7 @@ const VideoItem: React.FC<{
           <Box>
             <Box>
               {videoEndId === id ? (
-                <Overlay {...{ width, height, thumbnailUrl }} />
+                <Overlay {...{ width, height, thumbnailUrl, setVideoEndId }} />
               ) : (
                 <SunbirdPlayer
                   {...{ width, height }}
@@ -632,6 +634,7 @@ const VideoReel: React.FC<{
               key={"VideoItem" + index}
               authUser={authUser}
               videoEndId={videoEndId}
+              setVideoEndId={setVideoEndId}
               thumbnailUrl={videos?.[index]?.thumbnailUrl}
             />
           )}

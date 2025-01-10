@@ -10,8 +10,9 @@ import {
   Stack,
   VStack,
   Center,
+  Image,
 } from "@chakra-ui/react";
-import { debounce } from "lodash"; // remove uniqueId
+import { debounce, size } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +26,7 @@ import { handleEvent } from "./utils";
 import Loading from "../../components/common/Loading";
 import { callBatch } from "../../services/telemetry";
 import { getSid } from "../../services/utilService";
+import Overlay from "./videoReelComponent/Overlay";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -94,8 +96,21 @@ const VideoItem: React.FC<{
   refQml?: any;
   adapter: string;
   authUser?: any;
+  videoEndId?: string | number | undefined;
+  thumbnailUrl?: string;
 }> = memo(
-  ({ id, qml_id, isVisible, adapter, programID, authUser, refQml, style }) => {
+  ({
+    id,
+    qml_id,
+    isVisible,
+    adapter,
+    programID,
+    authUser,
+    refQml,
+    style,
+    videoEndId,
+    thumbnailUrl,
+  }) => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isQUMLLoading, setIsQUMLLoading] = useState<boolean>(false);
@@ -193,28 +208,37 @@ const VideoItem: React.FC<{
           </Center>
         ) : isVisible && !isLoading ? (
           <Box>
-            <SunbirdPlayer
-              {...{ width, height }}
-              _playerStypeHeight={height}
-              {...{ ...lesson, iframeId: "course" }}
-              userData={{
-                firstName: localStorage.getItem("name"),
-                lastName: "",
-              }}
-              public_url={VITE_PLAYER_URL}
-              adapter={adapter}
-              playerContext={updateCdataTag([
-                {
-                  id: qml_id,
-                  type: "question_set",
-                },
-                {
-                  id: lesson?.mimeType,
-                  type: "mimeType",
-                },
-              ])}
-              batchsize={5}
-            />
+            <Box>
+              {videoEndId === id ? (
+                <Overlay {...{ width, height, thumbnailUrl }} />
+              ) : (
+                <SunbirdPlayer
+                  {...{ width, height }}
+                  _playerStypeHeight={height}
+                  {...{
+                    ...lesson,
+                    iframeId: "course",
+                  }}
+                  userData={{
+                    firstName: localStorage.getItem("name"),
+                    lastName: "",
+                  }}
+                  public_url={VITE_PLAYER_URL}
+                  adapter={adapter}
+                  playerContext={updateCdataTag([
+                    {
+                      id: qml_id,
+                      type: "question_set",
+                    },
+                    {
+                      id: lesson?.mimeType,
+                      type: "mimeType",
+                    },
+                  ])}
+                  batchsize={5}
+                />
+              )}
+            </Box>
             {qml_id && (
               <VStack>
                 <TopIcon
@@ -376,6 +400,8 @@ const VideoReel: React.FC<{
   const navigate = useNavigate();
   const [isIndexScroll, setIsIndexScroll] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [videoEndId, setVideoEndId] = useState();
+
   const handleScroll = useCallback(
     debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
       const itemCount = videos.length;
@@ -383,6 +409,7 @@ const VideoReel: React.FC<{
       let newVisibleIndex = Math.round(scrollOffset / itemSize);
       if (newVisibleIndex >= 0 && newVisibleIndex !== visibleIndex) {
         setVisibleIndex(newVisibleIndex);
+        setVideoEndId(undefined);
         // call tracking API here
         if (isIndexScroll) {
           await callReaminigTelemetry("call telemetry api remaining on scroll");
@@ -410,7 +437,7 @@ const VideoReel: React.FC<{
         };
 
         const response = await content.isContentLiked(player);
-        setIsLiked(!response[0]?.like || false);
+        setIsLiked(!response?.[0]?.like || false);
       } catch (error) {
         console.error("Error fetching like status:", error);
       }
@@ -445,7 +472,7 @@ const VideoReel: React.FC<{
         telemetryListRef.current = [];
       }
     },
-    300
+    500
   );
 
   React.useEffect(() => {
@@ -485,6 +512,9 @@ const VideoReel: React.FC<{
       }
     } else {
       const { iframeId, data } = result;
+      if (iframeId !== "assessment") {
+        setVideoEndId(videos?.[visibleIndex]?.contentId);
+      }
       const player = {
         ...data,
         // courseId: videos?.[visibleIndex]?.contentId,
@@ -546,7 +576,19 @@ const VideoReel: React.FC<{
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
-        <TopIcon onClick={handleBack} icon={"ChevronLeftIcon"} left="16px" />
+        <TopIcon
+          {...{
+            _hover: { bg: "#FFFFFF1A", borderColor: "white" },
+            _active: {
+              bg: "#FFFFFF1A",
+              transform: "none",
+              boxShadow: "none",
+            },
+          }}
+          onClick={handleBack}
+          icon={"ChevronLeftIcon"}
+          left="16px"
+        />
         <TopIcon
           onClick={handleLikeToggle}
           icon={isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
@@ -589,6 +631,8 @@ const VideoReel: React.FC<{
               adapter={videos?.[index]?.contentSource}
               key={"VideoItem" + index}
               authUser={authUser}
+              videoEndId={videoEndId}
+              thumbnailUrl={videos?.[index]?.thumbnailUrl}
             />
           )}
         </List>

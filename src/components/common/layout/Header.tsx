@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({
   const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
   const isLeaderboardPage = location.pathname === "/leaderboard";
-  const [ value, setSelectedView] = useState("School");
+  const [value, setSelectedView] = useState("School");
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -64,7 +64,6 @@ const Header: React.FC<HeaderProps> = ({
   const debouncedSearch = debounce((value: string) => {
     onSearchChange?.(value);
   }, 1000);
-
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -143,7 +142,7 @@ const Header: React.FC<HeaderProps> = ({
             </Text>
             <Box
               width="90px"
-            minWidth="90px"
+              minWidth="90px"
               height="38px"
               bg="white"
               color="black"
@@ -159,7 +158,11 @@ const Header: React.FC<HeaderProps> = ({
               <Text fontSize="14px" color="black">
                 {selectedView || value || "Select"}{" "}
               </Text>
-              <IconByName name="ChevronDownIcon" color="primary.500" />
+              <IconByName
+                name="TriangleDownIcon"
+                color="primary.500"
+                fontSize="10px"
+              />
             </Box>
           </HStack>
         </>

@@ -11,6 +11,7 @@ import {
   VStack,
   Center,
   Image,
+  Badge,
 } from "@chakra-ui/react";
 import { debounce, size } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
@@ -121,7 +122,10 @@ const VideoItem: React.FC<{
     const [lesson, setLesson] = React.useState<{ mimeType: string }>({
       mimeType: "",
     });
-    const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
+    const [lessonQml, setLessonQml] = React.useState<{
+      mimeType: string;
+      subject?: string | [];
+    }>({
       mimeType: "",
     });
     const [heightPerItem, setHeightPerItem] = useState<{
@@ -243,6 +247,33 @@ const VideoItem: React.FC<{
             </Box>
             {qml_id && (
               <VStack>
+                {lessonQml?.subject && (
+                  <Badge
+                    visibility={
+                      heightPerItem?.height === 0 ? "hidden" : "visible"
+                    }
+                    opacity={heightPerItem?.height === 0 ? "0" : "1"}
+                    position={"absolute"}
+                    zIndex={2}
+                    p="6px"
+                    fontSize="12px"
+                    fontWeight={500}
+                    color="#03627C"
+                    bg="#03627C33"
+                    right={heightPerItem?.width === 0 ? "0px" : `75%`}
+                    bottom={
+                      heightPerItem?.height === 0
+                        ? "32px"
+                        : `${heightPerItem?.height - 82}`
+                    }
+                    transition="right 0.5s,bottom 0.5s"
+                    top="auto"
+                  >
+                    {Array.isArray(lessonQml?.subject)
+                      ? lessonQml.subject.join(", ")
+                      : lessonQml?.subject}
+                  </Badge>
+                )}
                 <TopIcon
                   onClick={() => {
                     if (heightPerItem?.height === 0) {
@@ -276,7 +307,7 @@ const VideoItem: React.FC<{
                       ? "TakeAQuizIcon"
                       : "ChevronDownIcon"
                   }
-                  bg={heightPerItem?.width === 0 ? "white" : "transparent"}
+                  bg={heightPerItem?.width === 0 ? "white" : "#03627C1A"}
                   right={heightPerItem?.width === 0 ? "0px" : `${32}px`}
                   bottom={
                     heightPerItem?.height === 0

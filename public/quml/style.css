@@ -118,10 +118,10 @@
     padding-bottom: 5px !important;
   }
   .wrapper {
-    display: flex !important;
-    flex-wrap: wrap;
-    grid-gap: 6px !important;
-    justify-content: space-between;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    justify-content: space-between !important;
     > * {
       flex-basis: calc(50% - 5px);
     }
@@ -130,8 +130,7 @@
     margin-bottom: 6px !important;
   }
   .quml-mcq-option-card {
-    padding: 2px 10px !important;
-    gap: 5px !important;
+    text-align: center !important;
   }
   .quml-mcq-option-card .option p,
   .startpage__md-desc {
@@ -356,13 +355,43 @@
     position: absolute !important;
     z-index: -1 !important;
   } */
-  /* .quml-option--selected {
-    background: #219653 !important;
-  } */
+  .quml-option--selected {
+    background: #d2f2fa !important;
+    border: 1px solid #c5c5c5 !important;
+  }
+  .quml-option:not(.quml-option--selected),
+  .quml-mcq-option-card:not(.quml-option--selected) {
+    box-shadow: 0px 4px 0px 0px #c5c5c5 !important;
+    border: 1px solid #c5c5c5 !important;
+  }
+  .qumlOption-imageQaGrid {
+    padding-bottom: 5px !important;
+  }
+  .quml-option .container {
+    display: none !important  ;
+  }
   .quml-mcq-option-card .container {
     display: none !important;
   }
-  .quml-mcq-option-card.quml-option--selected {
+  .quml-mcq-options {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    justify-content: space-between !important;
+  }
+  .quml-option,
+  .quml-mcq-option-card {
+    padding: 8px 16px !important;
+    border: 1px solid #c5c5c5 !important;
+  }
+  .quml-option .option p span,
+  .quml-mcq-option-card .option p span {
+    background: transparent !important;
+  }
+  .quml-option-card,
+  .quml-option .option p {
+    margin: 0% !important;
+    text-align: center !important;
   }
 }
 quml-header:not(.main-header) {

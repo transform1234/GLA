@@ -1,21 +1,17 @@
 import {
   Box,
-  Button,
   CircularProgress,
   CircularProgressLabel,
   Collapse,
   Flex,
   HStack,
-  Icon,
   Image,
-  List,
-  ListItem,
   Progress,
   Spacer,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import searchIcon from "../../../assets/icons/search.svg";
@@ -60,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({
   const [ value, setSelectedView] = useState("School");
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
   const RECENT_SEARCH_KEY = "recentSearches";
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
     useEffect(() => {
@@ -76,9 +72,6 @@ const Header: React.FC<HeaderProps> = ({
         setRecentSearches([]);
       }
     }, []);
-    
-
-  
 
   useEffect(() => {
     if (ref) {
@@ -142,12 +135,18 @@ const Header: React.FC<HeaderProps> = ({
     };
   }, [isOpen]);
 
-  const handleInputFocus = () => {
-    setIsInputFocused(true);
+ const handleInputFocus = (item:string) => {
+    if(item){
+      const result =  isInputFocused.filter((e) => {e != item})
+      setIsInputFocused([...isInputFocused , item]);
+    }
   };
   
-  const handleInputBlur = () => {
-    setIsInputFocused(false);
+  const handleInputBlur = (item: string) => {
+    if (item) {
+      const result = isInputFocused.filter((e) => e !== item);
+      setIsInputFocused(result);
+    }
   };
 
   const handleRecentSearchClick = (search: string) => {
@@ -165,6 +164,59 @@ const Header: React.FC<HeaderProps> = ({
       zIndex={10}
       transition="all 0.3s"
     >
+      {isLeaderboardPage && (
+        <>
+          <HStack alignItems="center" w="100%" mb={4}>
+            {/* Back Icon */}
+            <IconByName
+              name={"BackIcon"}
+              color="white"
+              alt="Back"
+              cursor="pointer"
+              width="2em"
+              height="2em"
+              onClick={() => navigate("/home")}
+            />
+
+            <Text lineHeight="16px" fontWeight="400" fontSize="20px" color="white" fontFamily="Bebas Neue">
+              {t("LEADERBOARD")}
+            </Text>
+
+            <Spacer />
+
+            <Text
+              color="white"
+              fontWeight="400"
+              fontSize="10px"
+              lineHeight="12.1px"
+              cursor="default"
+            >
+              VIEW
+            </Text>
+            <Box
+              width="90px"
+            minWidth="90px"
+              height="38px"
+              bg="white"
+              color="black"
+              padding="7px 6px 7px 10px"
+              borderRadius="8px"
+              border="1px solid borderGrey"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              onClick={() => onFilterClick && onFilterClick("dropdown")}
+              cursor="pointer"
+            >
+              <Text fontSize="14px" color="black">
+                {selectedView || value || "Select"}{" "}
+              </Text>
+              <IconByName name="ChevronDownIcon" color="primary.500" />
+            </Box>
+          </HStack>
+        </>
+      )}
+
       {isWatchPage && (
         <HStack>
           <IconByName
@@ -315,8 +367,8 @@ const Header: React.FC<HeaderProps> = ({
             onKeyDown={handleKeyDown}
             suggestions={suggestions || []}
             onSuggestionClick={onSuggestionClick}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
+            onFocus={(e) => handleInputFocus("input")}
+            onBlur={(e) => handleInputBlur("input")}
           />
         </Collapse>
 
@@ -335,17 +387,19 @@ const Header: React.FC<HeaderProps> = ({
               onKeyDown={handleKeyDown}
               suggestions={suggestions}
               onSuggestionClick={onSuggestionClick}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
+              onFocus={(e) => handleInputFocus("input")}
+              onBlur={(e) => handleInputBlur("input")}
           />
         )}
-         {isInputFocused && suggestions?.length === 0 &&  !isScrolled  && (
+        {isInputFocused.length > 0 && suggestions?.length === 0 &&  !isScrolled  && (
         <Box
           p="4"
           bg="white"
           borderBottomLeftRadius="8px"
           borderBottomRightRadius="8px"
           border="2px solid #C5C5C5"
+          onMouseEnter={(e) => handleInputFocus("focus")}
+          onMouseLeave={(e) => handleInputBlur("focus")}
         >
           <Text
             marginBottom="10px"
@@ -369,8 +423,8 @@ const Header: React.FC<HeaderProps> = ({
                 _hover={{ bg: "gray.100" }}
                 onClick={() => handleRecentSearchClick(search)}
               >
-                <IconByName
-                  name={"HistoryIcon"}
+              <IconByName
+                  name={"RepeatClockIcon"}
                   color="textprimary"
                   alt="history"
                   cursor="pointer"

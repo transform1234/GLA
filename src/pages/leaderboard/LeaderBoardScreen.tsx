@@ -642,7 +642,6 @@ const BottomComponent: React.FC<BottomComponentProps> = ({
 }) => {
   return (
     <HStack
-      pt={5}
       gap={2}
       overflowX="auto"
       sx={{

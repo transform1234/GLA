@@ -409,7 +409,7 @@ const Header: React.FC<HeaderProps> = ({
             lineHeight="16px"
             color="primary.500"
           >
-            RECENTLY SEARCHED
+            {t("HOME_RECENTLY_SEARCHED")}
           </Text>
           <Flex wrap="wrap" gap="4">
             {recentSearches.map((search, index) => (
@@ -430,8 +430,8 @@ const Header: React.FC<HeaderProps> = ({
                   cursor="pointer"
                   width="16px"
                   height="16px"
-                  marginTop="8px"
-                  marginLeft="10px"
+                  marginLeft="8px"
+                  marginRight="8px"
                 />
                 <Text
                   textTransform="capitalize"

@@ -4,6 +4,7 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   SearchIcon,
+  RepeatClockIcon,
 } from "@chakra-ui/icons";
 import { Button, Icon, Text } from "@chakra-ui/react";
 
@@ -154,13 +155,13 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
         <path d="M12.5208 16.8333L17.1875 21.4999L16 22.6666L9.33334 15.9999L16 9.33325L17.1875 10.4999L12.5208 15.1666H22.6667V16.8333H12.5208Z" />
       </Icon>
     );
-    
   },
   
   ChevronRightIcon,
   ChevronLeftIcon,
   ChevronUpIcon,
   SearchIcon,
+  RepeatClockIcon
 };
 
 const IconByName: React.FC<IconProps> = ({

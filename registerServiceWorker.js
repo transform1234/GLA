@@ -14,10 +14,7 @@ export function registerSW() {
                   console.log("New content available, please refresh.");
                   // Add logic to show a notification or auto-refresh
                   // For example:
-                  window.alert(
-                    "                'New content is available and will be used when all ' +'tabs for this page are closed. See https://bit.ly/CRA-PWA.'"
-                  );
-                  //   window.location.reload(true);
+                  window.alert("New content available, reloading...");
                   window.location.reload(true);
                 } else {
                   console.log("Content is cached for offline use.");

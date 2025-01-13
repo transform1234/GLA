@@ -238,7 +238,7 @@ const Header: React.FC<HeaderProps> = ({
                     variant="h2"
                     fontSize="12px"
                     fontWeight="400"
-                    title={t("HOME_HELLO") + " " + "SW 6 "}
+                    title={t("HOME_HELLO") + " " + " SW 6"}
                     color="white"
                   />
                   <CustomHeading

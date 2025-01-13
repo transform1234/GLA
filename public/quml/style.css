@@ -90,9 +90,9 @@
   .lanscape-mode-right {
     margin: 0 !important;
     padding: 0 1rem !important;
-    top: 40px !important;
+    top: 48px !important;
     width: 100% !important;
-    height: 2rem !important;
+    height: 23px !important;
     /* margin: auto !important; */
   }
   .lanscape-mode-right > ul {

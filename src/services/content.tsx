@@ -391,3 +391,26 @@ export const isContentLiked = async (payload: any): Promise<any> => {
     throw error;
   }
 };
+
+export const rateQuiz = async (payload: any): Promise<any> => {
+  try {
+    const response = await fetch(`${baseUrl}${URL.RATE_QUIZ}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Error rating quiz:", error);
+    throw error;
+  }
+};

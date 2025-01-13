@@ -118,7 +118,7 @@ const VideoItem: React.FC<{
     const [isQUMLLoading, setIsQUMLLoading] = useState<boolean>(false);
     const [playerContext, setPlayerContext] = useState<any>(contextData);
     const { width, height } = useDeviceSize();
-    const [start, setStart] = useState(0);
+    const [rating, setRating] = useState(0);
     const [lesson, setLesson] = React.useState<{ mimeType: string }>({
       mimeType: "",
     });
@@ -360,6 +360,7 @@ const VideoItem: React.FC<{
                         height={"100%"}
                         textAlign={"center"}
                         spacing={2}
+                        color={"#10162E"}
                       >
                         <CustomHeading fontSize={"24px"} fontWeight={"700"}>
                           CONGRATULATIONS!
@@ -372,14 +373,30 @@ const VideoItem: React.FC<{
                             and you have earned <b>20</b> coins.
                           </CustomHeading>
                         </VStack>
-                        <StarRating value={start} onChange={setStart} />
-                        <PrimaryButton
-                          onClick={() => {
-                            setStart(0);
-                          }}
-                        >
-                          Submit
-                        </PrimaryButton>
+                        {rating < 100 && (
+                          <Box>
+                            <StarRating value={rating} onChange={setRating} />
+                            <PrimaryButton
+                              isDisabled={rating === 0 ? true : false}
+                              onClick={async () => {
+                                const result = await content.rateQuiz({
+                                  programId: programID,
+                                  subject: Array.isArray(lessonQml?.subject)
+                                    ? (lessonQml.subject as string[])[0]
+                                    : lessonQml?.subject,
+                                  userId: authUser.userId,
+                                  contentId: videoEndId?.qml_id,
+                                  rating: rating,
+                                });
+                                if (result) {
+                                  setRating(100);
+                                }
+                              }}
+                            >
+                              Submit
+                            </PrimaryButton>
+                          </Box>
+                        )}
                       </VStack>
                     </Box>
                   ) : (

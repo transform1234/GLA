@@ -12,7 +12,7 @@ import { Button, Icon, Text } from "@chakra-ui/react";
 
 interface IconProps {
   name: string;
-  color?: string;
+  color?: any;
   [key: string]: any;
   isSelected?: boolean;
 }

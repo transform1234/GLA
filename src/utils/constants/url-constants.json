@@ -13,5 +13,5 @@
   "CONTENT_IS_LIKED": "/altprogramassociation/isContentLiked",
   "LEADERBOARD_FILTER_LIST": "/api/v1/altprogramassociation/altsubjectlist",
   "LEADERBOARD_USER_DATA": "/api/v1/altprogramassociation/getUserPoints",
-  "RATE_QUIZ": "/api/v1/altprogramassociation/rateQuiz"
+  "RATE_QUIZ": "/altprogramassociation/rateQuiz"
 }

@@ -13,6 +13,8 @@ export default defineConfig({
         clientsClaim: true,
         skipWaiting: true,
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // Increase to 5 MB or more as needed
+        globPatterns: ["**/*.{html,js,css,ico,png,svg}"],
+        ignoreURLParametersMatching: [/.*/, /youtube.html/], // Ignore YouTube 404 URLs dynamically
       },
       injectRegister: "auto",
       devOptions: {

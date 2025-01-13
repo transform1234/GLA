@@ -84,6 +84,10 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   };
 
   const handleClear = () => {
+    const inputElement = inputRef?.current?.querySelector("input");
+    if (inputElement && inputElement.value) {
+      inputElement.value = "";
+    }
     setInputValue("");
     onChange?.({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
     setFilteredSuggestions([]);
@@ -108,7 +112,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
         <Input
           type="text"
           placeholder={placeholder}
-          value={value}
+          value={inputValue || value} 
           onChange={handleInputChange}
           borderWidth="2px"
           borderRadius="8px"

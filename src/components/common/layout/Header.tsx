@@ -33,6 +33,7 @@ interface HeaderProps {
   progress?: string;
   onFilterClick?: (filter: string) => void;
   selectedView?: any;
+  recentSearch?: string[];
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -44,6 +45,7 @@ const Header: React.FC<HeaderProps> = ({
   progress,
   onFilterClick,
   selectedView,
+  recentSearch = [],
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -57,21 +59,6 @@ const Header: React.FC<HeaderProps> = ({
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
   const RECENT_SEARCH_KEY = "recentSearches";
   const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
-
-    useEffect(() => {
-      try {
-        const savedSearches = JSON.parse(
-          localStorage.getItem(RECENT_SEARCH_KEY) || "[]"
-        );
-        if (Array.isArray(savedSearches)) {
-          setRecentSearches(savedSearches);
-        }
-      } catch (error) {
-        console.error("Error parsing recent searches:", error);
-        setRecentSearches([]);
-      }
-    }, []);
 
   useEffect(() => {
     if (ref) {
@@ -82,25 +69,7 @@ const Header: React.FC<HeaderProps> = ({
   const debouncedSearch = debounce((value: string) => {
     const trimmedValue = value.trim();
     if (!trimmedValue) return;
-  
     onSearchChange?.(trimmedValue);
-  
-    try {
-      const savedSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || "[]");
-  
-      if (Array.isArray(savedSearches)) {
-        let updatedSearches = [trimmedValue, ...savedSearches];
-        updatedSearches = [...new Set(updatedSearches)];
-        if (updatedSearches.length > 5) {
-          updatedSearches = updatedSearches.slice(0, 5);
-        }
-        
-        localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updatedSearches));
-        setRecentSearches(updatedSearches);
-      }
-    } catch (error) {
-      console.error("Error managing recent searches:", error);
-    }
   }, 1000);
 
 
@@ -412,7 +381,7 @@ const Header: React.FC<HeaderProps> = ({
             {t("HOME_RECENTLY_SEARCHED")}
           </Text>
           <Flex wrap="wrap" gap="4">
-            {recentSearches.map((search, index) => (
+            {recentSearch?.map((search, index) => (
               <Box
                 key={index}
                 display="flex"
@@ -434,7 +403,6 @@ const Header: React.FC<HeaderProps> = ({
                   marginRight="8px"
                 />
                 <Text
-                  textTransform="capitalize"
                   pb="8px"
                   pt="8px"
                   pr="10px"

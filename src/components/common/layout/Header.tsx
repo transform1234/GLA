@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({
   const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
   const isLeaderboardPage = location.pathname === "/leaderboard";
-  const [ value, setSelectedView] = useState("School");
+  const [value, setSelectedView] = useState("School");
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -64,7 +64,6 @@ const Header: React.FC<HeaderProps> = ({
   const debouncedSearch = debounce((value: string) => {
     onSearchChange?.(value);
   }, 1000);
-
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -143,7 +142,7 @@ const Header: React.FC<HeaderProps> = ({
             </Text>
             <Box
               width="90px"
-            minWidth="90px"
+              minWidth="90px"
               height="38px"
               bg="white"
               color="black"
@@ -239,7 +238,7 @@ const Header: React.FC<HeaderProps> = ({
                     variant="h2"
                     fontSize="12px"
                     fontWeight="400"
-                    title={t("HOME_HELLO")}
+                    title={t("HOME_HELLO") + " " + " SW 1"}
                     color="white"
                   />
                   <CustomHeading

@@ -17,9 +17,8 @@ export function registerSW() {
                   window.alert(
                     "                'New content is available and will be used when all ' +'tabs for this page are closed. See https://bit.ly/CRA-PWA.'"
                   );
-                  alert("A new version is available. Refresh to update.");
                   //   window.location.reload(true);
-                  //   window.location.reload(true);
+                  window.location.reload(true);
                 } else {
                   console.log("Content is cached for offline use.");
                 }

@@ -179,7 +179,11 @@ const Header: React.FC<HeaderProps> = ({
               <Text fontSize="14px" color="black">
                 {selectedView || value || "Select"}{" "}
               </Text>
-              <IconByName name="ChevronDownIcon" color="primary.500" />
+              <IconByName
+                name="TriangleDownIcon"
+                color="primary.500"
+                fontSize="10px"
+              />
             </Box>
           </HStack>
         </>

@@ -2,14 +2,15 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Badge,
   Box,
+  Center,
   HStack,
   IconButton,
   Skeleton,
   SkeletonCircle,
   Stack,
   VStack,
-  Center,
 } from "@chakra-ui/react";
 import { debounce } from "lodash"; // remove uniqueId
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
@@ -19,12 +20,16 @@ import { FixedSizeList as List } from "react-window";
 import IconByName from "../../components/common/icons/Icon";
 import Layout from "../../components/common/layout/layout";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
+import Loading from "../../components/common/Loading";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
-import { handleEvent } from "./utils";
-import Loading from "../../components/common/Loading";
 import { callBatch } from "../../services/telemetry";
 import { getSid } from "../../services/utilService";
+import { handleEvent } from "./utils";
+import Overlay from "./videoReelComponent/Overlay";
+import StarRating from "../../components/common/input/Rating";
+import CustomHeading from "../../components/common/typography/Heading";
+import PrimaryButton from "../../components/common/button/PrimaryButton";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -94,17 +99,33 @@ const VideoItem: React.FC<{
   refQml?: any;
   adapter: string;
   authUser?: any;
+  thumbnailUrl?: string;
 }> = memo(
-  ({ id, qml_id, isVisible, adapter, programID, authUser, refQml, style }) => {
+  ({
+    id,
+    qml_id,
+    isVisible,
+    adapter,
+    programID,
+    authUser,
+    refQml,
+    style,
+    thumbnailUrl,
+  }) => {
     const { t } = useTranslation();
+    const [videoEndId, setVideoEndId] = useState<any>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isQUMLLoading, setIsQUMLLoading] = useState<boolean>(false);
     const [playerContext, setPlayerContext] = useState<any>(contextData);
     const { width, height } = useDeviceSize();
+    const [rating, setRating] = useState(0);
     const [lesson, setLesson] = React.useState<{ mimeType: string }>({
       mimeType: "",
     });
-    const [lessonQml, setLessonQml] = React.useState<{ mimeType: string }>({
+    const [lessonQml, setLessonQml] = React.useState<{
+      mimeType: string;
+      subject?: string | [];
+    }>({
       mimeType: "",
     });
     const [heightPerItem, setHeightPerItem] = useState<{
@@ -169,6 +190,27 @@ const VideoItem: React.FC<{
       inti();
     }, [id, isVisible]);
 
+    React.useEffect(() => {
+      const newHandleEvent = async (data: any) => {
+        const result = handleEvent(data);
+        if (!result || !result?.type) return;
+        if (result.iframeId === "assessment") {
+          setVideoEndId((old: any) => ({ ...old, qml_id }));
+        } else if (result.iframeId === "course") {
+          setVideoEndId((old: any) => ({ ...old, id }));
+        }
+      };
+      const handleEventNewItem = (event: any) => {
+        newHandleEvent(event);
+      };
+
+      window.addEventListener("message", handleEventNewItem, false);
+
+      return () => {
+        window.removeEventListener("message", handleEventNewItem);
+      };
+    }, []);
+
     return (
       <div
         style={{
@@ -193,30 +235,66 @@ const VideoItem: React.FC<{
           </Center>
         ) : isVisible && !isLoading ? (
           <Box>
-            <SunbirdPlayer
-              {...{ width, height }}
-              _playerStypeHeight={height}
-              {...{ ...lesson, iframeId: "course" }}
-              userData={{
-                firstName: localStorage.getItem("name"),
-                lastName: "",
-              }}
-              public_url={VITE_PLAYER_URL}
-              adapter={adapter}
-              playerContext={updateCdataTag([
-                {
-                  id: qml_id,
-                  type: "question_set",
-                },
-                {
-                  id: lesson?.mimeType,
-                  type: "mimeType",
-                },
-              ])}
-              batchsize={5}
-            />
+            <Box>
+              {videoEndId?.id === id ? (
+                <Overlay {...{ width, height, thumbnailUrl, setVideoEndId }} />
+              ) : (
+                <SunbirdPlayer
+                  {...{ width, height }}
+                  _playerStypeHeight={height}
+                  {...{
+                    ...lesson,
+                    iframeId: "course",
+                  }}
+                  userData={{
+                    firstName: localStorage.getItem("name"),
+                    lastName: "",
+                  }}
+                  public_url={VITE_PLAYER_URL}
+                  adapter={adapter}
+                  playerContext={updateCdataTag([
+                    {
+                      id: qml_id,
+                      type: "question_set",
+                    },
+                    {
+                      id: lesson?.mimeType,
+                      type: "mimeType",
+                    },
+                  ])}
+                  batchsize={5}
+                />
+              )}
+            </Box>
             {qml_id && (
               <VStack>
+                {lessonQml?.subject && (
+                  <Badge
+                    visibility={
+                      heightPerItem?.height === 0 ? "hidden" : "visible"
+                    }
+                    opacity={heightPerItem?.height === 0 ? "0" : "1"}
+                    position={"absolute"}
+                    zIndex={2}
+                    p="6px"
+                    fontSize="12px"
+                    fontWeight={500}
+                    color="#03627C"
+                    bg="#03627C33"
+                    right={heightPerItem?.width === 0 ? "0px" : `80%`}
+                    bottom={
+                      heightPerItem?.height === 0
+                        ? "32px"
+                        : `${heightPerItem?.height - 82}`
+                    }
+                    transition="right 0.5s,bottom 0.5s"
+                    top="auto"
+                  >
+                    {Array.isArray(lessonQml?.subject)
+                      ? lessonQml.subject.join(", ")
+                      : lessonQml?.subject}
+                  </Badge>
+                )}
                 <TopIcon
                   onClick={() => {
                     if (heightPerItem?.height === 0) {
@@ -250,7 +328,7 @@ const VideoItem: React.FC<{
                       ? "TakeAQuizIcon"
                       : "ChevronDownIcon"
                   }
-                  bg={heightPerItem?.width === 0 ? "white" : "transparent"}
+                  bg={heightPerItem?.width === 0 ? "white" : "#03627C1A"}
                   right={heightPerItem?.width === 0 ? "0px" : `${32}px`}
                   bottom={
                     heightPerItem?.height === 0
@@ -260,37 +338,98 @@ const VideoItem: React.FC<{
                   transition="right 0.5s,bottom 0.5s"
                   top="auto"
                 />
-                {isQUMLLoading && (
-                  <SunbirdPlayer
-                    forwardedRef={isVisible ? refQml : false}
-                    style={{ border: "none", borderRadius: "16px" }}
-                    _vstack={{
-                      position: "absolute",
-                      bottom: "16px",
-                      transition: "right 0.5s,width 0.5s, height 0.5s",
-                      right: "16px",
-                    }}
-                    {...heightPerItem}
-                    {...{ ...lessonQml, iframeId: "assessment" }}
-                    userData={{
-                      firstName: localStorage.getItem("name"),
-                      lastName: "",
-                    }}
-                    public_url={VITE_PLAYER_URL}
-                    adapter={adapter}
-                    playerContext={updateCdataTag([
-                      {
-                        id,
-                        type: "learning_content",
-                      },
-                      {
-                        id: lessonQml?.mimeType,
-                        type: "mimeType",
-                      },
-                    ])}
-                    batchsize={5}
-                  />
-                )}
+                {isQUMLLoading &&
+                  (videoEndId?.qml_id === qml_id ? (
+                    <Box
+                      pt={"52px"}
+                      bg={"transparent"}
+                      {...heightPerItem}
+                      {...{
+                        position: "absolute",
+                        bottom: "16px",
+                        transition: "right 0.5s,width 0.5s, height 0.5s",
+                        right: "16px",
+                      }}
+                    >
+                      <VStack
+                        p="4"
+                        pt={"52px"}
+                        bg={"white"}
+                        ref={isVisible ? refQml : false}
+                        rounded={"16px"}
+                        height={"100%"}
+                        textAlign={"center"}
+                        spacing={2}
+                        color={"#10162E"}
+                      >
+                        <CustomHeading fontSize={"24px"} fontWeight={"700"}>
+                          CONGRATULATIONS!
+                        </CustomHeading>
+                        <VStack>
+                          <CustomHeading fontSize={"14px"} fontWeight={"500"}>
+                            You’ve completed the quiz!
+                          </CustomHeading>
+                          <CustomHeading fontSize={"14px"} fontWeight={"500"}>
+                            and you have earned <b>20</b> coins.
+                          </CustomHeading>
+                        </VStack>
+                        {rating < 100 && (
+                          <Box>
+                            <StarRating value={rating} onChange={setRating} />
+                            <PrimaryButton
+                              isDisabled={rating === 0 ? true : false}
+                              onClick={async () => {
+                                const result = await content.rateQuiz({
+                                  programId: programID,
+                                  subject: Array.isArray(lessonQml?.subject)
+                                    ? (lessonQml.subject as string[])[0]
+                                    : lessonQml?.subject,
+                                  userId: authUser.userId,
+                                  contentId: videoEndId?.qml_id,
+                                  rating: rating,
+                                });
+                                if (result) {
+                                  setRating(100);
+                                }
+                              }}
+                            >
+                              Submit
+                            </PrimaryButton>
+                          </Box>
+                        )}
+                      </VStack>
+                    </Box>
+                  ) : (
+                    <SunbirdPlayer
+                      forwardedRef={isVisible ? refQml : false}
+                      style={{ border: "none", borderRadius: "16px" }}
+                      _vstack={{
+                        position: "absolute",
+                        bottom: "16px",
+                        transition: "right 0.5s,width 0.5s, height 0.5s",
+                        right: "16px",
+                      }}
+                      {...heightPerItem}
+                      {...{ ...lessonQml, iframeId: "assessment" }}
+                      userData={{
+                        firstName: localStorage.getItem("name"),
+                        lastName: "",
+                      }}
+                      public_url={VITE_PLAYER_URL}
+                      adapter={adapter}
+                      playerContext={updateCdataTag([
+                        {
+                          id,
+                          type: "learning_content",
+                        },
+                        {
+                          id: lessonQml?.mimeType,
+                          type: "mimeType",
+                        },
+                      ])}
+                      batchsize={5}
+                    />
+                  ))}
               </VStack>
             )}
           </Box>
@@ -375,7 +514,7 @@ const VideoReel: React.FC<{
   const telemetryListRef = useRef<any[]>([]);
   const navigate = useNavigate();
   const [isIndexScroll, setIsIndexScroll] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+
   const handleScroll = useCallback(
     debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
       const itemCount = videos.length;
@@ -424,7 +563,7 @@ const VideoReel: React.FC<{
         telemetryListRef.current = [];
       }
     },
-    300
+    500
   );
 
   React.useEffect(() => {
@@ -554,6 +693,7 @@ const VideoReel: React.FC<{
               adapter={videos?.[index]?.contentSource}
               key={"VideoItem" + index}
               authUser={authUser}
+              thumbnailUrl={videos?.[index]?.thumbnailUrl}
             />
           )}
         </List>
@@ -600,9 +740,7 @@ const TopIcon: React.FC<{
   );
 };
 
-const LikeButton: React.FC<any> = ({
-  playerPayload
-}) => {
+const LikeButton: React.FC<any> = ({ playerPayload }) => {
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
@@ -610,11 +748,11 @@ const LikeButton: React.FC<any> = ({
       if (!playerPayload?.programId) return;
       try {
         if (playerPayload?.contentId) {
-        const response = await content.isContentLiked(playerPayload);
-        if (response && response[0]?.like !== undefined) {
-          setIsLiked(response[0]?.like || false);
-                }  
+          const response = await content.isContentLiked(playerPayload);
+          if (response && response[0]?.like !== undefined) {
+            setIsLiked(response[0]?.like || false);
           }
+        }
       } catch (error) {
         console.error("Error fetching like status:", error);
       }

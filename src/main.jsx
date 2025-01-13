@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import "../i18n.js";
-import { registerSW } from "../registerServiceWorker.js";
+// import { registerSW } from "../registerServiceWorker.js";
 
 const sentryDsn = import.meta.env.VITE_APP_SENTRY_DSN;
 
@@ -27,4 +27,4 @@ root.render(
   </StrictMode>
 );
 
-registerSW();
+// registerSW();

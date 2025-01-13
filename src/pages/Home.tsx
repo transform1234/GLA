@@ -43,6 +43,24 @@ export default function Homepage(props: any) {
   const navigate = useNavigate();
   const { authUser } = props;
   const [progress, setProgress] = useState<string>("");
+  const [recentSearch, setRecentSearch] = useState<string[]>([]);
+  const RECENT_SEARCH_KEY = "recentSearches";
+
+  useEffect(() => {
+    try {
+      const savedSearches = JSON.parse(
+        localStorage.getItem(RECENT_SEARCH_KEY) || "[]"
+      );
+      if (Array.isArray(savedSearches) && setRecentSearch) {
+        setRecentSearch(savedSearches);
+      }
+    } catch (error) {
+      console.error("Error parsing recent searches:", error);
+      if (setRecentSearch) {
+        setRecentSearch([]);
+      }
+    }
+  }, [setRecentSearch]);
 
   useEffect(() => {
     const fetchProgramId = async () => {
@@ -115,6 +133,22 @@ export default function Homepage(props: any) {
       const response = await fetchSearchResults(payload);
       if (type === "search") {
         setSuggestions(Boolean(searchTerm) && response?.paginatedData);
+  
+        if (response?.paginatedData?.length) {
+          setRecentSearch((prev: any) => {
+            const updatedSearches = [
+              searchTerm,
+              ...prev.filter((term: any) => term !== searchTerm),
+            ];
+            const limitedSearches = updatedSearches.slice(0, 5); // Keep the recent searches limited to 5
+
+            localStorage.setItem(
+              RECENT_SEARCH_KEY,
+              JSON.stringify(limitedSearches)
+            );
+            return limitedSearches;
+          });
+        }
       } else {
         setVideos(response?.paginatedData);
       }
@@ -187,6 +221,7 @@ export default function Homepage(props: any) {
         onSearchChange: setSearchTerm,
         onSuggestionClick: handleSuggestionClick,
         progress: progress,
+        recentSearch: recentSearch,
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">

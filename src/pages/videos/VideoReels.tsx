@@ -459,27 +459,6 @@ const VideoReel: React.FC<{
   );
 
   React.useEffect(() => {
-    const fetchLikeStatus = async () => {
-      if (!programID) return;
-      try {
-        const player = {
-          programId: programID,
-          subject:
-            videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-          contentId: videos?.[visibleIndex]?.contentId,
-        };
-
-        const response = await content.isContentLiked(player);
-        setIsLiked(!response?.[0]?.like || false);
-      } catch (error) {
-        console.error("Error fetching like status:", error);
-      }
-    };
-
-    fetchLikeStatus();
-  }, [activeIndex, programID, videos?.length]);
-
-  React.useEffect(() => {
     if (activeIndex || activeIndex === 0) {
       setVisibleIndex(
         typeof activeIndex === "string" ? Number(activeIndex) : activeIndex
@@ -582,25 +561,6 @@ const VideoReel: React.FC<{
     }
   }
 
-  const handleLikeToggle = async () => {
-    try {
-      const likeStatus = isLiked;
-      const player = {
-        programId: programID,
-        subject:
-          videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
-        userId: authUser?.userId,
-        contentId: videos?.[visibleIndex]?.contentId,
-        like: likeStatus,
-      };
-      const result = await content.contentLike(player);
-      console.log(result);
-      setIsLiked(!isLiked);
-    } catch (error) {
-      console.error("Error toggling like status:", error);
-    }
-  };
-
   const handleBack = async () => {
     await callReaminigTelemetry("call telemetry api remaining on back");
     redirect ? navigate(redirect) : navigate("/");
@@ -609,23 +569,16 @@ const VideoReel: React.FC<{
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
-        <TopIcon
-          {...{
-            _hover: { bg: "#FFFFFF1A", borderColor: "white" },
-            _active: {
-              bg: "#FFFFFF1A",
-              transform: "none",
-              boxShadow: "none",
-            },
+        <TopIcon onClick={handleBack} icon={"ChevronLeftIcon"} left="16px" />
+        <LikeButton
+          playerPayload={{
+            programId: programID,
+            subject:
+              videos?.[visibleIndex]?.subject ||
+              localStorage.getItem("subject"),
+            contentId: videos?.[visibleIndex]?.contentId,
+            userId: authUser?.userId,
           }}
-          onClick={handleBack}
-          icon={"ChevronLeftIcon"}
-          left="16px"
-        />
-        <TopIcon
-          onClick={handleLikeToggle}
-          icon={isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
-          right="16px"
         />
         <List
           overscanCount={1}
@@ -709,6 +662,50 @@ const TopIcon: React.FC<{
       _focus={{ boxShadow: "none", outline: "none" }}
       onClick={onClick}
       {...props}
+    />
+  );
+};
+
+const LikeButton: React.FC<any> = ({ playerPayload }) => {
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      if (!playerPayload?.programId) return;
+      try {
+        if (playerPayload?.contentId) {
+          const response = await content.isContentLiked(playerPayload);
+          if (response && response[0]?.like !== undefined) {
+            setIsLiked(response[0]?.like || false);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching like status:", error);
+      }
+    };
+
+    fetchLikeStatus();
+  }, [playerPayload]);
+
+  const handleLikeToggle = async () => {
+    try {
+      const likeStatus = !isLiked;
+      const payloadWithLikeStatus = {
+        ...playerPayload,
+        like: likeStatus,
+      };
+      await content.contentLike(payloadWithLikeStatus);
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("Error toggling like status:", error);
+    }
+  };
+
+  return (
+    <TopIcon
+      onClick={handleLikeToggle}
+      icon={!isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
+      right="16px"
     />
   );
 };

@@ -38,7 +38,9 @@ const SearchPage: React.FC = () => {
   }, [location.search]);
 
   useEffect(() => {
-    fetchData(searchTerm);
+    if (searchTerm) {
+      fetchData(searchTerm);
+    }
   }, [searchTerm]);
 
   const fetchData = async (search: any) => {

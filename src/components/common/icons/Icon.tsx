@@ -5,6 +5,7 @@ import {
   ChevronUpIcon,
   SearchIcon,
   TriangleDownIcon,
+  RepeatClockIcon,
 } from "@chakra-ui/icons";
 import { Button, Icon, Text } from "@chakra-ui/react";
 
@@ -169,6 +170,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
   ChevronDownIcon,
   TriangleDownIcon,
   SearchIcon,
+  RepeatClockIcon,
 };
 
 const IconByName: React.FC<IconProps> = ({

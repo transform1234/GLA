@@ -3,6 +3,7 @@ import {
   CircularProgress,
   CircularProgressLabel,
   Collapse,
+  Flex,
   HStack,
   Image,
   Progress,
@@ -32,6 +33,7 @@ interface HeaderProps {
   progress?: string;
   onFilterClick?: (filter: string) => void;
   selectedView?: any;
+  recentSearch?: string[];
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -43,6 +45,7 @@ const Header: React.FC<HeaderProps> = ({
   progress,
   onFilterClick,
   selectedView,
+  recentSearch = [],
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -54,6 +57,8 @@ const Header: React.FC<HeaderProps> = ({
   const isLeaderboardPage = location.pathname === "/leaderboard";
   const [value, setSelectedView] = useState("School");
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
+  const RECENT_SEARCH_KEY = "recentSearches";
+  const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
 
   useEffect(() => {
     if (ref) {
@@ -62,7 +67,9 @@ const Header: React.FC<HeaderProps> = ({
   }, [ref, searchTerm]);
 
   const debouncedSearch = debounce((value: string) => {
-    onSearchChange?.(value);
+    const trimmedValue = value.trim();
+    if (!trimmedValue) return;
+    onSearchChange?.(trimmedValue);
   }, 1000);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,10 +103,24 @@ const Header: React.FC<HeaderProps> = ({
     };
   }, [isOpen]);
 
-  // const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSelectedView(event.target.value);
-  //   localStorage.setItem("dropdownFilter", event.target.value);
-  // };
+ const handleInputFocus = (item:string) => {
+    if(item){
+      const result =  isInputFocused.filter((e) => {e != item})
+      setIsInputFocused([...isInputFocused , item]);
+    }
+  };
+  
+  const handleInputBlur = (item: string) => {
+    if (item) {
+      const result = isInputFocused.filter((e) => e !== item);
+      setIsInputFocused(result);
+    }
+  };
+
+  const handleRecentSearchClick = (search: string) => {
+    console.log("Navigating to search with:", search);
+    navigate(`/search?search=${encodeURIComponent(search.trim())}`);
+  };
 
   return (
     <Box
@@ -125,7 +146,7 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => navigate("/home")}
             />
 
-            <Text fontSize="20px" color="white" fontFamily="Bebas Neue" ml={2}>
+            <Text lineHeight="16px" fontWeight="400" fontSize="20px" color="white" fontFamily="Bebas Neue">
               {t("LEADERBOARD")}
             </Text>
 
@@ -301,7 +322,9 @@ const Header: React.FC<HeaderProps> = ({
             </Collapse>
           </>
         )}
-
+        </VStack>
+       <VStack align={"stretch"} spacing={0}>
+        <Box mt="12px">
         <Collapse
           in={isOpen || isWatchPage || isSearchPage}
           transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
@@ -311,11 +334,13 @@ const Header: React.FC<HeaderProps> = ({
             placeholder={t("HOME_SEARCH")}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={isSearchPage || isWatchPage}
+            isBackButton={true}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions || []}
             onSuggestionClick={onSuggestionClick}
+            onFocus={(e) => handleInputFocus("input")}
+            onBlur={(e) => handleInputBlur("input")}
           />
         </Collapse>
 
@@ -329,13 +354,72 @@ const Header: React.FC<HeaderProps> = ({
               placeholder={t("HOME_SEARCH")}
               icon={searchIcon}
               showClearIcon={true}
-              isBackButton={isWatchPage || isSearchPage}
+              isBackButton={true}
               onChange={handleSearchChange}
               onKeyDown={handleKeyDown}
               suggestions={suggestions}
               onSuggestionClick={onSuggestionClick}
-            />
-          )}
+              onFocus={(e) => handleInputFocus("input")}
+              onBlur={(e) => handleInputBlur("input")}
+          />
+        )}
+        {isInputFocused.length > 0 && suggestions?.length === 0 &&  !isScrolled  && (
+        <Box
+          p="4"
+          bg="white"
+          borderBottomLeftRadius="8px"
+          borderBottomRightRadius="8px"
+          border="2px solid #C5C5C5"
+          onMouseEnter={(e) => handleInputFocus("focus")}
+          onMouseLeave={(e) => handleInputBlur("focus")}
+        >
+          <Text
+            marginBottom="10px"
+            textAlign="left"
+            fontSize="12px"
+            fontWeight="600"
+            lineHeight="16px"
+            color="primary.500"
+          >
+            {t("HOME_RECENTLY_SEARCHED")}
+          </Text>
+          <Flex wrap="wrap" gap="4">
+            {recentSearch?.map((search, index) => (
+              <Box
+                key={index}
+                display="flex"
+                alignItems="center"
+                cursor="pointer"
+                border="1px solid #C5C5C5"
+                borderRadius="90px"
+                _hover={{ bg: "gray.100" }}
+                onClick={() => handleRecentSearchClick(search)}
+              >
+              <IconByName
+                  name={"RepeatClockIcon"}
+                  color="textprimary"
+                  alt="history"
+                  cursor="pointer"
+                  width="16px"
+                  height="16px"
+                  marginLeft="8px"
+                  marginRight="8px"
+                />
+                <Text
+                  pb="8px"
+                  pt="8px"
+                  pr="10px"
+                  fontSize="14px"
+                  fontWeight="400"
+                >
+                  {search}
+                </Text>
+              </Box>
+            ))}
+          </Flex>
+        </Box>
+      )}
+      </Box>
       </VStack>
       {bottomComponent && bottomComponent}
     </Box>

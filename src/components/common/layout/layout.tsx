@@ -26,6 +26,7 @@ interface Props {
     progress?: string;
     onFilterClick?: (filter: string) => void;
     selectedView?: any;
+    recentSearch?: string[];
   };
 }
 

@@ -27,7 +27,9 @@ interface CustomInputProps {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   isBackButton: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+} 
 
 const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   placeholder = "Search...",
@@ -40,6 +42,8 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   isBackButton,
   onChange,
   getInputRef,
+  onFocus,
+  onBlur
 }) => {
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -80,6 +84,10 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   };
 
   const handleClear = () => {
+    const inputElement = inputRef?.current?.querySelector("input");
+    if (inputElement && inputElement.value) {
+      inputElement.value = "";
+    }
     setInputValue("");
     onChange?.({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
     setFilteredSuggestions([]);
@@ -104,7 +112,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
         <Input
           type="text"
           placeholder={placeholder}
-          value={value}
+          value={inputValue || value} 
           onChange={handleInputChange}
           borderWidth="2px"
           borderRadius="8px"
@@ -112,6 +120,8 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
           bg="white"
           onKeyDown={onKeyDown}
           pl={isBackButton ? "45px" : "16px"}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
         <InputRightElement>
           {inputValue && showClearIcon ? (

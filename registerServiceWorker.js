@@ -19,6 +19,7 @@ export function registerSW() {
                   );
                   alert("A new version is available. Refresh to update.");
                   //   window.location.reload(true);
+                  //   window.location.reload(true);
                 } else {
                   console.log("Content is cached for offline use.");
                 }

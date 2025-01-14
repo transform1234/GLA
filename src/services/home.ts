@@ -93,11 +93,9 @@ export const getSubjectList = async () => {
   }
 };
 
-export const getLeaderboardFilter = async () => {
+export const getLeaderboardFilter = async (payload:any) => {
   try {
-    const programData = await getProgramId();
 
-    if (programData?.programId) {
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json",
@@ -110,12 +108,7 @@ export const getLeaderboardFilter = async () => {
         {
           method: "POST",
           headers: headers,
-          body: JSON.stringify({
-            board: localStorage.getItem("board"),
-            medium: localStorage.getItem("medium"),
-            grade: localStorage.getItem("grade"),
-            programId: programData.programId,
-          }),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -128,186 +121,46 @@ export const getLeaderboardFilter = async () => {
       if (subjectList?.data) {
         return _.sortBy(subjectList.data, "rules");
       }
+    }
+   catch (error) {
+    console.error("Error in getting subject list:", error);
+    throw error;
+  }
+};
+
+export const getCurrentUserdetail = async (
+  page: number = 1,
+  limit: number = 10
+) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    };
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_AUTH_URL}${
+        URL.LEADERBOARD_USER_DATA
+      }?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: headers,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+    const userData = await response.json();
+
+    if (userData?.data) {
+      return userData?.data;
     } else {
       return [];
     }
   } catch (error) {
-    console.error("Error in getting subject list:", error);
+    console.error("Error in getting user data:", error);
     throw error;
   }
 };
 
-export const getAllUserData = async () => {
-  try {
-    const programData = await getProgramId();
-
-    if (programData?.programId) {
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      };
-
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_AUTH_URL
-        }${URL.LEADERBOARD_FILTER_LIST}`,
-        {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify({
-            board: localStorage.getItem("board"),
-            medium: localStorage.getItem("medium"),
-            grade: localStorage.getItem("grade"),
-            programId: programData.programId,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch subject list");
-      }
-
-      const datas: any = [
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "You",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 2,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 1,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 2,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 2,
-          coins: 999999,
-        },
-        {
-          name: "Anish",
-          classDetails: "Class VD, KV Viman Nagar",
-          rank: 2,
-          coins: 999999,
-        },
-      ];
-
-      const subjectList = await response.json();
-
-      if (subjectList?.data) {
-        return datas;
-      }
-    } else {
-      return [];
-    }
-  } catch (error) {
-    console.error("Error in getting subject list:", error);
-    throw error;
-  }
-};
-
-export const getCurrentUserdetail = async () => {
-  try {
-   
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      };
-
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_AUTH_URL
-        }${URL.LEADERBOARD_USER_DATA}`,
-        {
-          method: "GET",
-          headers: headers,
-          
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch subject list");
-      }
-
-
-      const userData = await response.json();
-
-      if (userData?.data) {
-        return userData?.data
-      }
-    else {
-      return [];
-    }
-  } catch (error) {
-    console.error("Error in getting subject list:", error);
-    throw error;
-  }
-};

@@ -15,7 +15,7 @@ type Filter = {
   subject: string | null;
 };
 
-const Watch = () => {
+const Watch = (prop: any) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<any>();
   const [error, setError] = useState<string | null>(null);
@@ -149,6 +149,7 @@ const Watch = () => {
         searchTerm: filter.searchTerm,
         onSearchChange: handleSearchChange,
         onSubjectSelect: handleSelectSubject,
+        points: prop?.authUser?.points,
         bottomComponent: (
           <BottomComponent
             subjects={subjects}

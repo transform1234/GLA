@@ -133,7 +133,7 @@ export default function Homepage(props: any) {
       const response = await fetchSearchResults(payload);
       if (type === "search") {
         setSuggestions(Boolean(searchTerm) && response?.paginatedData);
-  
+
         if (response?.paginatedData?.length) {
           setRecentSearch((prev: any) => {
             const updatedSearches = [
@@ -222,6 +222,7 @@ export default function Homepage(props: any) {
         onSuggestionClick: handleSuggestionClick,
         progress: progress,
         recentSearch: recentSearch,
+        points: authUser?.points,
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">

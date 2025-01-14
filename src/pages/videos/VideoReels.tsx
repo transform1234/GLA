@@ -30,6 +30,7 @@ import Overlay from "./videoReelComponent/Overlay";
 import StarRating from "../../components/common/input/Rating";
 import CustomHeading from "../../components/common/typography/Heading";
 import PrimaryButton from "../../components/common/button/PrimaryButton";
+import CoinPopover from "../../components/common/cards/CoinPopover";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -646,6 +647,18 @@ const VideoReel: React.FC<{
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
         <TopIcon onClick={handleBack} icon={"ChevronLeftIcon"} left="16px" />
+        {authUser?.points && (
+          <CoinPopover
+            points={authUser?.points}
+            _hstack={{
+              position: "absolute",
+              top: "16px",
+              right: "64px",
+              zIndex: "10",
+            }}
+          />
+        )}
+
         <LikeButton
           playerPayload={{
             programId: programID,

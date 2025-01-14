@@ -22,6 +22,7 @@ import CustomInputWithDropdown from "../input/CustomDropDown";
 import CustomHeading from "../typography/Heading";
 // import notificationIcon from "../../../assets/icons/icn-notification.svg";
 import { debounce } from "lodash";
+import CoinPopover from "../cards/CoinPopover";
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -33,6 +34,7 @@ interface HeaderProps {
   progress?: string;
   onFilterClick?: (filter: string) => void;
   selectedView?: any;
+  points?: number;
   recentSearch?: string[];
 }
 
@@ -45,6 +47,7 @@ const Header: React.FC<HeaderProps> = ({
   progress,
   onFilterClick,
   selectedView,
+  points,
   recentSearch = [],
 }: HeaderProps) => {
   const { t } = useTranslation();
@@ -103,13 +106,15 @@ const Header: React.FC<HeaderProps> = ({
     };
   }, [isOpen]);
 
- const handleInputFocus = (item:string) => {
-    if(item){
-      const result =  isInputFocused.filter((e) => {e != item})
-      setIsInputFocused([...isInputFocused , item]);
+  const handleInputFocus = (item: string) => {
+    if (item) {
+      const result = isInputFocused.filter((e) => {
+        e != item;
+      });
+      setIsInputFocused([...isInputFocused, item]);
     }
   };
-  
+
   const handleInputBlur = (item: string) => {
     if (item) {
       const result = isInputFocused.filter((e) => e !== item);
@@ -146,7 +151,13 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => navigate("/home")}
             />
 
-            <Text lineHeight="16px" fontWeight="400" fontSize="20px" color="white" fontFamily="Bebas Neue">
+            <Text
+              lineHeight="16px"
+              fontWeight="400"
+              fontSize="20px"
+              color="white"
+              fontFamily="Bebas Neue"
+            >
               {t("LEADERBOARD")}
             </Text>
 
@@ -190,31 +201,34 @@ const Header: React.FC<HeaderProps> = ({
       )}
 
       {isWatchPage && (
-        <HStack>
-          <IconByName
-            name={"BackIcon"}
-            color="white"
-            alt="Back"
-            cursor="pointer"
-            width="2em"
-            height="2em"
-            onClick={() => navigate("/home")}
-          />
-          <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
-            {t("HOME_WATCH")}
-          </Text>
+        <HStack justifyContent={"space-between"}>
+          <HStack>
+            <IconByName
+              name={"BackIcon"}
+              color="white"
+              alt="Back"
+              cursor="pointer"
+              width="2em"
+              height="2em"
+              onClick={() => navigate("/home")}
+            />
+            <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
+              {t("HOME_WATCH")}
+            </Text>
+          </HStack>
+          {points && <CoinPopover points={points} />}
         </HStack>
       )}
       <VStack align={"stretch"} spacing={3}>
         {!isWatchPage && !isSearchPage && !isLeaderboardPage && (
           <>
-            <HStack> </HStack>
             <HStack justifyContent="space-between" alignItems="center" w="100%">
               {/* Left-hand side: Palooza logo */}
               {!isOpen && <Image src={`${palooza_logo}`} height="25px" />}
 
               {/* Right-hand side: SearchIcon and NotificationIcon */}
               <HStack spacing={4}>
+                {points && <CoinPopover points={points} />}
                 {isScrolled && progress !== "" && (
                   <CircularProgress
                     value={Math.round(Number(progress) || 0)}
@@ -322,33 +336,13 @@ const Header: React.FC<HeaderProps> = ({
             </Collapse>
           </>
         )}
-        </VStack>
-       <VStack align={"stretch"} spacing={0}>
+      </VStack>
+      <VStack align={"stretch"} spacing={0}>
         <Box mt="12px">
-        <Collapse
-          in={isOpen || isWatchPage || isSearchPage}
-          transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
-        >
-          <CustomInputWithDropdown
-            getInputRef={(e) => setRef(e)}
-            placeholder={t("HOME_SEARCH")}
-            icon={searchIcon}
-            showClearIcon={true}
-            isBackButton={true}
-            onChange={handleSearchChange}
-            onKeyDown={handleKeyDown}
-            suggestions={suggestions || []}
-            onSuggestionClick={onSuggestionClick}
-            onFocus={(e) => handleInputFocus("input")}
-            onBlur={(e) => handleInputBlur("input")}
-          />
-        </Collapse>
-
-        {!isOpen &&
-          !isScrolled &&
-          !isWatchPage &&
-          !isSearchPage &&
-          !isLeaderboardPage && (
+          <Collapse
+            in={isOpen || isWatchPage || isSearchPage}
+            transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
+          >
             <CustomInputWithDropdown
               getInputRef={(e) => setRef(e)}
               placeholder={t("HOME_SEARCH")}
@@ -357,69 +351,91 @@ const Header: React.FC<HeaderProps> = ({
               isBackButton={true}
               onChange={handleSearchChange}
               onKeyDown={handleKeyDown}
-              suggestions={suggestions}
+              suggestions={suggestions || []}
               onSuggestionClick={onSuggestionClick}
               onFocus={(e) => handleInputFocus("input")}
               onBlur={(e) => handleInputBlur("input")}
-          />
-        )}
-        {isInputFocused.length > 0 && suggestions?.length === 0 &&  !isScrolled  && (
-        <Box
-          p="4"
-          bg="white"
-          borderBottomLeftRadius="8px"
-          borderBottomRightRadius="8px"
-          border="2px solid #C5C5C5"
-          onMouseEnter={(e) => handleInputFocus("focus")}
-          onMouseLeave={(e) => handleInputBlur("focus")}
-        >
-          <Text
-            marginBottom="10px"
-            textAlign="left"
-            fontSize="12px"
-            fontWeight="600"
-            lineHeight="16px"
-            color="primary.500"
-          >
-            {t("HOME_RECENTLY_SEARCHED")}
-          </Text>
-          <Flex wrap="wrap" gap="4">
-            {recentSearch?.map((search, index) => (
+            />
+          </Collapse>
+
+          {!isOpen &&
+            !isScrolled &&
+            !isWatchPage &&
+            !isSearchPage &&
+            !isLeaderboardPage && (
+              <CustomInputWithDropdown
+                getInputRef={(e) => setRef(e)}
+                placeholder={t("HOME_SEARCH")}
+                icon={searchIcon}
+                showClearIcon={true}
+                isBackButton={true}
+                onChange={handleSearchChange}
+                onKeyDown={handleKeyDown}
+                suggestions={suggestions}
+                onSuggestionClick={onSuggestionClick}
+                onFocus={(e) => handleInputFocus("input")}
+                onBlur={(e) => handleInputBlur("input")}
+              />
+            )}
+          {isInputFocused.length > 0 &&
+            suggestions?.length === 0 &&
+            !isScrolled && (
               <Box
-                key={index}
-                display="flex"
-                alignItems="center"
-                cursor="pointer"
-                border="1px solid #C5C5C5"
-                borderRadius="90px"
-                _hover={{ bg: "gray.100" }}
-                onClick={() => handleRecentSearchClick(search)}
+                p="4"
+                bg="white"
+                borderBottomLeftRadius="8px"
+                borderBottomRightRadius="8px"
+                border="2px solid #C5C5C5"
+                onMouseEnter={(e) => handleInputFocus("focus")}
+                onMouseLeave={(e) => handleInputBlur("focus")}
               >
-              <IconByName
-                  name={"RepeatClockIcon"}
-                  color="textprimary"
-                  alt="history"
-                  cursor="pointer"
-                  width="16px"
-                  height="16px"
-                  marginLeft="8px"
-                  marginRight="8px"
-                />
                 <Text
-                  pb="8px"
-                  pt="8px"
-                  pr="10px"
-                  fontSize="14px"
-                  fontWeight="400"
+                  marginBottom="10px"
+                  textAlign="left"
+                  fontSize="12px"
+                  fontWeight="600"
+                  lineHeight="16px"
+                  color="primary.500"
                 >
-                  {search}
+                  {t("HOME_RECENTLY_SEARCHED")}
                 </Text>
+                <Flex wrap="wrap" gap="4">
+                  {recentSearch?.map((search, index) => (
+                    <Box
+                      key={index}
+                      display="flex"
+                      alignItems="center"
+                      cursor="pointer"
+                      border="1px solid #C5C5C5"
+                      borderRadius="90px"
+                      _hover={{ bg: "gray.100" }}
+                      onClick={() => handleRecentSearchClick(search)}
+                    >
+                      <IconByName
+                        name={"RepeatClockIcon"}
+                        color="textprimary"
+                        alt="history"
+                        cursor="pointer"
+                        width="16px"
+                        height="16px"
+                        marginLeft="8px"
+                        marginRight="8px"
+                      />
+                      <Text
+                        pb="8px"
+                        pt="8px"
+                        pr="10px"
+                        fontSize="14px"
+                        fontWeight="400"
+                      >
+                        {search}
+                      </Text>
+                    </Box>
+                  ))}
+                </Flex>
               </Box>
-            ))}
-          </Flex>
+            )}
         </Box>
-      )}
-      </Box>
       </VStack>
       {bottomComponent && bottomComponent}
     </Box>

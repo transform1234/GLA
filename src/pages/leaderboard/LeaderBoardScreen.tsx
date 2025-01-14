@@ -62,6 +62,20 @@ const LeaderboardScreen: React.FC = (props:any) => {
   const groupId = props?.authUser?.GroupMemberships[0]?.Group?.groupId;
 
   useEffect(() => {
+    impression({
+      edata: {
+        type: "Leaderboard",
+        pageid: "LEADERBOARD",
+        uri: "/leaderboard",
+        query: Object.fromEntries(
+          new URLSearchParams(location.search).entries()
+        ),
+        visits: [],
+      },
+    });
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem("dropdownFilter", selectedView);
   }, [selectedView]);
 

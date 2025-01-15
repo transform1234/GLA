@@ -143,10 +143,22 @@ const LeaderboardScreen: React.FC = (props:any) => {
 
     try {
       const data: any = await getCurrentUserdetail(currentPage);
-      setCoinsData((prevData:any) => ({
-        ...prevData,
-        points: [...(prevData?.points || []), ...data?.points],
-      }));
+      if (!data || !Array.isArray(data.points)) {
+        return;
+      }
+      setCoinsData((prevData: any) => {
+        const newPoints = data?.points || [];
+        const existingPoints = prevData?.points || [];
+        const combinedPoints = [...existingPoints, ...newPoints];
+  
+        const uniquePoints = Array.from(
+          new Map(combinedPoints.map((item: any) => [item.id, item])).values()
+        );
+        return {
+          ...prevData,
+          points: uniquePoints,
+        };
+      });
     } catch (error) {
       console.error("Error fetching user stats:", error);
     } finally {
@@ -160,6 +172,10 @@ const LeaderboardScreen: React.FC = (props:any) => {
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+  
+    if (scrollTop === 0) {
+      return;
+    }
     if (scrollHeight - scrollTop === clientHeight && !loading) {
       setPage((prevPage) => prevPage + 1);
     }

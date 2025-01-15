@@ -114,6 +114,7 @@ const Watch = (prop: any) => {
   const handleSelectSubject = (subject: string) => {
     setCustomFilter({
       ...(filter || {}),
+      searchTerm: "",
       subject,
     });
   };

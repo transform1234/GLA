@@ -133,6 +133,7 @@ const VideoItem: React.FC<{
       width: number;
       height: number;
     }>({ width: 0, height: 0 });
+    const subjectRef = useRef<HTMLDivElement>(null);
 
     const updateCdataTag = (data: any[]) => {
       return {
@@ -270,19 +271,23 @@ const VideoItem: React.FC<{
             {qml_id && (
               <VStack>
                 {lessonQml?.subject && (
-                  <Badge
+                  <HStack
+                    ref={subjectRef}
+                    spacing={1}
                     visibility={
                       heightPerItem?.height === 0 ? "hidden" : "visible"
                     }
                     opacity={heightPerItem?.height === 0 ? "0" : "1"}
                     position={"absolute"}
                     zIndex={2}
-                    p="6px"
-                    fontSize="12px"
-                    fontWeight={500}
-                    color="#03627C"
-                    bg="#03627C33"
-                    right={heightPerItem?.width === 0 ? "0px" : `80%`}
+                    right={
+                      heightPerItem?.width === 0
+                        ? "0px"
+                        : `${
+                            heightPerItem?.width -
+                            (subjectRef?.current?.clientWidth || 0)
+                          }px`
+                    }
                     bottom={
                       heightPerItem?.height === 0
                         ? "32px"
@@ -291,10 +296,25 @@ const VideoItem: React.FC<{
                     transition="right 0.5s,bottom 0.5s"
                     top="auto"
                   >
-                    {Array.isArray(lessonQml?.subject)
-                      ? lessonQml.subject.join(", ")
-                      : lessonQml?.subject}
-                  </Badge>
+                    {Array.isArray(lessonQml?.subject) ? (
+                      lessonQml.subject.map((sub) => (
+                        <Badge
+                          key={sub}
+                          p="6px"
+                          fontSize="12px"
+                          fontWeight={500}
+                          color="#03627C"
+                          bg="#03627C33"
+                        >
+                          {sub}
+                        </Badge>
+                      ))
+                    ) : (
+                      <Badge variant="outline" colorScheme="blue">
+                        {lessonQml?.subject}
+                      </Badge>
+                    )}
+                  </HStack>
                 )}
                 <TopIcon
                   onClick={() => {
@@ -342,6 +362,7 @@ const VideoItem: React.FC<{
                 {isQUMLLoading &&
                   (videoEndId?.qml_id === qml_id ? (
                     <Box
+                      // display={heightPerItem?.height === 0 ? "none" : "block"}
                       pt={"52px"}
                       bg={"transparent"}
                       {...heightPerItem}
@@ -362,22 +383,47 @@ const VideoItem: React.FC<{
                         textAlign={"center"}
                         spacing={2}
                         color={"#10162E"}
+                        overflowY={"scroll"}
                       >
-                        <CustomHeading fontSize={"24px"} fontWeight={"700"}>
+                        <CustomHeading
+                          fontSize={"24px"}
+                          fontWeight={"700"}
+                          fontFamily={"Bebas Neue"}
+                          color={"darkBlue.500"}
+                        >
                           CONGRATULATIONS!
                         </CustomHeading>
                         <VStack>
-                          <CustomHeading fontSize={"14px"} fontWeight={"500"}>
+                          <CustomHeading
+                            fontSize={"14px"}
+                            fontWeight={"500"}
+                            color={"darkBlue.500"}
+                          >
                             You’ve completed the quiz!
                           </CustomHeading>
-                          <CustomHeading fontSize={"14px"} fontWeight={"500"}>
-                            and you have earned <b>20</b> coins.
-                          </CustomHeading>
+                          {rating < 100 ? (
+                            <CustomHeading
+                              fontSize={"14px"}
+                              fontWeight={"500"}
+                              color={"darkBlue.500"}
+                            >
+                              and you have earned <b>20</b> coins.
+                            </CustomHeading>
+                          ) : (
+                            <CustomHeading
+                              fontSize={"18px"}
+                              fontWeight={"500"}
+                              color={"darkBlue.500"}
+                            >
+                              Rating is submitted.
+                            </CustomHeading>
+                          )}
                         </VStack>
                         {rating < 100 && (
-                          <Box>
+                          <Box width={"100%"}>
                             <StarRating value={rating} onChange={setRating} />
                             <PrimaryButton
+                              width={"100%"}
                               isDisabled={rating === 0 ? true : false}
                               onClick={async () => {
                                 const result = await content.rateQuiz({
@@ -628,7 +674,10 @@ const VideoReel: React.FC<{
     if (typeof activeIndex === "string") {
       activeIndex = Number(activeIndex);
     }
-    if (isNaN(activeIndex) || activeIndex > videos?.length) {
+    if (
+      isNaN(activeIndex) ||
+      (activeIndex > videos?.length && videos?.length > 0)
+    ) {
       return (
         <Loading
           message={`Video not found at index ${activeIndex}.`}
@@ -646,7 +695,13 @@ const VideoReel: React.FC<{
   return (
     <Layout isFooterVisible={false} isHeaderVisible={false}>
       <Box position={"relative"}>
-        <TopIcon onClick={handleBack} icon={"ChevronLeftIcon"} left="16px" />
+        <TopIcon
+          onClick={handleBack}
+          icon={"ChevronLeftIcon"}
+          left="16px"
+          _hover={{ bg: "#FFFFFF26" }}
+          _active={{ bg: "#FFFFFF26" }}
+        />
         {authUser?.points && (
           <CoinPopover
             points={authUser?.points}
@@ -732,6 +787,8 @@ const TopIcon: React.FC<{
   size?: string;
   bg?: string;
   p?: string;
+  _hover?: any;
+  _active?: any;
 }> = ({ onClick, left, icon, _icon, ...props }) => {
   return (
     <IconButton
@@ -793,6 +850,8 @@ const LikeButton: React.FC<any> = ({ playerPayload }) => {
       onClick={handleLikeToggle}
       icon={!isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
       right="16px"
+      _hover={{ bg: "#FFFFFF26" }}
+      _active={{ bg: "#FFFFFF26" }}
     />
   );
 };

@@ -228,6 +228,7 @@ const BottomComponent: React.FC<BottomComponentProps> = ({
         cursor="pointer"
         px="10px"
         py="7px"
+        whiteSpace="nowrap"
         rounded={8}
         onClick={() => onSelectSubject("")}
       >
@@ -247,6 +248,7 @@ const BottomComponent: React.FC<BottomComponentProps> = ({
             cursor="pointer"
             px="10px"
             py="7px"
+            whiteSpace="nowrap"
             rounded={8}
             onClick={() => onSelectSubject(sub.subject)}
           >

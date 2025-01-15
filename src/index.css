@@ -65,3 +65,23 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Scrollbar for WebKit browsers */
+::-webkit-scrollbar {
+  width: 5px; /* Width of the vertical scrollbar */
+  height: 5px; /* Height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #e1e1e1; /* Background of the scrollbar track */
+  border-radius: 6px; /* Round edges for the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7c7c7; /* Color of the scrollbar thumb */
+  border-radius: 6px; /* Round edges for the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1; /* Color on hover */
+}

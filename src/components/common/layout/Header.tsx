@@ -138,16 +138,14 @@ const Header: React.FC<HeaderProps> = ({
       transition="all 0.3s"
     >
       {isLeaderboardPage && (
-        <>
-          <HStack alignItems="center" w="100%" mb={4}>
-            {/* Back Icon */}
+        <HStack alignItems="center" justifyContent={"space-between"} mb={4}>
+          {/* Back Icon */}
+          <HStack spacing={2}>
             <IconByName
               name={"BackIcon"}
               color="white"
               alt="Back"
               cursor="pointer"
-              width="2em"
-              height="2em"
               onClick={() => navigate("/home")}
             />
 
@@ -160,9 +158,8 @@ const Header: React.FC<HeaderProps> = ({
             >
               {t("LEADERBOARD")}
             </Text>
-
-            <Spacer />
-
+          </HStack>
+          <HStack spacing={2}>
             <Text
               color="white"
               fontWeight="400"
@@ -172,10 +169,8 @@ const Header: React.FC<HeaderProps> = ({
             >
               VIEW
             </Text>
-            <Box
-              width="90px"
-              minWidth="90px"
-              height="38px"
+            <HStack
+              height={"38px"}
               bg="white"
               color="black"
               padding="7px 6px 7px 10px"
@@ -195,9 +190,9 @@ const Header: React.FC<HeaderProps> = ({
                 color="primary.500"
                 fontSize="10px"
               />
-            </Box>
+            </HStack>
           </HStack>
-        </>
+        </HStack>
       )}
 
       {isWatchPage && (

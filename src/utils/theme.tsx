@@ -1,14 +1,14 @@
 import { border, extendTheme } from "@chakra-ui/react";
-import BebasNeue from '../assets/fonts/BebasNeue-Regular.ttf';
-import InterRegular from '../assets/fonts/Inter_18pt-Regular.ttf';
-import InterItalic from '../assets/fonts/Inter-Italic.woff2';
+import BebasNeue from "../assets/fonts/BebasNeue-Regular.ttf";
+import InterRegular from "../assets/fonts/Inter_18pt-Regular.ttf";
+import InterItalic from "../assets/fonts/Inter-Italic.woff2";
 const customTheme = extendTheme({
   styles: {
     global: {
       "@font-face": [
         {
           fontFamily: "Bebas Neue",
-          src: `url(${BebasNeue}) format('truetype')`
+          src: `url(${BebasNeue}) format('truetype')`,
         },
         {
           fontFamily: "Inter",
@@ -55,7 +55,7 @@ const customTheme = extendTheme({
       800: "#56000e",
       900: "#2d0007",
     },
-    yellow : {
+    yellow: {
       50: "#fff59d",
       100: "#ffec6f",
       200: "#ffe94d",
@@ -69,6 +69,18 @@ const customTheme = extendTheme({
     },
     progressBarGreen: {
       500: "#00A745",
+    },
+    darkBlue: {
+      50: "#e3e8f0",
+      100: "#c1c9d6",
+      200: "#9aaac0",
+      300: "#748ba9",
+      400: "#506d93",
+      500: "#10162E",
+      600: "#0e1428",
+      700: "#0b1122",
+      800: "#090e1c",
+      900: "#060b17",
     },
     progressDarkBG: "#023B4A",
     progressLightBG: "#03627C2B",

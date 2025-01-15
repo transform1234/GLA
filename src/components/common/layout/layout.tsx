@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Center, useDisclosure } from "@chakra-ui/react";
 import Loading from "../Loading";
 import useDeviceSize from "./useDeviceSize";
@@ -16,6 +16,12 @@ interface Props {
   loading?: boolean;
   isFooterVisible?: boolean;
   isHeaderVisible?: boolean;
+  getHeight?: (sizes: {
+    headerHeight: number;
+    footerHeight: number;
+    totalHeight: number;
+    bodyHeight: number;
+  }) => void;
   _header?: {
     suggestions?: string[];
     searchTerm?: string;
@@ -36,12 +42,16 @@ const Layout: React.FC<Props> = ({
   loading = false,
   isFooterVisible = true,
   isHeaderVisible = true,
+  getHeight,
   _header,
 }) => {
   const { width, height } = useDeviceSize();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const footerRef = React.useRef<any>(null);
+  const headerRef = React.useRef<any>(null);
+
   const [modalContent] = useState({
     title: `${t("POPUP_CONFIRM_LOGOUT")}`,
     message: `${t("POPUP_CONFIRM_MSG")}`,
@@ -70,6 +80,33 @@ const Layout: React.FC<Props> = ({
     { icon: "LogoutIcon", title: "Logout", onClick: onOpen },
   ];
 
+  useEffect(() => {
+    if (getHeight && height) {
+      const headerHeight =
+        isHeaderVisible && headerRef.current
+          ? headerRef.current.offsetHeight
+          : 0;
+      const footerHeight =
+        isFooterVisible && footerRef.current
+          ? footerRef.current.offsetHeight
+          : 0;
+
+      getHeight({
+        headerHeight,
+        footerHeight,
+        totalHeight: headerHeight + footerHeight,
+        bodyHeight: height - (headerHeight + footerHeight),
+      });
+    }
+  }, [
+    isHeaderVisible,
+    isFooterVisible,
+    headerRef,
+    footerRef,
+    height,
+    getHeight,
+  ]);
+
   return (
     <Center
       flexDirection="column"
@@ -88,19 +125,21 @@ const Layout: React.FC<Props> = ({
           boxShadow="0px 0px 15px 0px #e1e1e1"
           overflowY="auto"
         >
-          {isHeaderVisible && <Header {..._header} />}
-
+          {isHeaderVisible && (
+            <Box ref={headerRef}>
+              <Header {..._header} />
+            </Box>
+          )}
           {children}
-
           {isFooterVisible && (
-            <>
+            <Box ref={footerRef}>
               <Box minH={"96px"} />
               <Footer
                 menues={menuList}
                 selectedIndex={selectedIndex}
                 onSelect={(index: number) => setSelectedIndex(index)}
               />
-            </>
+            </Box>
           )}
         </Box>
       )}

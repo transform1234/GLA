@@ -1,14 +1,14 @@
 @media only screen and (max-width: 480px) {
   .landscape-content {
     padding: 4.5rem 1rem !important;
-    padding-bottom: 0px !important;
+    /* padding-bottom: 0px !important; */
     /* display: none !important; */
   }
   .quml-header__container {
     justify-content: end !important;
     min-height: 2.5rem !important;
-    padding: 1rem 1rem 0 1rem !important;
-    height: 43px !important;
+    padding: 1rem 1rem 0px 1rem !important;
+    height: 48px !important;
     gap: 26px;
   }
   .quml-header__features {
@@ -224,7 +224,12 @@
     height: auto !important ;
   }
   .scoreboard__btn-container {
-    padding: 8px 0 !important;
+    padding: 8px !important;
+    position: fixed;
+    bottom: 0;
+    background: white;
+    justify-content: space-between;
+    width: 100%;
   }
   .scoreboard__header .scoreboard__title,
   .sections-score-count-info {
@@ -267,7 +272,7 @@
   .quml-header__container,
   .scoreboard {
     border-radius: 16px 16px 0 0 !important;
-    overflow: hidden !important;
+    /* overflow: hidden !important; */
   }
   .quml-alert__icon-container,
   .quml-alert__icon-empty,
@@ -279,7 +284,7 @@
     width: 100% !important;
   }
   .quml-alert__image.quml-alert__image--correct::before {
-    content: "That’s the right answer!";
+    content: "That is the right answer!";
     /* padding: 10px !important; */
     font-size: 14px !important;
     font-family: Inter !important;
@@ -292,7 +297,7 @@
   }
 
   .quml-alert__image.quml-alert__image--wrong::before {
-    content: "That’s incorrect!";
+    content: "That is incorrect!";
     /* padding: 10px !important; */
     font-size: 14px !important;
     font-family: Inter !important;

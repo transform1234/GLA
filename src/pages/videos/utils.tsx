@@ -211,3 +211,9 @@ export const formatNumber = (num: number) => {
   }
   return num.toString();
 };
+
+export const customLog = (...data: any) => {
+  if (localStorage.getItem("log") === "true") {
+    console.log(...data);
+  }
+};

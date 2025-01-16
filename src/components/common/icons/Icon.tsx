@@ -8,6 +8,7 @@ import {
   RepeatClockIcon,
   StarIcon,
   CheckIcon,
+  CheckCircleIcon,
 } from "@chakra-ui/icons";
 import { Button, Icon, Text } from "@chakra-ui/react";
 
@@ -276,6 +277,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
   RepeatClockIcon,
   StarIcon,
   CheckIcon,
+  CheckCircleIcon,
 };
 
 const IconByName: React.FC<IconProps> = ({

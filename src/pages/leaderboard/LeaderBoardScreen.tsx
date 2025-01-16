@@ -29,9 +29,8 @@ import IconByName from "../../components/common/icons/Icon";
 import moment from "moment";
 interface UserData {
   rank: number;
-  points: number[];
-  winTime: string;
-  recentWinCoins: number;
+  points: number;
+  lastEarnedPoints: any[];
 }
 
 const LeaderboardScreen: React.FC = (props: any) => {
@@ -560,10 +559,10 @@ const LeaderboardScreen: React.FC = (props: any) => {
             borderTopRightRadius="16px"
             width={width}
           >
-            <Flex justifyContent="space-between" alignItems="center">
-              {!activeCollapse.includes("history") ? (
-                <>
-                  <Flex flexDirection="column">
+            {!activeCollapse.includes("history") ? (
+              <HStack justifyContent="space-between" alignItems="center">
+                <HStack spacing={3}>
+                  <VStack spacing={0}>
                     <Text
                       fontFamily="Bebas Neue"
                       fontWeight="400"
@@ -582,19 +581,19 @@ const LeaderboardScreen: React.FC = (props: any) => {
                     >
                       {myData?.rank}
                     </Text>
-                  </Flex>
+                  </VStack>
 
                   {/* Vertical Divider */}
                   <Box
-                    height="40px"
+                    height="24px"
                     width="1px"
                     bg="yellow.900"
-                    mx="4"
+                    mx="3"
                     opacity="40%"
                   />
 
                   {/* YOUR COINS */}
-                  <Flex flexDirection="column">
+                  <VStack spacing={0}>
                     <Text
                       fontFamily="Bebas Neue"
                       fontWeight="400"
@@ -613,12 +612,10 @@ const LeaderboardScreen: React.FC = (props: any) => {
                     >
                       {myData?.points}
                     </Text>
-                  </Flex>
-
-                  {/* Vertical Divider */}
+                  </VStack>
 
                   {/* +32 Coins for Quiz */}
-                  <Flex flexDirection="column">
+                  <VStack spacing={0} pl="1">
                     <Text
                       fontWeight="900"
                       fontSize="12px"
@@ -626,7 +623,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
                       color="yellow.900"
                       whiteSpace="nowrap"
                     >
-                      +{myData?.recentWinCoins}{" "}
+                      +{myData?.lastEarnedPoints?.[0]?.points}
                       {t("LEADERBOARD_CONIS_FOR_QUIZ")}
                     </Text>
                     <Text
@@ -634,36 +631,39 @@ const LeaderboardScreen: React.FC = (props: any) => {
                       fontSize="8px"
                       color="yellow.900"
                       textAlign="start"
+                      lineHeight="16px"
                     >
-                      {myData?.winTime}
+                      {myData?.lastEarnedPoints?.[0]?.created_at &&
+                        moment(
+                          myData?.lastEarnedPoints?.[0]?.created_at
+                        ).fromNow()}
                     </Text>
-                  </Flex>
-
-                  {/* VIEW HISTORY Button */}
-                  <Button
-                    width="122px"
-                    height="40px"
-                    borderRadius="46px"
-                    fontWeight="700"
-                    fontSize="12px"
-                    bg="white"
-                    color="yellow.900"
-                    lineHeight="24px"
-                    px="6"
-                    onClick={() => handleCollapseToggle("history")}
-                    _hover={{
-                      borderColor: "transparent",
-                      bg: "yellow.300",
-                      boxShadow: "0px -5px 5px 0px #0000000A",
-                    }}
-                  >
-                    {t("LEADERBOARD_VIEW_HISTORY")}
-                  </Button>
-                </>
-              ) : (
-                <div></div>
-              )}
-            </Flex>
+                  </VStack>
+                </HStack>
+                {/* VIEW HISTORY Button */}
+                <Button
+                  width="122px"
+                  height="40px"
+                  borderRadius="46px"
+                  fontWeight="700"
+                  fontSize="12px"
+                  bg="white"
+                  color="yellow.900"
+                  lineHeight="24px"
+                  px="6"
+                  onClick={() => handleCollapseToggle("history")}
+                  _hover={{
+                    borderColor: "transparent",
+                    bg: "yellow.300",
+                    boxShadow: "0px -5px 5px 0px #0000000A",
+                  }}
+                >
+                  {t("LEADERBOARD_VIEW_HISTORY")}
+                </Button>
+              </HStack>
+            ) : (
+              <div></div>
+            )}
           </Box>
         )}
       </Box>

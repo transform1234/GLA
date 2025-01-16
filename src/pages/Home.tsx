@@ -23,6 +23,7 @@ import CustomHeading from "../components/common/typography/Heading";
 import { fetchSearchResults, getProgramProgress } from "../services/content";
 import { getProgramId, getSubjectList } from "../services/home";
 import { impression } from "../services/telemetry";
+import IconByName from "../components/common/icons/Icon";
 
 const subjectIcons = {
   science: { icon: physics, label: "Science" },
@@ -309,16 +310,25 @@ export default function Homepage(props: any) {
                               color={"primary.500"}
                             />
                           </VStack>
-                          <Progress
-                            w={"100%"}
-                            colorScheme="progressBarGreen"
-                            bg="progressLightBG"
-                            color={"white"}
-                            size="xs"
-                            value={sub?.progress?.percentage || 0}
-                            rounded={"full"}
-                            isAnimated
-                          />
+                          {(typeof sub?.progress?.percentage === "string" &&
+                            parseInt(sub?.progress?.percentage) < 100) ||
+                          sub?.progress?.percentage < 100 ? (
+                            <Progress
+                              w={"100%"}
+                              colorScheme="progressBarGreen"
+                              bg="progressLightBG"
+                              color={"white"}
+                              size="xs"
+                              value={sub?.progress?.percentage || 0}
+                              rounded={"full"}
+                              isAnimated
+                            />
+                          ) : (
+                            <IconByName
+                              name="CheckCircleIcon"
+                              color="progressBarGreen.500"
+                            />
+                          )}
                         </VStack>
                       ))}
                   </HStack>

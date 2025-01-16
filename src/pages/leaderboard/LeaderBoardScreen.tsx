@@ -31,7 +31,16 @@ interface UserData {
   rank: number;
   points: number[];
   winTime: string;
-  recentWinCoins: number;
+  lastEarnedPoints: [
+    {
+      points: number;
+      created_at: string;
+    }
+  ];
+}
+
+interface TimeAgoProps {
+  date: string | Date;
 }
 
 const LeaderboardScreen: React.FC = (props: any) => {
@@ -176,6 +185,10 @@ const LeaderboardScreen: React.FC = (props: any) => {
 
   const handleSelectedViewChange = (newSelectedView: string) => {
     setSelectedView(newSelectedView);
+  };
+
+  const TimeAgo: React.FC<TimeAgoProps> = ({ date }) => {
+    return <span>{moment(date).fromNow()}</span>;
   };
 
   return (
@@ -626,7 +639,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
                       color="yellow.900"
                       whiteSpace="nowrap"
                     >
-                      +{myData?.recentWinCoins}{" "}
+                      +{myData?.lastEarnedPoints[0]?.points}{" "}
                       {t("LEADERBOARD_CONIS_FOR_QUIZ")}
                     </Text>
                     <Text
@@ -635,7 +648,9 @@ const LeaderboardScreen: React.FC = (props: any) => {
                       color="yellow.900"
                       textAlign="start"
                     >
-                      {myData?.winTime}
+                      {myData?.lastEarnedPoints[0]?.created_at && (
+                        <TimeAgo date={myData?.lastEarnedPoints[0]?.created_at} />
+                      )}
                     </Text>
                   </Flex>
 

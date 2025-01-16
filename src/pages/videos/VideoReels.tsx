@@ -26,13 +26,14 @@ import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { callBatch } from "../../services/telemetry";
 import { getSid } from "../../services/utilService";
-import { handleEvent } from "./utils";
+import { customLog, handleEvent } from "./utils";
 import CustomSkeleton from "./videoReelComponent/CustomSkeleton";
 import Overlay from "./videoReelComponent/Overlay";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
 const VITE_APP_PID = import.meta.env.VITE_APP_PID;
+const TELEMETRYBATCH = import.meta.env.VITE_TELEMETRYBATCH || 5;
 
 /*
 Comment telemetry in all Sunbird players; to undo, find this function and uncomment.
@@ -265,7 +266,7 @@ const VideoItem: React.FC<{
                       type: "mimeType",
                     },
                   ])}
-                  batchsize={5}
+                  batchsize={TELEMETRYBATCH}
                 />
               )}
             </Box>
@@ -491,7 +492,7 @@ const VideoItem: React.FC<{
                           type: "mimeType",
                         },
                       ])}
-                      batchsize={5}
+                      batchsize={TELEMETRYBATCH}
                     />
                   ))}
               </VStack>
@@ -530,7 +531,11 @@ const VideoReel: React.FC<{
         setVisibleIndex(newVisibleIndex);
         // call tracking API here
         if (isIndexScroll) {
-          await callReaminigTelemetry("call telemetry api remaining on scroll");
+          await callReaminigTelemetry(
+            telemetryListRef?.current || [],
+            "call telemetry api remaining on scroll"
+          );
+          telemetryListRef.current = [];
           const queryParams = new URLSearchParams(location.search);
           queryParams.set("index", String(newVisibleIndex));
           navigate({
@@ -558,20 +563,15 @@ const VideoReel: React.FC<{
     }
   }, [activeIndex, listRef?.current?.scrollToItem, videos.length]);
 
-  const callReaminigTelemetry = debounce(
-    async (message: string | undefined) => {
-      if (telemetryListRef.current.length > 0) {
-        console.log(
-          message || "call telemetry api remaining",
-          telemetryListRef.current
-        );
-        await callBatch(telemetryListRef.current);
-        telemetryListRef.current = [];
-      }
-    },
-    500
-  );
-
+  const callReaminigTelemetry = async (
+    data: any[],
+    message: string | undefined
+  ) => {
+    if (data.length > 0) {
+      await callBatch(data);
+      customLog(message || "call telemetry api remaining", data);
+    }
+  };
   React.useEffect(() => {
     const handleEventNew = (event: any) => {
       newHandleEvent(event);
@@ -588,17 +588,25 @@ const VideoReel: React.FC<{
     const result = handleEvent(data);
     if (
       data?.data?.iframeId &&
-      telemetryListRef.current.length > 0 &&
-      telemetryListRef.current.length >= 5
+      telemetryListRef.current.length < TELEMETRYBATCH
     ) {
-      console.log(
-        "Call the telemetry API based on batch length",
-        telemetryListRef.current
-      );
-      await callBatch(telemetryListRef.current);
-      telemetryListRef.current = [];
-    } else if (data?.data?.iframeId) {
       telemetryListRef.current = [...telemetryListRef.current, data?.data];
+      customLog(
+        telemetryListRef.current,
+        "telemetryListRef.current",
+        data?.data?.iframeId &&
+          telemetryListRef.current.length >= TELEMETRYBATCH
+      );
+    }
+    if (
+      data?.data?.iframeId &&
+      telemetryListRef.current.length >= TELEMETRYBATCH
+    ) {
+      await callReaminigTelemetry(
+        telemetryListRef?.current || [],
+        "Call the telemetry API based on batch length"
+      );
+      telemetryListRef.current = [];
     }
 
     if (!result || !result?.type) return;
@@ -622,7 +630,6 @@ const VideoReel: React.FC<{
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
-      console.log(retult1, "retult1");
       if (retult1?.errorCode) {
         const ratingText = document.querySelector("#rating-text");
         const quizTitle = document.querySelector("#quiz-title");
@@ -643,7 +650,9 @@ const VideoReel: React.FC<{
         ).innerHTML = `<span style="color:red">Error:- Someting went wrong</span>`;
         (
           ratingText as HTMLElement
-        ).innerHTML = `<span style="color:red">Error:- ${retult1?.errorMessage?.errorMessage}</span>`;
+        ).innerHTML = `<span style="color:red">Error:- ${
+          retult1?.errorMessage?.errorMessage || retult1?.errorMessage
+        }</span>`;
       } else if (iframeId === "assessment" && retult1) {
         if (retult1?.assignRewardPoints?.lesson_completion) {
           const ratingPoint = document.querySelector("#rating-point");
@@ -669,8 +678,10 @@ const VideoReel: React.FC<{
         }
       }
       await callReaminigTelemetry(
+        telemetryListRef?.current || [],
         "call telemetry api remaining before tracking"
       );
+      telemetryListRef.current = [];
       console.log("result1", videos?.[visibleIndex], player, result, retult1);
     }
   };
@@ -693,7 +704,11 @@ const VideoReel: React.FC<{
   }
 
   const handleBack = async () => {
-    await callReaminigTelemetry("call telemetry api remaining on back");
+    await callReaminigTelemetry(
+      telemetryListRef?.current || [],
+      "call telemetry api remaining on back"
+    );
+    telemetryListRef.current = [];
     redirect ? navigate(redirect) : navigate("/");
   };
 

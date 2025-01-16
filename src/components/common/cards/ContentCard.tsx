@@ -121,18 +121,12 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
     ) {
       return {
         text: "Take Quiz",
-        icon: (
-          <IconByName
-            name={"QuizIcon"}
-            color="yellow.500"
-            alt="take quiz"
-            cursor="pointer"
-            width="20px"
-            height="20px"
-            top="4px"
-            left="8px"
-          />
-        ),
+        iconName: {
+          name: "QuizIcon",
+          color:"yellow.500",
+          width: "20px",
+          height: "20px",
+        },
         bgColor: "yellow.lightYellow",
       };
     } else if (
@@ -141,18 +135,12 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
     ) {
       return {
         text: "Watch Video",
-        icon: (
-          <IconByName
-            name={"WatchVideoIcon"}
-            color="yellow.500"
-            alt="watch video"
-            cursor="pointer"
-            width="20px"
-            height="20px"
-            top="8px"
-            left="9px"
-          />
-        ),
+        iconName: {
+          name: "WatchVideoIcon",
+          color:"yellow.500",
+          width: "20px",
+          height: "20px",
+        },
         bgColor: "yellow.lightYellow",
       };
     }
@@ -162,17 +150,9 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
     ) {
       return  {
         text: "Completed",
-        icon: (
-          <IconByName
-            name={"CheckIcon"}
-            alt="completed"
-            cursor="pointer"
-            width="16px"
-            height="12px"
-            top="8px"
-            left="9px"
-          />
-        ),
+        iconName: {
+          name: "CheckIcon",
+        },
         bgColor: "greenColor",
       };
     }
@@ -194,7 +174,16 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
           color="white"
         >
           <HStack spacing={1} alignItems="center">
-            {badgeDetails.icon}
+          <IconByName
+             name={badgeDetails?.iconName?.name || ""}
+             alt={badgeDetails?.text}
+             cursor="pointer"
+             color={badgeDetails?.iconName?.color || "white"}
+             width={badgeDetails?.iconName?.width || "16px"}
+             height={badgeDetails?.iconName?.height || "12px"}
+             top="8px"
+             left="9px"
+      />
             <Text lineHeight="26.07px" fontWeight="700" fontSize="12px" color="white" >{badgeDetails.text}</Text>
           </HStack>
         </Badge>

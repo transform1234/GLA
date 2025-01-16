@@ -27,118 +27,13 @@ const subjectImages: { [key: string]: string } = {
 };
 
 const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
-  const subjectImage = item.subject ? subjectImages[item.subject] : null;
-  const imageSrc = item.thumbnailUrl || subjectImage || defaultImage;
+  const subjectImage = item.subject && subjectImages[item.subject] ? subjectImages[item.subject] : defaultImage;
+  const imageSrc = item.thumbnailUrl && item.thumbnailUrl.trim() !== "" ? item.thumbnailUrl : subjectImage;
 
-  const getBadgeDetails = () => {
-    if (
-      (!item.lesson_questionset || item.lesson_questionset_status === "pending") &&
-      item.lesson_status === "completed"
-    ) {
-      return {
-        text: "Completed",
-        icon: (
-          <IconByName
-            name={"CheckIcon"}
-            alt="completed"
-            cursor="pointer"
-            width="16px"
-            height="12px"
-            top="8px"
-            left="9px"
-          />
-        ),
-        bgColor: "greencolor",
-      };
-    } else if (
-      item.lesson_questionset_status === "pending" &&
-      item.lesson_status === "completed"
-    ) {
-      return {
-        text: "Take Quiz",
-        icon: (
-          <IconByName
-            name={"QuizIcon"}
-            color="#FFD500"
-            alt="take quiz"
-            cursor="pointer"
-            width="20px"
-            height="20px"
-            top="4px"
-            left="8px"
-          />
-        ),
-        bgColor: "yellow.lightYellow",
-      };
-    } else if (
-      item.lesson_questionset_status === "completed" &&
-      item.lesson_status === "pending"
-    ) {
-      return {
-        text: "Watch Video",
-        icon: (
-          <IconByName
-            name={"WatchVideoIcon"}
-            color="#FFD500"
-            alt="watch video"
-            cursor="pointer"
-            width="20px"
-            height="20px"
-            top="8px"
-            left="9px"
-          />
-        ),
-        bgColor: "yellow.lightYellow",
-      };
-    }
-    else if (
-      item.lesson_questionset_status === "completed" &&
-      item.lesson_status === "completed"
-    ) {
-      return  {
-        text: "Completed",
-        icon: (
-          <IconByName
-            name={"CheckIcon"}
-            alt="completed"
-            cursor="pointer"
-            width="16px"
-            height="12px"
-            top="8px"
-            left="9px"
-          />
-        ),
-        bgColor: "greencolor",
-      };
-    }
-    return null;
-  };
-  
-
-  const badgeDetails = getBadgeDetails();
   return (
     <Box position="relative">
       {/* Badge Section */}
-      {badgeDetails && (
-        <Badge
-          position="absolute"
-          top="12px"
-          left="12px"
-          borderRadius="4px"
-          paddingTop="2px"
-          paddingRight="6px"
-          paddingBottom="2px"
-          paddingLeft="6px"
-          py={1}
-          bg={badgeDetails.bgColor}
-          color="white"
-        >
-          <HStack spacing={1} alignItems="center">
-            {badgeDetails.icon}
-            <Text lineHeight="26.07px" fontWeight="700" fontSize="12px" color="white" >{badgeDetails.text}</Text>
-          </HStack>
-        </Badge>
-      )}
+      <BadgeWithDetails item={item} />
 
       {/* Image Section */}
       <Image
@@ -190,3 +85,118 @@ const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
 });
 
 export default ContentCard;
+
+interface BadgeWithDetailsProps {
+  item: {
+    lesson_questionset_status?: string;
+    lesson_status?: string;
+    lesson_questionset?: string;
+  };
+}
+
+const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
+  const getBadgeDetails = () => {
+    if (
+      (!item.lesson_questionset || item.lesson_questionset_status === "pending") &&
+      item.lesson_status === "completed"
+    ) {
+      return {
+        text: "Completed",
+        icon: (
+          <IconByName
+            name={"CheckIcon"}
+            alt="completed"
+            cursor="pointer"
+            width="16px"
+            height="12px"
+            top="8px"
+            left="9px"
+          />
+        ),
+        bgColor: "greenColor",
+      };
+    } else if (
+      item.lesson_questionset_status === "pending" &&
+      item.lesson_status === "completed"
+    ) {
+      return {
+        text: "Take Quiz",
+        icon: (
+          <IconByName
+            name={"QuizIcon"}
+            color="yellow.500"
+            alt="take quiz"
+            cursor="pointer"
+            width="20px"
+            height="20px"
+            top="4px"
+            left="8px"
+          />
+        ),
+        bgColor: "yellow.lightYellow",
+      };
+    } else if (
+      item.lesson_questionset_status === "completed" &&
+      item.lesson_status === "pending"
+    ) {
+      return {
+        text: "Watch Video",
+        icon: (
+          <IconByName
+            name={"WatchVideoIcon"}
+            color="yellow.500"
+            alt="watch video"
+            cursor="pointer"
+            width="20px"
+            height="20px"
+            top="8px"
+            left="9px"
+          />
+        ),
+        bgColor: "yellow.lightYellow",
+      };
+    }
+    else if (
+      item.lesson_questionset_status === "completed" &&
+      item.lesson_status === "completed"
+    ) {
+      return  {
+        text: "Completed",
+        icon: (
+          <IconByName
+            name={"CheckIcon"}
+            alt="completed"
+            cursor="pointer"
+            width="16px"
+            height="12px"
+            top="8px"
+            left="9px"
+          />
+        ),
+        bgColor: "greenColor",
+      };
+    }
+    return null;
+  };
+
+  const badgeDetails = getBadgeDetails();
+
+  if (!badgeDetails) return null;
+
+  return (
+        <Badge
+          position="absolute"
+          top="12px"
+          left="12px"
+          borderRadius="4px"
+          padding="2px 6px"
+          bg={badgeDetails.bgColor}
+          color="white"
+        >
+          <HStack spacing={1} alignItems="center">
+            {badgeDetails.icon}
+            <Text lineHeight="26.07px" fontWeight="700" fontSize="12px" color="white" >{badgeDetails.text}</Text>
+          </HStack>
+        </Badge>
+  );
+};

@@ -8,7 +8,6 @@ import {
   RepeatClockIcon,
   StarIcon,
   CheckIcon,
-  QuestionIcon
 } from "@chakra-ui/icons";
 import { Button, Icon, Text } from "@chakra-ui/react";
 
@@ -20,7 +19,7 @@ interface IconProps {
 }
 
 const iconsMap: Record<string, React.FC<IconProps>> = {
-  QuestionMarkIcon: ({ color, isSelected, ...props }) => {
+  QuestionIcon: ({ color, isSelected, ...props }) => {
     return (
       <Icon
         color={isSelected ? "primary.500" : "black"}
@@ -277,7 +276,6 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
   RepeatClockIcon,
   StarIcon,
   CheckIcon,
-  QuestionIcon
 };
 
 const IconByName: React.FC<IconProps> = ({

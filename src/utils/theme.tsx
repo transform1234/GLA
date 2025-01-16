@@ -98,7 +98,7 @@ const customTheme = extendTheme({
     borderColor: "#00A745",
     borderGrey: "#C5C5C5",
     lightGrey: "#828282",
-    greencolor: "#219653"
+    greenColor: "#219653"
   },
   components: {
     Center: {

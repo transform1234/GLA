@@ -128,14 +128,16 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <Box
+    <VStack
       backgroundImage={`url(${background})`}
       p="4"
       roundedBottom={"16px"}
-      position="sticky"
+      position={isScrolled ? "fixed" : "sticky"}
       top="0"
       zIndex={10}
       transition="all 0.3s"
+      align={"stretch"}
+      width={"100%"}
     >
       {isLeaderboardPage && (
         <HStack alignItems="center" justifyContent={"space-between"} mb={4}>
@@ -214,226 +216,214 @@ const Header: React.FC<HeaderProps> = ({
           {points && <CoinPopover points={points} />}
         </HStack>
       )}
-      <VStack align={"stretch"} spacing={3}>
-        {!isWatchPage && !isSearchPage && !isLeaderboardPage && (
-          <>
-            <HStack justifyContent="space-between" alignItems="center" w="100%">
-              {/* Left-hand side: Palooza logo */}
-              {!isOpen && <Image src={`${palooza_logo}`} height="25px" />}
+      {!isWatchPage && !isSearchPage && !isLeaderboardPage && (
+        <VStack align={"stretch"} spacing={3}>
+          <HStack justifyContent="space-between" alignItems="center" w="100%">
+            {/* Left-hand side: Palooza logo */}
+            {!isOpen && <Image src={`${palooza_logo}`} height="25px" />}
 
-              {/* Right-hand side: SearchIcon and NotificationIcon */}
-              <HStack spacing={4}>
-                {points && <CoinPopover points={points} />}
-                {isScrolled && progress !== "" && (
-                  <CircularProgress
-                    value={Math.round(Number(progress) || 0)}
-                    color="progressBarGreen.500"
-                    size="26px"
-                    thickness="5px"
-                    trackColor={"progressCircaleDarkBG"}
-                  >
-                    <CircularProgressLabel
-                      color="white"
-                      fontSize={"8px"}
-                    >{`${Math.round(
-                      Number(progress) || 0
-                    )}%`}</CircularProgressLabel>
-                  </CircularProgress>
-                )}
-                {/* <Image
+            {/* Right-hand side: SearchIcon and NotificationIcon */}
+            <HStack spacing={4}>
+              {points && <CoinPopover points={points} />}
+              {isScrolled && progress !== "" && (
+                <CircularProgress
+                  value={Math.round(Number(progress) || 0)}
+                  color="progressBarGreen.500"
+                  size="26px"
+                  thickness="5px"
+                  trackColor={"progressCircaleDarkBG"}
+                >
+                  <CircularProgressLabel
+                    color="white"
+                    fontSize={"8px"}
+                  >{`${Math.round(
+                    Number(progress) || 0
+                  )}%`}</CircularProgressLabel>
+                </CircularProgress>
+              )}
+              {/* <Image
                   src={notificationIcon}
                   alt="Notification"
                   cursor="pointer"
                   boxSize="1.5rem"
                   onClick={() => navigate("/home")}
                 /> */}
-                {isScrolled && !isOpen && (
-                  <IconByName
-                    name={"SearchIcon"}
-                    minW="24px"
-                    height="24px"
-                    cursor="pointer"
-                    color="white"
-                    onClick={(e: any) => setIsOpen(true)}
-                  />
-                )}
-              </HStack>
+              {isScrolled && !isOpen && (
+                <IconByName
+                  name={"SearchIcon"}
+                  minW="24px"
+                  height="24px"
+                  cursor="pointer"
+                  color="white"
+                  onClick={(e: any) => setIsOpen(true)}
+                />
+              )}
             </HStack>
+          </HStack>
 
-            <Collapse
-              in={!isScrolled && !isOpen}
-              transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
-            >
-              <HStack align={"stretch"}>
-                <VStack align="flex-start" spacing={1} flex={10}>
-                  <CustomHeading
-                    lineHeight="21px"
-                    fontFamily="Inter"
-                    variant="h2"
-                    fontSize="12px"
-                    fontWeight="400"
-                    title={t("HOME_HELLO")}
-                    color="white"
-                  />
-                  <CustomHeading
-                    lineHeight="21px"
-                    fontFamily="Inter"
-                    variant="h2"
-                    fontSize="20px"
-                    fontWeight="600"
-                    title={localStorage.getItem("name")}
-                    color="white"
-                    textTransform="capitalize"
-                  />
-                </VStack>
-                {progress !== "" && (
-                  <Box
-                    w={"100%"}
-                    flex={15}
-                    rounded={"8"}
-                    p="2.5"
-                    bg={"#355F6A"}
-                  >
-                    <HStack align={"center"}>
-                      <VStack align={"stretch"} w={"100%"}>
-                        <CustomHeading
-                          lineHeight="12px"
-                          fontFamily="Inter"
-                          variant="h2"
-                          fontSize="12px"
-                          fontWeight="600"
-                          title={"Your Progress"}
-                          color="white"
-                          textTransform="uppercase"
-                        />
-                        <Progress
-                          colorScheme="progressBarGreen"
-                          size="sm"
-                          value={Math.round(Number(progress) || 0)}
-                          rounded={"full"}
-                          bg="progressDarkBG"
-                        />
-                      </VStack>
-                      <CustomHeading
-                        fontFamily="Inter"
-                        variant="h2"
-                        fontSize="20px"
-                        lineHeight="20px"
-                        textAlign={"center"}
-                        fontWeight="500"
-                        title={`${Math.round(Number(progress) || 0)}%`}
-                        color="white"
-                      />
-                    </HStack>
-                  </Box>
-                )}
-              </HStack>
-            </Collapse>
-          </>
-        )}
-      </VStack>
-      <VStack align={"stretch"} spacing={0}>
-        <Box mt="12px">
           <Collapse
-            in={isOpen || isWatchPage || isSearchPage}
+            in={!isScrolled && !isOpen}
             transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
           >
-            <CustomInputWithDropdown
-              getInputRef={(e) => setRef(e)}
-              placeholder={t("HOME_SEARCH")}
-              icon={searchIcon}
-              showClearIcon={true}
-              isBackButton={true}
-              onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
-              suggestions={suggestions || []}
-              onSuggestionClick={onSuggestionClick}
-              onFocus={(e) => handleInputFocus("input")}
-              onBlur={(e) => handleInputBlur("input")}
-            />
-          </Collapse>
-
-          {!isOpen &&
-            !isScrolled &&
-            !isWatchPage &&
-            !isSearchPage &&
-            !isLeaderboardPage && (
-              <CustomInputWithDropdown
-                getInputRef={(e) => setRef(e)}
-                placeholder={t("HOME_SEARCH")}
-                icon={searchIcon}
-                showClearIcon={true}
-                isBackButton={true}
-                onChange={handleSearchChange}
-                onKeyDown={handleKeyDown}
-                suggestions={suggestions}
-                onSuggestionClick={onSuggestionClick}
-                onFocus={(e) => handleInputFocus("input")}
-                onBlur={(e) => handleInputBlur("input")}
-              />
-            )}
-          {isInputFocused.length > 0 &&
-            suggestions?.length === 0 &&
-            !isScrolled && (
-              <Box
-                p="4"
-                bg="white"
-                borderBottomLeftRadius="8px"
-                borderBottomRightRadius="8px"
-                border="2px solid #C5C5C5"
-                onMouseEnter={(e) => handleInputFocus("focus")}
-                onMouseLeave={(e) => handleInputBlur("focus")}
-              >
-                <Text
-                  marginBottom="10px"
-                  textAlign="left"
+            <HStack align={"stretch"}>
+              <VStack align="flex-start" spacing={1} flex={10}>
+                <CustomHeading
+                  lineHeight="21px"
+                  fontFamily="Inter"
+                  variant="h2"
                   fontSize="12px"
+                  fontWeight="400"
+                  title={t("HOME_HELLO")}
+                  color="white"
+                />
+                <CustomHeading
+                  lineHeight="21px"
+                  fontFamily="Inter"
+                  variant="h2"
+                  fontSize="20px"
                   fontWeight="600"
-                  lineHeight="16px"
-                  color="primary.500"
-                >
-                  {t("HOME_RECENTLY_SEARCHED")}
-                </Text>
-                <Flex wrap="wrap" gap="4">
-                  {recentSearch?.map((search, index) => (
-                    <Box
-                      key={index}
-                      display="flex"
-                      alignItems="center"
-                      cursor="pointer"
-                      border="1px solid #C5C5C5"
-                      borderRadius="90px"
-                      _hover={{ bg: "gray.100" }}
-                      onClick={() => handleRecentSearchClick(search)}
-                    >
-                      <IconByName
-                        name={"RepeatClockIcon"}
-                        color="textprimary"
-                        alt="history"
-                        cursor="pointer"
-                        width="16px"
-                        height="16px"
-                        marginLeft="8px"
-                        marginRight="8px"
+                  title={localStorage.getItem("name")}
+                  color="white"
+                  textTransform="capitalize"
+                />
+              </VStack>
+              {progress !== "" && (
+                <Box w={"100%"} flex={15} rounded={"8"} p="2.5" bg={"#355F6A"}>
+                  <HStack align={"center"}>
+                    <VStack align={"stretch"} w={"100%"}>
+                      <CustomHeading
+                        lineHeight="12px"
+                        fontFamily="Inter"
+                        variant="h2"
+                        fontSize="12px"
+                        fontWeight="600"
+                        title={"Your Progress"}
+                        color="white"
+                        textTransform="uppercase"
                       />
-                      <Text
-                        pb="8px"
-                        pt="8px"
-                        pr="10px"
-                        fontSize="14px"
-                        fontWeight="400"
-                      >
-                        {search}
-                      </Text>
-                    </Box>
-                  ))}
-                </Flex>
-              </Box>
-            )}
-        </Box>
-      </VStack>
+                      <Progress
+                        colorScheme="progressBarGreen"
+                        size="sm"
+                        value={Math.round(Number(progress) || 0)}
+                        rounded={"full"}
+                        bg="progressDarkBG"
+                      />
+                    </VStack>
+                    <CustomHeading
+                      fontFamily="Inter"
+                      variant="h2"
+                      fontSize="20px"
+                      lineHeight="20px"
+                      textAlign={"center"}
+                      fontWeight="500"
+                      title={`${Math.round(Number(progress) || 0)}%`}
+                      color="white"
+                    />
+                  </HStack>
+                </Box>
+              )}
+            </HStack>
+          </Collapse>
+        </VStack>
+      )}
+      <Collapse
+        in={isOpen || isWatchPage || isSearchPage}
+        transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
+      >
+        <CustomInputWithDropdown
+          getInputRef={(e) => setRef(e)}
+          placeholder={t("HOME_SEARCH")}
+          icon={searchIcon}
+          showClearIcon={true}
+          isBackButton={true}
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
+          suggestions={suggestions || []}
+          onSuggestionClick={onSuggestionClick}
+          onFocus={(e) => handleInputFocus("input")}
+          onBlur={(e) => handleInputBlur("input")}
+        />
+      </Collapse>
+
+      {!isOpen &&
+        !isScrolled &&
+        !isWatchPage &&
+        !isSearchPage &&
+        !isLeaderboardPage && (
+          <CustomInputWithDropdown
+            getInputRef={(e) => setRef(e)}
+            placeholder={t("HOME_SEARCH")}
+            icon={searchIcon}
+            showClearIcon={true}
+            isBackButton={true}
+            onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
+            suggestions={suggestions}
+            onSuggestionClick={onSuggestionClick}
+            onFocus={(e) => handleInputFocus("input")}
+            onBlur={(e) => handleInputBlur("input")}
+          />
+        )}
+      {isInputFocused.length > 0 &&
+        suggestions?.length === 0 &&
+        !isScrolled && (
+          <Box
+            p="4"
+            bg="white"
+            borderBottomLeftRadius="8px"
+            borderBottomRightRadius="8px"
+            border="2px solid #C5C5C5"
+            onMouseEnter={(e) => handleInputFocus("focus")}
+            onMouseLeave={(e) => handleInputBlur("focus")}
+          >
+            <Text
+              marginBottom="10px"
+              textAlign="left"
+              fontSize="12px"
+              fontWeight="600"
+              lineHeight="16px"
+              color="primary.500"
+            >
+              {t("HOME_RECENTLY_SEARCHED")}
+            </Text>
+            <Flex wrap="wrap" gap="4">
+              {recentSearch?.map((search, index) => (
+                <Box
+                  key={index}
+                  display="flex"
+                  alignItems="center"
+                  cursor="pointer"
+                  border="1px solid #C5C5C5"
+                  borderRadius="90px"
+                  _hover={{ bg: "gray.100" }}
+                  onClick={() => handleRecentSearchClick(search)}
+                >
+                  <IconByName
+                    name={"RepeatClockIcon"}
+                    color="textprimary"
+                    alt="history"
+                    cursor="pointer"
+                    width="16px"
+                    height="16px"
+                    marginLeft="8px"
+                    marginRight="8px"
+                  />
+                  <Text
+                    pb="8px"
+                    pt="8px"
+                    pr="10px"
+                    fontSize="14px"
+                    fontWeight="400"
+                  >
+                    {search}
+                  </Text>
+                </Box>
+              ))}
+            </Flex>
+          </Box>
+        )}
       {bottomComponent && bottomComponent}
-    </Box>
+    </VStack>
   );
 };
 

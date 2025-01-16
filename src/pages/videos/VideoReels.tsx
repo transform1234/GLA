@@ -7,9 +7,6 @@ import {
   Center,
   HStack,
   IconButton,
-  Skeleton,
-  SkeletonCircle,
-  Stack,
   VStack,
 } from "@chakra-ui/react";
 import { debounce } from "lodash"; // remove uniqueId
@@ -17,20 +14,21 @@ import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
+import PrimaryButton from "../../components/common/button/PrimaryButton";
+import CoinPopover from "../../components/common/cards/CoinPopover";
 import IconByName from "../../components/common/icons/Icon";
+import StarRating from "../../components/common/input/Rating";
 import Layout from "../../components/common/layout/layout";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import Loading from "../../components/common/Loading";
+import CustomHeading from "../../components/common/typography/Heading";
 import SunbirdPlayer from "../../components/players/SunbirdPlayer";
 import * as content from "../../services/content";
 import { callBatch } from "../../services/telemetry";
 import { getSid } from "../../services/utilService";
 import { handleEvent } from "./utils";
+import CustomSkeleton from "./videoReelComponent/CustomSkeleton";
 import Overlay from "./videoReelComponent/Overlay";
-import StarRating from "../../components/common/input/Rating";
-import CustomHeading from "../../components/common/typography/Heading";
-import PrimaryButton from "../../components/common/button/PrimaryButton";
-import CoinPopover from "../../components/common/cards/CoinPopover";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
@@ -242,6 +240,9 @@ const VideoItem: React.FC<{
                 <Overlay {...{ width, height, thumbnailUrl, setVideoEndId }} />
               ) : (
                 <SunbirdPlayer
+                  LoaderComponent={({ display }: any) => (
+                    <CustomSkeleton display={display} />
+                  )}
                   {...{ width, height }}
                   _playerStypeHeight={height}
                   {...{
@@ -269,7 +270,7 @@ const VideoItem: React.FC<{
               )}
             </Box>
             {qml_id && (
-              <VStack>
+              <VStack bg="red.100">
                 {lessonQml?.subject && (
                   <HStack
                     ref={subjectRef}
@@ -279,7 +280,7 @@ const VideoItem: React.FC<{
                     }
                     opacity={heightPerItem?.height === 0 ? "0" : "1"}
                     position={"absolute"}
-                    zIndex={2}
+                    zIndex={20}
                     right={
                       heightPerItem?.width === 0
                         ? "0px"
@@ -390,11 +391,13 @@ const VideoItem: React.FC<{
                           fontWeight={"700"}
                           fontFamily={"Bebas Neue"}
                           color={"darkBlue.500"}
+                          id="quiz-title"
                         >
                           CONGRATULATIONS!
                         </CustomHeading>
                         <VStack>
                           <CustomHeading
+                            id="quiz-subtitle"
                             fontSize={"14px"}
                             fontWeight={"500"}
                             color={"darkBlue.500"}
@@ -406,8 +409,14 @@ const VideoItem: React.FC<{
                               fontSize={"14px"}
                               fontWeight={"500"}
                               color={"darkBlue.500"}
+                              id="rating-text"
+                              display={"none"}
                             >
-                              and you have earned <b>20</b> coins.
+                              and you have earned
+                              <b id="rating-point" style={{ padding: "0 5px" }}>
+                                Loding.
+                              </b>
+                              coins.
                             </CustomHeading>
                           ) : (
                             <CustomHeading
@@ -420,9 +429,14 @@ const VideoItem: React.FC<{
                           )}
                         </VStack>
                         {rating < 100 && (
-                          <Box width={"100%"}>
-                            <StarRating value={rating} onChange={setRating} />
+                          <Box width={"100%"} id="rating-box" display={"none"}>
+                            <StarRating
+                              value={rating}
+                              onChange={setRating}
+                              hStackProps={{ id: "rating-start" }}
+                            />
                             <PrimaryButton
+                              id="rating-button"
                               width={"100%"}
                               isDisabled={rating === 0 ? true : false}
                               onClick={async () => {
@@ -448,6 +462,9 @@ const VideoItem: React.FC<{
                     </Box>
                   ) : (
                     <SunbirdPlayer
+                      LoaderComponent={({ display }: any) => (
+                        <CustomSkeleton display={display} type="assessment" />
+                      )}
                       forwardedRef={isVisible ? refQml : false}
                       style={{ border: "none", borderRadius: "16px" }}
                       _vstack={{
@@ -481,65 +498,7 @@ const VideoItem: React.FC<{
             )}
           </Box>
         ) : (
-          <Stack gap="6" width="100%" height="100%" bg={"blackAlpha.400"}>
-            <HStack gap="5" padding={4} justifyContent={"space-between"}>
-              <HStack gap="5">
-                <SkeletonCircle
-                  size="8"
-                  startColor="primary.500"
-                  endColor="primary.50"
-                />
-                <SkeletonCircle
-                  size="8"
-                  startColor="primary.500"
-                  endColor="primary.50"
-                />
-              </HStack>
-              <SkeletonCircle
-                size="8"
-                startColor="primary.500"
-                endColor="primary.50"
-              />
-            </HStack>
-            <Center
-              position="absolute"
-              top="50%"
-              left="50%"
-              transform="translate(-50%, -50%)"
-            >
-              <HStack gap="10" padding={4} align={"center"}>
-                <SkeletonCircle
-                  size="25px"
-                  startColor="primary.500"
-                  endColor="primary.50"
-                />
-                <SkeletonCircle
-                  size="50px"
-                  startColor="primary.500"
-                  endColor="primary.50"
-                />
-                <SkeletonCircle
-                  size="25px"
-                  startColor="primary.500"
-                  endColor="primary.50"
-                />
-              </HStack>
-            </Center>
-            <HStack
-              width="full"
-              position="absolute"
-              justifyContent="end"
-              bottom="32px"
-            >
-              <Skeleton
-                height="48px"
-                roundedLeft={"full"}
-                width={"110px"}
-                startColor="primary.500"
-                endColor="primary.50"
-              />
-            </HStack>
-          </Stack>
+          <CustomSkeleton />
         )}
       </div>
     );
@@ -663,6 +622,52 @@ const VideoReel: React.FC<{
           videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
       };
       const retult1 = await content.addLessonTracking(player);
+      console.log(retult1, "retult1");
+      if (retult1?.errorCode) {
+        const ratingText = document.querySelector("#rating-text");
+        const quizTitle = document.querySelector("#quiz-title");
+        const quizSubTitle = document.querySelector("#quiz-subtitle");
+
+        if (ratingText) {
+          (ratingText as HTMLElement).style.setProperty(
+            "display",
+            "block",
+            "important"
+          );
+        }
+        (
+          quizSubTitle as HTMLElement
+        ).innerHTML = `<span style="color:red">Error:- ${retult1?.errorCode}</span>`;
+        (
+          quizTitle as HTMLElement
+        ).innerHTML = `<span style="color:red">Error:- Someting went wrong</span>`;
+        (
+          ratingText as HTMLElement
+        ).innerHTML = `<span style="color:red">Error:- ${retult1?.errorMessage?.errorMessage}</span>`;
+      } else if (iframeId === "assessment" && retult1) {
+        if (retult1?.assignRewardPoints?.lesson_completion) {
+          const ratingPoint = document.querySelector("#rating-point");
+          const ratingText = document.querySelector("#rating-text");
+          if (ratingPoint && ratingText) {
+            (
+              ratingPoint as HTMLElement
+            ).innerHTML = `${retult1?.assignRewardPoints?.lesson_completion?.points}`;
+            (ratingText as HTMLElement).style.setProperty(
+              "display",
+              "block",
+              "important"
+            );
+          }
+        }
+        const ratingBox = document.querySelector("#rating-box");
+        if (ratingBox) {
+          (ratingBox as HTMLElement).style.setProperty(
+            "display",
+            "block",
+            "important"
+          );
+        }
+      }
       await callReaminigTelemetry(
         "call telemetry api remaining before tracking"
       );
@@ -709,7 +714,7 @@ const VideoReel: React.FC<{
               position: "absolute",
               top: "16px",
               right: "64px",
-              zIndex: "10",
+              zIndex: "20",
             }}
           />
         )}
@@ -799,7 +804,7 @@ const TopIcon: React.FC<{
       position="absolute"
       top="16px"
       left={left}
-      zIndex="10"
+      zIndex="20"
       bg="#FFFFFF26"
       rounded={"full"}
       border={"none"}

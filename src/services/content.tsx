@@ -1,4 +1,5 @@
 import URL from "../utils/constants/url-constants.json";
+import { handleResponseException } from "./core";
 import { search } from "./telemetry";
 const baseUrl: string = `${import.meta.env.VITE_API_AUTH_URL}/api/v1`;
 
@@ -244,21 +245,14 @@ export const addLessonTracking = async ({
         }),
       }
     );
-
-    const result = await response.json();
-    if (response.ok) {
-      return result;
-    } else {
-      console.log("Failed to add lesson tracking");
-      return {};
-    }
+    return await response.json();
   } catch (e: unknown) {
     if (e instanceof Error) {
       console.log("course/progress/contentid", e.message);
     } else {
       console.log("course/progress/contentid", String(e));
     }
-    return {};
+    return handleResponseException(e);
   }
 };
 export const fetchSearchResults = async (payloadProp: any): Promise<any> => {

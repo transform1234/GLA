@@ -68,8 +68,8 @@ button:focus-visible {
 
 /* Scrollbar for WebKit browsers */
 ::-webkit-scrollbar {
-  width: 5px; /* Width of the vertical scrollbar */
-  height: 5px; /* Height of the horizontal scrollbar */
+  width: 1px; /* Width of the vertical scrollbar */
+  height: 1px; /* Height of the horizontal scrollbar */
 }
 
 ::-webkit-scrollbar-track {

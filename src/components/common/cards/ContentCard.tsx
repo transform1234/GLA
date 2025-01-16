@@ -15,6 +15,7 @@ interface ContentCardProps {
     subject?: string;
     lesson_questionset_status?: string;
     lesson_status?: string;
+    lesson_questionset?: string;
   };
 }
 
@@ -30,7 +31,10 @@ const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
   const imageSrc = item.thumbnailUrl || subjectImage || defaultImage;
 
   const getBadgeDetails = () => {
-    if (item.lesson_questionset_status === "completed" && item.lesson_status === "completed") {
+    if (
+      (!item.lesson_questionset || item.lesson_questionset_status === "pending") &&
+      item.lesson_status === "completed"
+    ) {
       return {
         text: "Completed",
         icon: (
@@ -46,7 +50,10 @@ const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
         ),
         bgColor: "greencolor",
       };
-    } else if (item.lesson_questionset_status === "pending" && item.lesson_status === "completed") {
+    } else if (
+      item.lesson_questionset_status === "pending" &&
+      item.lesson_status === "completed"
+    ) {
       return {
         text: "Take Quiz",
         icon: (
@@ -63,7 +70,10 @@ const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
         ),
         bgColor: "yellow.lightYellow",
       };
-    } else if (item.lesson_questionset_status === "completed" && item.lesson_status === "pending") {
+    } else if (
+      item.lesson_questionset_status === "completed" &&
+      item.lesson_status === "pending"
+    ) {
       return {
         text: "Watch Video",
         icon: (
@@ -81,23 +91,29 @@ const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
         bgColor: "yellow.lightYellow",
       };
     }
-    return {
-      text: "Pending",
-      icon: (
-        <IconByName
-          name={"QuestionIcon"}
-          color="#FFD500"
-          alt="pending"
-          cursor="pointer"
-          width="20px"
-          height="20px"
-          top="8px"
-          left="9px"
-        />
-      ),
-      bgColor: "yellow.lightYellow",
-    };;
+    else if (
+      item.lesson_questionset_status === "completed" &&
+      item.lesson_status === "completed"
+    ) {
+      return  {
+        text: "Completed",
+        icon: (
+          <IconByName
+            name={"CheckIcon"}
+            alt="completed"
+            cursor="pointer"
+            width="16px"
+            height="12px"
+            top="8px"
+            left="9px"
+          />
+        ),
+        bgColor: "greencolor",
+      };
+    }
+    return null;
   };
+  
 
   const badgeDetails = getBadgeDetails();
   return (

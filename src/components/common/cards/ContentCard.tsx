@@ -102,17 +102,9 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
     ) {
       return {
         text: "Completed",
-        icon: (
-          <IconByName
-            name={"CheckIcon"}
-            alt="completed"
-            cursor="pointer"
-            width="16px"
-            height="12px"
-            top="8px"
-            left="9px"
-          />
-        ),
+        iconName: {
+          name: "CheckIcon",
+        },
         bgColor: "greenColor",
       };
     } else if (
@@ -175,14 +167,14 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
         >
           <HStack spacing={1} alignItems="center">
           <IconByName
-             name={badgeDetails?.iconName?.name || ""}
              alt={badgeDetails?.text}
              cursor="pointer"
-             color={badgeDetails?.iconName?.color || "white"}
-             width={badgeDetails?.iconName?.width || "16px"}
-             height={badgeDetails?.iconName?.height || "12px"}
+             color="white"
+             width="16px"
+             height="12px"
              top="8px"
              left="9px"
+             {...badgeDetails.iconName}
       />
             <Text lineHeight="26.07px" fontWeight="700" fontSize="12px" color="white" >{badgeDetails.text}</Text>
           </HStack>

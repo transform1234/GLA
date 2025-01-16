@@ -3,7 +3,7 @@ import { Box, Image, Badge, Text, HStack } from "@chakra-ui/react";
 import defaultImage from "../../../assets/images/default-img.png";
 import scienceImage from "../../../assets/images/science-sub.png";
 import englishImage from "../../../assets/images/english-sub.png";
-import kannadaImage from "../../../assets/images/kannada-sub.png";
+import mathImage from "../../../assets/images/math-sub.png";
 import IconByName from "../icons/Icon";
 
 interface ContentCardProps {
@@ -22,8 +22,8 @@ interface ContentCardProps {
 const subjectImages: { [key: string]: string } = {
   English: englishImage,
   Science: scienceImage,
-  Kannada: kannadaImage,
-  Math: defaultImage,
+  Kannada: defaultImage,
+  Mathematics: mathImage,
 };
 
 const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {

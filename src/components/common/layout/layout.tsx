@@ -76,7 +76,7 @@ const Layout: React.FC<Props> = ({
     { route: "/home", icon: "HomeIcon", title: "Home" },
     { route: "/leaderboard", icon: "LeaderboardIcon", title: "Leaderboard" },
     { route: "/watch", icon: "WatchIcon", title: "Watch", isOutOFBox: true },
-    { route: "/guide", icon: "QuestionIcon", title: "Guide" },
+    { route: "/guide", icon: "QuestionMarkIcon", title: "Guide" },
     { icon: "LogoutIcon", title: "Logout", onClick: onOpen },
   ];
 

@@ -45,17 +45,7 @@ const Watch = (prop: any) => {
 
       try {
         const response = await fetchSearchResults(payload);
-        setVideos(
-          response?.paginatedData?.map((item: any) => ({
-            src: item.img
-              ? `/path/to/image/${item?.contentId}.jpg`
-              : defaultImage,
-            alt: item?.name,
-            name: item?.name,
-            category: [item?.subject],
-            contentId: item?.contentId,
-          }))
-        );
+        setVideos(response?.paginatedData);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");

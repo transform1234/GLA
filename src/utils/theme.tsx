@@ -66,6 +66,7 @@ const customTheme = extendTheme({
       700: "#8c8900",
       800: "#565b00",
       900: "#483E09",
+      lightYellow: "#FFD50066"
     },
     progressBarGreen: {
       500: "#00A745",
@@ -97,6 +98,7 @@ const customTheme = extendTheme({
     borderColor: "#00A745",
     borderGrey: "#C5C5C5",
     lightGrey: "#828282",
+    greencolor: "#219653"
   },
   components: {
     Center: {

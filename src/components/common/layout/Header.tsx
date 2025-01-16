@@ -36,6 +36,7 @@ interface HeaderProps {
   selectedView?: any;
   points?: number;
   recentSearch?: string[];
+  width?: number;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -49,6 +50,7 @@ const Header: React.FC<HeaderProps> = ({
   selectedView,
   points,
   recentSearch = [],
+  width,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -137,7 +139,7 @@ const Header: React.FC<HeaderProps> = ({
       zIndex={10}
       transition="all 0.3s"
       align={"stretch"}
-      width={"100%"}
+      width={width}
     >
       {isLeaderboardPage && (
         <HStack alignItems="center" justifyContent={"space-between"} mb={4}>

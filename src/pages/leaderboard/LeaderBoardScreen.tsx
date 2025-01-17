@@ -61,7 +61,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
   };
   const [bodyHeight, setBodyHeight] = useState<number>(0);
   const groupId = props?.authUser?.GroupMemberships[0]?.Group?.groupId;
-
+  const [hasMoreData, setHasMoreData] = useState(true);
   useEffect(() => {
     impression({
       edata: {
@@ -140,6 +140,11 @@ const LeaderboardScreen: React.FC = (props: any) => {
 
     try {
       const data: any = await getCurrentUserdetail(currentPage);
+  
+      if (!data || !Array.isArray(data.points) || data.points.length === 0) {
+        setHasMoreData(false);
+        return;
+      }
       setCoinsData((prevData: any) => ({
         ...prevData,
         points: [...(prevData?.points || []), ...data?.points],
@@ -157,7 +162,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (scrollHeight - scrollTop === clientHeight && !loading) {
+    if (scrollHeight - scrollTop === clientHeight && !loading && hasMoreData) {
       setPage((prevPage) => prevPage + 1);
     }
   };
@@ -177,6 +182,19 @@ const LeaderboardScreen: React.FC = (props: any) => {
     setSelectedView(newSelectedView);
   };
 
+  const handleViewChange = (radioSelection: string) => {
+    if (radioSelection !== selectedView) {
+      setSelectedView(radioSelection);
+      setActiveCollapse("none");
+      setCoinsData({ points: [] });
+      handleSelectedViewChange(radioSelection);
+      getAllData(radioSelection, filter.days);
+      fetchUserData(1);
+      setPage(1);
+      setHasMoreData(true);
+    }
+  };
+  
   return (
     <Layout
       getHeight={({ bodyHeight: bHeight }) => setBodyHeight(bHeight)}
@@ -527,13 +545,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
               mt="4"
               colorScheme="blue"
               isDisabled={radioSelection === selectedView}
-              onClick={() => {
-                setSelectedView(radioSelection);
-                setActiveCollapse("none");
-                handleSelectedViewChange(radioSelection);
-                getAllData(radioSelection, filter.days);
-                fetchUserData(page);
-              }}
+              onClick={() => handleViewChange(radioSelection)}
               width="100%"
             >
               {t("LEADERBOARD_APPLY")}

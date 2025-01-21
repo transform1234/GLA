@@ -97,6 +97,21 @@ interface BadgeWithDetailsProps {
 const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
   const getBadgeDetails = () => {
     if (
+      item.lesson_questionset &&
+      item.lesson_questionset_status === "pending" &&
+      item.lesson_status === "completed"
+    ) {
+      return {
+        text: "Take Quiz",
+        iconName: {
+          name: "QuizIcon",
+          color: "yellow.500",
+          width: "20px",
+          height: "20px",
+        },
+        bgColor: "yellow.lightYellow",
+      };
+    } else if (
       (!item.lesson_questionset || item.lesson_questionset_status === "pending") &&
       item.lesson_status === "completed"
     ) {
@@ -106,20 +121,6 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
           name: "CheckIcon",
         },
         bgColor: "greenColor",
-      };
-    } else if (
-      item.lesson_questionset_status === "pending" &&
-      item.lesson_status === "completed"
-    ) {
-      return {
-        text: "Take Quiz",
-        iconName: {
-          name: "QuizIcon",
-          color:"yellow.500",
-          width: "20px",
-          height: "20px",
-        },
-        bgColor: "yellow.lightYellow",
       };
     } else if (
       item.lesson_questionset_status === "completed" &&

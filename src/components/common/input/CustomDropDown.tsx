@@ -27,7 +27,9 @@ interface CustomInputProps {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   isBackButton: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+} 
 
 const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   placeholder = "Search...",
@@ -40,12 +42,15 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   isBackButton,
   onChange,
   getInputRef,
+  onFocus,
+  onBlur
 }) => {
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [inputValue, setInputValue] = useState(value || "");
 
   useEffect(() => {
     setShowDropdown(suggestions.length > 0);
@@ -73,7 +78,18 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    onChange?.(e);
+  };
+
   const handleClear = () => {
+    const inputElement = inputRef?.current?.querySelector("input");
+    if (inputElement && inputElement.value) {
+      inputElement.value = "";
+    }
+    setInputValue("");
+    onChange?.({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
     setFilteredSuggestions([]);
     setShowDropdown(false);
   };
@@ -96,17 +112,19 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
         <Input
           type="text"
           placeholder={placeholder}
-          value={value}
-          onChange={onChange}
+          value={inputValue || value} 
+          onChange={handleInputChange}
           borderWidth="2px"
           borderRadius="8px"
           height="46px"
           bg="white"
           onKeyDown={onKeyDown}
           pl={isBackButton ? "45px" : "16px"}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
         <InputRightElement>
-          {value && showClearIcon ? (
+          {inputValue && showClearIcon ? (
             <Image
               src={close}
               alt="close"

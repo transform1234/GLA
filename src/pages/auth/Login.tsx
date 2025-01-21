@@ -10,6 +10,7 @@ import {
   Link,
   useDisclosure,
   VStack,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,7 +34,7 @@ export default function Login() {
     alert?: string;
   }>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const isLoginDisabled = !(username && password);
+  const [isLoginDisabled, setIsLoginButtonDisabled] = useState(false);
   const navigate = useNavigate();
   const [modalContent, setModalContent] = useState({
     title: "",
@@ -94,68 +95,14 @@ export default function Login() {
 
   const handleLogin = async () => {
     setIsSubmitted(true);
-    const telemetryImpression = {
-      context: {
-        env: "log-in",
-        cdata: [],
-      },
-      edata: {
-        type: "edit",
 
-        subtype: "Scroll",
-
-        pageid: "log-in",
-
-        uid: id,
-
-        studentid: "student-id",
-
-        userName: userName,
-
-        grade: grade,
-
-        medium: medium,
-
-        board: board,
-      },
-    };
-    // telemetryFactory.impression(telemetryImpression);
-
-    const telemetryInteract = {
-      context: {
-        env: "sign-in",
-        cdata: [],
-      },
-      edata: {
-        id: "login-button",
-        type: "CLICK",
-        subtype: "",
-        pageid: "sign-in",
-        uid: id,
-
-        studentid: "student-id",
-
-        userName: userName,
-
-        grade: grade,
-
-        medium: medium,
-
-        board: board,
-      },
-    };
-    // telemetryFactory.interact(telemetryInteract);
     if (validate()) {
+      setIsLoginButtonDisabled(true);
       try {
         const result = await fetchToken(username, password);
-        if (result) {
-          if (result?.authUser?.userId) {
-            navigate(0);
-            navigate("/home");
-          } else {
-            localStorage.removeItem("token");
-            setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
-          }
+        if (result && result?.authUser?.userId) {
+          navigate(0);
+          navigate("/home");
         } else {
           localStorage.removeItem("token");
           setErrors({ alert: t("LOGIN_PLEASE_ENTER_VALID_CREDENTIALS") });
@@ -173,6 +120,7 @@ export default function Login() {
       ...prevErrors,
       [field]: value ? "" : t("LOGIN_REQUIRED_FIELD"),
     }));
+    setIsLoginButtonDisabled(false);
     if (field === "username") setUsername(value);
     if (field === "password") setPassword(value);
   };
@@ -181,48 +129,39 @@ export default function Login() {
     <Layout isHeaderVisible={false} isFooterVisible={false}>
       <Center>
         <Box
-          minH="100vh"
-          display="flex"
-          flexDirection="column"
           position="relative"
-          w="100%"
+          width="100vw"
           backgroundImage={`url(${background})`}
-          backgroundSize="cover"
-          backgroundPosition="center"
+          backgroundRepeat="repeat-x"
         >
-          <Center height="100vh">
-            <Box width="100%" padding="15px">
-              <Box
-                position="absolute"
-                top={["2vh", "3vh"]}
-                left={["2vw", "1vw"]}
-              >
+          <Box position="absolute" top={["2vh", "3vh"]} left={["2vw", "1vw"]}>
+            <Image
+              src={transformLogo}
+              alt="Transform Schools Logo"
+              width={["115.71px"]}
+              marginTop={["68px"]}
+              marginLeft={["16px"]}
+            />
+          </Box>
+
+          {/* Centered content */}
+          <Center>
+            <Box>
+              <Box marginTop="281px">
                 <Image
-                  src={transformLogo}
-                  alt="Transform Schools Logo"
-                  width={["28vw", "16vw", "8vw"]}
-                  marginTop={["3vh", "5vh"]}
+                  height="70px"
+                  width="360px"
+                  src={logo}
+                  alt="App Logo"
+                  transform="scale(0.9)"
                 />
               </Box>
-
-              {/* Centered content */}
-              <Center height="100%">
-                <VStack spacing={6}>
-                  <Box marginTop="100px" marginBottom="50px">
-                    <Image
-                      src={logo}
-                      alt="App Logo"
-                      style={{ width: "100%", height: "auto" }}
-                    />
-                  </Box>
-                </VStack>
-              </Center>
               {/* </Box> */}
-              <VStack mt="40px">
+              <VStack mt="20px">
                 <CustomHeading
                   fontFamily="Bebas Neue"
-                  variant="h2"
                   fontSize="24px"
+                  lineHeight="28px"
                   fontWeight="400"
                   title={t("LOGIN_TO_YOUR_ACCOUNT")}
                   color="black"
@@ -282,10 +221,9 @@ export default function Login() {
 
                 <PrimaryButton
                   onClick={handleLogin}
-                  width="100%"
-                  color="white"
+                   height="56px"
+                   marginTop="16px"
                   disabled={isLoginDisabled}
-                  marginTop="20px"
                 >
                   {t("LOGIN")}
                 </PrimaryButton>
@@ -296,27 +234,32 @@ export default function Login() {
                     <AlertTitle>{errors.alert}</AlertTitle>
                   </Alert>
                 )}
-
                 <PopupModal
                   isOpen={isOpen}
                   onClose={onClose}
                   title={modalContent.title}
                   showIcon={true}
+                  maxWidth="380px" 
+                  height="460px"   
                   footerContent={
                     <PrimaryButton
                       onClick={onClose}
-                      width="100%"
-                      color="white"
-                      bg="primary.500"
+                      height="56px"
                     >
-                      {t("POPUP_UNDERSTOOD")}
+                     <Text  
+                          lineHeight="24px"
+                          fontSize="16px"
+                          fontWeight="700"
+                          color="white"
+                          > {t("POPUP_UNDERSTOOD")}</Text> 
                     </PrimaryButton>
                   }
                 >
                   <CustomHeading
-                    variant="p"
                     fontSize="14px"
-                    mb="1rem"
+                    lineHeight="21px"
+                    fontWeight="400"
+                    fontFamily="Inter"
                     title={modalContent.message}
                     color="textSecondary"
                   />
@@ -339,38 +282,63 @@ export default function Login() {
                     {modalContent.labels?.map((labelItem: any) => (
                       <CustomHeading
                         key={labelItem.code}
-                        variant="h2"
                         paddingLeft="28px"
-                        title={
-                          <>
-                            <strong>{labelItem.code}:</strong>{" "}
-                            {t(labelItem.translationKey)}
-                          </>
-                        }
                         color="textSecondary"
-                      />
+                        title=""
+                      >
+                        <Text as="strong" fontWeight="700">
+                          {labelItem.code}:
+                        </Text>{" "}
+                        <Text as="span" color="textSecondary">
+                          {t(labelItem.translationKey)}
+                        </Text>
+                      </CustomHeading>
                     ))}
                   </Box>
 
                   {modalContent.example && (
-                    <Box mt={4}>
+                    <Box>
                       <CustomHeading
-                        variant="h2"
-                        marginBottom="10px"
                         marginTop="10px"
                         fontSize="12px"
                         padding="10px"
-                        title={
-                          <>
-                            <strong>{t("POPUP_EXAMPLE")}:</strong>
-                            <strong>
-                              <i>{modalContent.example}</i>
-                            </strong>
-                          </>
-                        }
+                        gap="10px"
+                        borderRadius="4px"
+                        minHeight="68px"
+                        minWidth="333px"
                         color="textSecondary"
                         bg="backgroundHighlight"
-                      />
+                        title=""
+                      >
+                        <Text
+                          as="strong"
+                          variant="italicText"
+                          lineHeight="16px"
+                          fontSize="12px"
+                          fontWeight="700"
+                        >
+                          {t("POPUP_EXAMPLE")}:
+                        </Text>{" "}
+                        <Text
+                          as="span"
+                          variant="italicText"
+                          lineHeight="16px"
+                          fontSize="12px"
+                          fontWeight="700"
+                          color="textSecondary"
+                        >
+                          {modalContent.example}
+                          <Text
+                            variant="italicText"
+                            as="span"
+                            fontWeight="700"
+                            fontSize="12px"
+                            wordBreak="break-word"
+                          >
+                            "ANKU30121988"{" "}
+                          </Text>
+                        </Text>
+                      </CustomHeading>
                     </Box>
                   )}
                 </PopupModal>

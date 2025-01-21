@@ -15,7 +15,7 @@ type Filter = {
   subject: string | null;
 };
 
-const Watch = () => {
+const Watch = (prop: any) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<any>();
   const [error, setError] = useState<string | null>(null);
@@ -45,17 +45,7 @@ const Watch = () => {
 
       try {
         const response = await fetchSearchResults(payload);
-        setVideos(
-          response?.paginatedData?.map((item: any) => ({
-            src: item.img
-              ? `/path/to/image/${item?.contentId}.jpg`
-              : defaultImage,
-            alt: item?.name,
-            name: item?.name,
-            category: [item?.subject],
-            contentId: item?.contentId,
-          }))
-        );
+        setVideos(response?.paginatedData);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -114,6 +104,7 @@ const Watch = () => {
   const handleSelectSubject = (subject: string) => {
     setCustomFilter({
       ...(filter || {}),
+      searchTerm: "",
       subject,
     });
   };
@@ -129,7 +120,11 @@ const Watch = () => {
     navigate(
       `/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(
         filter.searchTerm
-      )}&subject=${encodeURIComponent(video?.category[0])}&redirect=/watch`
+      )}&subject=${
+        filter.subject === "all"
+          ? ""
+          : encodeURIComponent(filter?.subject || "")
+      }&redirect=/watch`
     );
   };
 
@@ -145,6 +140,7 @@ const Watch = () => {
         searchTerm: filter.searchTerm,
         onSearchChange: handleSearchChange,
         onSubjectSelect: handleSelectSubject,
+        points: prop?.authUser?.points,
         bottomComponent: (
           <BottomComponent
             subjects={subjects}
@@ -223,6 +219,7 @@ const BottomComponent: React.FC<BottomComponentProps> = ({
         cursor="pointer"
         px="10px"
         py="7px"
+        whiteSpace="nowrap"
         rounded={8}
         onClick={() => onSelectSubject("")}
       >
@@ -242,6 +239,7 @@ const BottomComponent: React.FC<BottomComponentProps> = ({
             cursor="pointer"
             px="10px"
             py="7px"
+            whiteSpace="nowrap"
             rounded={8}
             onClick={() => onSelectSubject(sub.subject)}
           >

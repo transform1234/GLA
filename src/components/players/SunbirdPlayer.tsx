@@ -1,7 +1,14 @@
 import { CloseIcon } from "@chakra-ui/icons";
-import { IconButton, Text, VStack } from "@chakra-ui/react";
-import React, { useRef, useEffect } from "react";
+import {
+  Center,
+  CircularProgress,
+  IconButton,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import React, { useRef, useEffect, useState } from "react";
 import { handleEvent } from "../../pages/videos/utils";
+import Loading from "../common/Loading";
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
 const baseUrl: string = `${import.meta.env.VITE_API_AUTH_URL}/api/v1`;
@@ -24,6 +31,8 @@ interface SunbirdPlayerProps {
   handleExitButton?: () => void;
   style?: React.CSSProperties;
   playerContext?: object;
+  batchsize?: number;
+  LoaderComponent?: any;
 }
 
 const SunbirdPlayer = ({
@@ -34,6 +43,7 @@ const SunbirdPlayer = ({
   height,
   forwardedRef,
   adapter,
+  LoaderComponent,
   ...props
 }: SunbirdPlayerProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -42,6 +52,7 @@ const SunbirdPlayer = ({
   const fileType = typeMatch ? typeMatch[1] : "";
   let trackData: any[] = [];
   const [url, setUrl] = React.useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -120,6 +131,11 @@ const SunbirdPlayer = ({
       }
     }
   };
+
+  const handleIFrameLoad = () => {
+    setLoading(false);
+  };
+
   // console.log(adapter);
   if (url) {
     return (
@@ -152,8 +168,20 @@ const SunbirdPlayer = ({
             rounded="full"
           />
         )}
+        {LoaderComponent ? (
+          <LoaderComponent
+            {...(loading ? { display: "flex" } : { display: "none" })}
+          />
+        ) : (
+          <Loading {...(loading ? { display: "flex" } : { display: "none" })} />
+        )}
+
         <iframe
-          style={{ border: "none", ...(props?.style || {}) }}
+          style={{
+            border: "none",
+            display: loading ? "none" : "block",
+            ...(props?.style || {}),
+          }}
           height={"100%"}
           width="100%"
           ref={iframeRef}
@@ -167,6 +195,7 @@ const SunbirdPlayer = ({
           })}
           src={`${public_url || process.env.PUBLIC_URL || ""}${url}/index.html`}
           allow="autoplay"
+          onLoad={handleIFrameLoad}
         />
       </VStack>
     );

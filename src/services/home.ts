@@ -79,10 +79,10 @@ export const getSubjectList = async () => {
         throw new Error("Failed to fetch subject list");
       }
 
-      const subjectList = await response.json();
+      const leaderboardList = await response.json();
 
-      if (subjectList?.data) {
-        return _.sortBy(subjectList.data, "rules");
+      if (leaderboardList?.data) {
+        return _.sortBy(leaderboardList.data, "rules");
       }
     } else {
       return [];
@@ -92,3 +92,75 @@ export const getSubjectList = async () => {
     throw error;
   }
 };
+
+export const getLeaderboardFilter = async (payload:any) => {
+  try {
+
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      };
+
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_AUTH_URL
+        }${URL.LEADERBOARD_FILTER_LIST}`,
+        {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch subject list");
+      }
+
+      const subjectList = await response.json();
+
+      if (subjectList?.data) {
+        return _.sortBy(subjectList.data, "rules");
+      }
+    }
+   catch (error) {
+    console.error("Error in getting subject list:", error);
+    throw error;
+  }
+};
+
+export const getCurrentUserdetail = async (
+  page: number = 1,
+  limit: number = 20
+) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "application/json",
+    };
+
+    const response = await fetch(
+      `${import.meta.env.VITE_API_AUTH_URL}${
+        URL.LEADERBOARD_USER_DATA
+      }?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: headers,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+    const userData = await response.json();
+
+    if (userData?.data) {
+      return userData?.data;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Error in getting user data:", error);
+    throw error;
+  }
+};
+

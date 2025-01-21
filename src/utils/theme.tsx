@@ -101,6 +101,17 @@ const customTheme = extendTheme({
     greenColor: "#219653"
   },
   components: {
+    Table: {
+      baseStyle: {
+        th: {
+          lineHeight: "14.4px",
+          fontSize: "12px",
+          fontFamily: "Bebas Neue",
+          fontWeight: "400",
+          p: "2",
+        },
+      },
+    },
     Center: {
       baseStyle: {
         minH: "100vh",

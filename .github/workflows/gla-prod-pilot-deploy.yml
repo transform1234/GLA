@@ -2,7 +2,7 @@ name: Deploy to PROD-GLA
 on:
   push:
     branches:
-      - prod
+      - prod 
 jobs:
   build:
     name: Generate Build and Deploy to DEV

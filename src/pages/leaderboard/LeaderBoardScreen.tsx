@@ -128,7 +128,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
 
   useEffect(() => {
     const fetchUserStats = async () => {
-      await getAllData("School", "allDay");
+      await getAllData("School", "allday");
     };
 
     fetchUserStats();
@@ -234,13 +234,13 @@ const LeaderboardScreen: React.FC = (props: any) => {
         <Table variant="simple" size="md">
           <Thead position="sticky" top="0" zIndex="1" bg="white">
             <Tr>
-              <Th color={"darkBlue.500"} p="2">
+              <Th color="textPrimary">
                 {t("LEADERBOARD_NAME")}
               </Th>
-              <Th color={"darkBlue.500"} textAlign="center" p="2">
+              <Th color="textPrimary" textAlign="center">
                 {t("LEADERBOARD_RANK")}
               </Th>
-              <Th color={"darkBlue.500"} textAlign="right" p="2">
+              <Th color="textPrimary" textAlign="right">
                 {t("LEADERBOARD_COINS")}
               </Th>
             </Tr>
@@ -749,17 +749,17 @@ const BottomComponent: React.FC<BottomComponentProps> = ({
     >
       <Box
         bg={
-          selectedFilter === "" || "allDay" === selectedFilter
+          selectedFilter === "" || "allday" === selectedFilter
             ? "darkBlue.500"
             : "transparent"
         }
         borderColor={
-          selectedFilter === "" || "allDay" === selectedFilter
+          selectedFilter === "" || "allday" === selectedFilter
             ? "primary.500"
             : "white"
         }
         borderWidth={
-          selectedFilter === "" || "allDay" === selectedFilter ? "1px" : "1px"
+          selectedFilter === "" || "allday" === selectedFilter ? "1px" : "1px"
         }
         color="white"
         fontFamily="Inter"
@@ -771,7 +771,7 @@ const BottomComponent: React.FC<BottomComponentProps> = ({
         py="7px"
         whiteSpace="nowrap"
         rounded={8}
-        onClick={() => handleFilterSelect("allDay")}
+        onClick={() => handleFilterSelect("allday")}
       >
         All Time
       </Box>

@@ -171,7 +171,7 @@ const VideoItem: React.FC<{
                 type: "program",
               },
               {
-                id: authUser?.GroupMemberships[0]?.School?.udiseCode,
+                id: authUser?.GroupMemberships?.[0]?.School?.udiseCode,
                 type: "school_udise",
               },
               {

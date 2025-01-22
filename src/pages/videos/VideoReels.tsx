@@ -447,7 +447,7 @@ const VideoItem: React.FC<{
                                     ? (lessonQml.subject as string[])[0]
                                     : lessonQml?.subject,
                                   userId: authUser.userId,
-                                  contentId: videoEndId?.qml_id,
+                                  assessmentId: videoEndId?.qml_id,
                                   rating: rating,
                                 });
                                 if (result) {

@@ -65,7 +65,7 @@ export default function Homepage(props: any) {
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      if (!authUser?.Student?.School) {
+      if (!authUser?.GroupMemberships?.[0]?.School) {
         setError(t("NO_SCHOOL_FOUND"));
         return;
       }

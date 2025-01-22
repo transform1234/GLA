@@ -30,7 +30,7 @@ export const fetchToken = async (username: string, password: string) => {
   const authUser = await checkUserDetails();
   const { grade, medium, board } =
     authUser?.data?.GroupMemberships?.[0]?.Group || {};
-  const { udiseCode } = authUser?.data?.Student?.School || {};
+  const { udiseCode } = authUser?.data?.GroupMemberships[0]?.School || {};
   localStorage.setItem("id", authUser?.data?.userId);
   localStorage.setItem("name", authUser?.data?.name);
   localStorage.setItem("grade", grade);
@@ -92,7 +92,7 @@ export const logout = async () => {
   const authUser = await checkUserDetails();
   const { grade, medium, board } =
     authUser?.data?.GroupMemberships?.[0]?.Group || {};
-  const { udiseCode } = authUser?.data?.Student?.School || {};
+  const { udiseCode } = authUser?.data?.GroupMemberships[0]?.School || {};
   const programID = await getProgramId();
   const contextData = [
     {

@@ -23,7 +23,7 @@ function AppRouter() {
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
-    if (token) {
+    if (token && token !== "not-logged-in") {
       setRoutes(authRoutes);
     } else {
       setRoutes(guestRoutes);
@@ -46,7 +46,7 @@ function AppRouter() {
         setToken(result?.token);
         setAuthUser(result?.data);
       } else {
-        setToken();
+        setToken("not-logged-in");
       }
       if (result?.isRefresh) {
         navigate(0);
@@ -55,6 +55,10 @@ function AppRouter() {
 
     validateUser();
   }, [location?.pathname]); // call on page change
+
+  if (!token) {
+    return <Loading />;
+  }
 
   return (
     <Routes>

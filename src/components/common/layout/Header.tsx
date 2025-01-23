@@ -37,6 +37,10 @@ interface HeaderProps {
   points?: number;
   recentSearch?: string[];
   width?: number;
+  keyDownSearchFilter?: {
+    from: string;
+    subject: string;
+  };
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -51,6 +55,7 @@ const Header: React.FC<HeaderProps> = ({
   points,
   recentSearch = [],
   width,
+  keyDownSearchFilter,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -85,7 +90,11 @@ const Header: React.FC<HeaderProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value; // Type assertion here
     if (e.key === "Enter" && value.trim()) {
-      navigate(`/search?search=${encodeURIComponent(value.trim())}`);
+      const queryParams = new URLSearchParams({
+        search: value.trim(),
+        ...keyDownSearchFilter,
+      });
+      navigate(`/search?${queryParams.toString()}`);
     }
   };
 

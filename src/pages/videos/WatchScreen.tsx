@@ -141,6 +141,7 @@ const Watch = (prop: any) => {
         onSearchChange: handleSearchChange,
         onSubjectSelect: handleSelectSubject,
         points: prop?.authUser?.points,
+        keyDownSearchFilter: { from : "watch" , subject : JSON.parse(localStorage.getItem("watchFilter") || "{}").subject },
         bottomComponent: (
           <BottomComponent
             subjects={subjects}

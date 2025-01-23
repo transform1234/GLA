@@ -34,6 +34,10 @@ interface Props {
     selectedView?: any;
     points?: number;
     recentSearch?: string[];
+    keyDownSearchFilter?: {
+      from: string;
+      subject: string;
+    };
   };
 }
 

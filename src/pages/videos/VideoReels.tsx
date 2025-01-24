@@ -293,7 +293,7 @@ const VideoItem: React.FC<{
                     bottom={
                       heightPerItem?.height === 0
                         ? "32px"
-                        : `${heightPerItem?.height - 82}`
+                        : `${heightPerItem?.height - 74}`
                     }
                     transition="right 0.5s,bottom 0.5s"
                     top="auto"
@@ -302,7 +302,7 @@ const VideoItem: React.FC<{
                       lessonQml.subject.map((sub) => (
                         <Badge
                           key={sub}
-                          p="6px"
+                          p="2px"
                           fontSize="12px"
                           fontWeight={500}
                           color="#03627C"
@@ -312,7 +312,13 @@ const VideoItem: React.FC<{
                         </Badge>
                       ))
                     ) : (
-                      <Badge variant="outline" colorScheme="blue">
+                      <Badge
+                        p="2px"
+                        fontSize="12px"
+                        fontWeight={500}
+                        color="#03627C"
+                        bg="#03627C33"
+                      >
                         {lessonQml?.subject}
                       </Badge>
                     )}
@@ -376,88 +382,120 @@ const VideoItem: React.FC<{
                       }}
                     >
                       <VStack
-                        p="4"
-                        pt={"52px"}
+                        p={heightPerItem?.height === 0 ? "0px" : "4"}
+                        pt={heightPerItem?.height === 0 ? "0px" : "44px"}
                         bg={"white"}
                         ref={isVisible ? refQml : false}
                         rounded={"16px"}
                         height={"100%"}
                         textAlign={"center"}
                         spacing={2}
-                        color={"#10162E"}
+                        color={"darkBlue.500"}
                         overflowY={"scroll"}
+                        justifyContent="center"
                       >
-                        <CustomHeading
-                          fontSize={"24px"}
-                          fontWeight={"700"}
-                          fontFamily={"Bebas Neue"}
-                          color={"darkBlue.500"}
-                          id="quiz-title"
-                        >
-                          CONGRATULATIONS!
-                        </CustomHeading>
-                        <VStack>
-                          <CustomHeading
-                            id="quiz-subtitle"
-                            fontSize={"14px"}
-                            fontWeight={"500"}
-                            color={"darkBlue.500"}
-                          >
-                            You’ve completed the quiz!
-                          </CustomHeading>
-                          {rating < 100 ? (
+                        {rating < 100 ? (
+                          <VStack spacing={2} width={"100%"}>
                             <CustomHeading
-                              fontSize={"14px"}
-                              fontWeight={"500"}
+                              fontSize={"24px"}
+                              fontWeight={"700"}
+                              fontFamily={"Bebas Neue"}
                               color={"darkBlue.500"}
-                              id="rating-text"
+                              id="quiz-title"
+                            >
+                              CONGRATULATIONS!
+                            </CustomHeading>
+                            <VStack spacing={1}>
+                              <CustomHeading
+                                id="quiz-subtitle"
+                                fontSize={"14px"}
+                                fontWeight={"500"}
+                                color={"darkBlue.500"}
+                              >
+                                You've completed the quiz!
+                              </CustomHeading>
+
+                              <CustomHeading
+                                fontSize={"14px"}
+                                fontWeight={"500"}
+                                color={"darkBlue.500"}
+                                id="rating-text"
+                                display={"none"}
+                              >
+                                and you have earned
+                                <span
+                                  id="rating-point"
+                                  style={{ padding: "0 5px" }}
+                                >
+                                  Loding.
+                                </span>
+                                coins.
+                              </CustomHeading>
+                            </VStack>
+                            <VStack
+                              bg="white"
+                              id="rating-box"
                               display={"none"}
-                            >
-                              and you have earned
-                              <b id="rating-point" style={{ padding: "0 5px" }}>
-                                Loding.
-                              </b>
-                              coins.
-                            </CustomHeading>
-                          ) : (
-                            <CustomHeading
-                              fontSize={"18px"}
-                              fontWeight={"500"}
-                              color={"darkBlue.500"}
-                            >
-                              Rating is submitted.
-                            </CustomHeading>
-                          )}
-                        </VStack>
-                        {rating < 100 && (
-                          <Box width={"100%"} id="rating-box" display={"none"}>
-                            <StarRating
-                              value={rating}
-                              onChange={setRating}
-                              hStackProps={{ id: "rating-start" }}
-                            />
-                            <PrimaryButton
-                              id="rating-button"
+                              position={width < 412 ? "sticky" : "relative"}
+                              bottom={width < 412 ? "0px" : "auto"}
+                              spacing={width < 412 ? "1" : 4}
                               width={"100%"}
-                              isDisabled={rating === 0 ? true : false}
-                              onClick={async () => {
-                                const result = await content.rateQuiz({
-                                  programId: programID,
-                                  subject: Array.isArray(lessonQml?.subject)
-                                    ? (lessonQml.subject as string[])[0]
-                                    : lessonQml?.subject,
-                                  userId: authUser.userId,
-                                  assessmentId: videoEndId?.qml_id,
-                                  rating: rating,
-                                });
-                                if (result) {
-                                  setRating(100);
-                                }
-                              }}
                             >
-                              Submit
-                            </PrimaryButton>
-                          </Box>
+                              <StarRating
+                                value={rating}
+                                onChange={setRating}
+                                hStackProps={{ id: "rating-start", spacing: 4 }}
+                              />
+                              <PrimaryButton
+                                size={width < 412 ? "sm" : "md"}
+                                width={"100%"}
+                                id="rating-button"
+                                isDisabled={rating === 0 ? true : false}
+                                onClick={async () => {
+                                  const result = await content.rateQuiz({
+                                    programId: programID,
+                                    subject: Array.isArray(lessonQml?.subject)
+                                      ? (lessonQml.subject as string[])[0]
+                                      : lessonQml?.subject,
+                                    userId: authUser.userId,
+                                    assessmentId: videoEndId?.qml_id,
+                                    rating: rating,
+                                  });
+                                  if (result) {
+                                    setRating(100);
+                                  }
+                                }}
+                              >
+                                Submit
+                              </PrimaryButton>
+                            </VStack>
+                          </VStack>
+                        ) : (
+                          <VStack spacing={6}>
+                            <IconByName
+                              boxSize={"48px"}
+                              name={"FamilyStarIcon"}
+                              color={"yellow.lightDark"}
+                            />
+                            <VStack spacing={3}>
+                              <CustomHeading
+                                fontSize={"24px"}
+                                fontWeight={"700"}
+                                fontFamily={"Bebas Neue"}
+                                color={"darkBlue.500"}
+                              >
+                                Thank you for your feedback!
+                              </CustomHeading>
+                              <CustomHeading
+                                id="quiz-subtitle"
+                                fontSize={"14px"}
+                                fontWeight={"500"}
+                                color={"darkBlue.500"}
+                              >
+                                Your feedback is valuable to us
+                              </CustomHeading>
+                            </VStack>
+                          </VStack>
                         )}
                       </VStack>
                     </Box>
@@ -634,7 +672,6 @@ const VideoReel: React.FC<{
         const ratingText = document.querySelector("#rating-text");
         const quizTitle = document.querySelector("#quiz-title");
         const quizSubTitle = document.querySelector("#quiz-subtitle");
-
         if (ratingText) {
           (ratingText as HTMLElement).style.setProperty(
             "display",
@@ -672,7 +709,7 @@ const VideoReel: React.FC<{
         if (ratingBox) {
           (ratingBox as HTMLElement).style.setProperty(
             "display",
-            "block",
+            "flex",
             "important"
           );
         }

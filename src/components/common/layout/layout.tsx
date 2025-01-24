@@ -127,7 +127,7 @@ const Layout: React.FC<Props> = ({
         >
           {isHeaderVisible && (
             <Box ref={headerRef}>
-             <Header {...{ width }} {..._header} />
+              <Header {...{ width }} {..._header} />
             </Box>
           )}
           {children}

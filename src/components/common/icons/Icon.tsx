@@ -16,20 +16,20 @@ interface IconProps {
   name: string;
   color?: any;
   [key: string]: any;
-  isSelected?: boolean;
+  active?: boolean;
 }
 
 const iconsMap: Record<string, React.FC<IconProps>> = {
-  QuestionIcon: ({ color, isSelected, ...props }) => {
+  QuestionIcon: ({ color, active, ...props }) => {
     return (
       <Icon
-        color={isSelected ? "primary.500" : "black"}
+        color={active ? "primary.500" : "black"}
         viewBox="0 0 17 20"
         {...props}
       >
         <path
           d={
-            isSelected
+            active
               ? "M9 20L8.75 17H8.5C6.13333 17 4.125 16.175 2.475 14.525C0.825 12.875 0 10.8667 0 8.5C0 6.13333 0.825 4.125 2.475 2.475C4.125 0.825 6.13333 0 8.5 0C9.68333 0 10.7875 0.220833 11.8125 0.6625C12.8375 1.10417 13.7375 1.7125 14.5125 2.4875C15.2875 3.2625 15.8958 4.1625 16.3375 5.1875C16.7792 6.2125 17 7.31667 17 8.5C17 9.75 16.7958 10.95 16.3875 12.1C15.9792 13.25 15.4208 14.3167 14.7125 15.3C14.0042 16.2833 13.1625 17.175 12.1875 17.975C11.2125 18.775 10.15 19.45 9 20ZM8.475 13.975C8.75833 13.975 9 13.875 9.2 13.675C9.4 13.475 9.5 13.2333 9.5 12.95C9.5 12.6667 9.4 12.425 9.2 12.225C9 12.025 8.75833 11.925 8.475 11.925C8.19167 11.925 7.95 12.025 7.75 12.225C7.55 12.425 7.45 12.6667 7.45 12.95C7.45 13.2333 7.55 13.475 7.75 13.675C7.95 13.875 8.19167 13.975 8.475 13.975ZM7.75 10.8H9.25C9.25 10.3 9.3 9.95 9.4 9.75C9.5 9.55 9.81667 9.18333 10.35 8.65C10.65 8.35 10.9 8.025 11.1 7.675C11.3 7.325 11.4 6.95 11.4 6.55C11.4 5.7 11.1125 5.0625 10.5375 4.6375C9.9625 4.2125 9.28333 4 8.5 4C7.76667 4 7.15 4.20417 6.65 4.6125C6.15 5.02083 5.8 5.51667 5.6 6.1L7 6.65C7.08333 6.36667 7.24167 6.0875 7.475 5.8125C7.70833 5.5375 8.05 5.4 8.5 5.4C8.95 5.4 9.2875 5.525 9.5125 5.775C9.7375 6.025 9.85 6.3 9.85 6.6C9.85 6.88333 9.76667 7.1375 9.6 7.3625C9.43333 7.5875 9.23333 7.81667 9 8.05C8.41667 8.55 8.0625 8.94583 7.9375 9.2375C7.8125 9.52917 7.75 10.05 7.75 10.8Z"
               : "M9 20L8.75 17H8.5C6.13333 17 4.125 16.175 2.475 14.525C0.825 12.875 0 10.8667 0 8.5C0 6.13333 0.825 4.125 2.475 2.475C4.125 0.825 6.13333 0 8.5 0C9.68333 0 10.7875 0.220833 11.8125 0.6625C12.8375 1.10417 13.7375 1.7125 14.5125 2.4875C15.2875 3.2625 15.8958 4.1625 16.3375 5.1875C16.7792 6.2125 17 7.31667 17 8.5C17 9.75 16.7958 10.95 16.3875 12.1C15.9792 13.25 15.4208 14.3167 14.7125 15.3C14.0042 16.2833 13.1625 17.175 12.1875 17.975C11.2125 18.775 10.15 19.45 9 20ZM11 16.35C12.1833 15.35 13.1458 14.1792 13.8875 12.8375C14.6292 11.4958 15 10.05 15 8.5C15 6.68333 14.3708 5.14583 13.1125 3.8875C11.8542 2.62917 10.3167 2 8.5 2C6.68333 2 5.14583 2.62917 3.8875 3.8875C2.62917 5.14583 2 6.68333 2 8.5C2 10.3167 2.62917 11.8542 3.8875 13.1125C5.14583 14.3708 6.68333 15 8.5 15H11V16.35ZM8.475 13.975C8.75833 13.975 9 13.875 9.2 13.675C9.4 13.475 9.5 13.2333 9.5 12.95C9.5 12.6667 9.4 12.425 9.2 12.225C9 12.025 8.75833 11.925 8.475 11.925C8.19167 11.925 7.95 12.025 7.75 12.225C7.55 12.425 7.45 12.6667 7.45 12.95C7.45 13.2333 7.55 13.475 7.75 13.675C7.95 13.875 8.19167 13.975 8.475 13.975ZM7.75 10.8H9.25C9.25 10.3 9.3 9.95 9.4 9.75C9.5 9.55 9.81667 9.18333 10.35 8.65C10.65 8.35 10.9 8.025 11.1 7.675C11.3 7.325 11.4 6.95 11.4 6.55C11.4 5.7 11.1125 5.0625 10.5375 4.6375C9.9625 4.2125 9.28333 4 8.5 4C7.76667 4 7.15 4.20417 6.65 4.6125C6.15 5.02083 5.8 5.51667 5.6 6.1L7 6.65C7.08333 6.36667 7.24167 6.0875 7.475 5.8125C7.70833 5.5375 8.05 5.4 8.5 5.4C8.95 5.4 9.2875 5.525 9.5125 5.775C9.7375 6.025 9.85 6.3 9.85 6.6C9.85 6.88333 9.76667 7.1375 9.6 7.3625C9.43333 7.5875 9.23333 7.81667 9 8.05C8.41667 8.55 8.0625 8.94583 7.9375 9.2375C7.8125 9.52917 7.75 10.05 7.75 10.8Z"
           }
@@ -39,16 +39,16 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
     );
   },
 
-  HomeIcon: ({ color, isSelected, ...props }) => {
+  HomeIcon: ({ color, active, ...props }) => {
     return (
       <Icon
-        color={isSelected ? "primary.500" : "black"}
+        color={active ? "primary.500" : "black"}
         viewBox="0 0 16 18"
         {...props}
       >
         <path
           d={
-            isSelected
+            active
               ? "M0 18V6L8 0L16 6V18H10V11H6V18H0Z"
               : "M2 16H5V10H11V16H14V7L8 2.5L2 7V16ZM0 18V6L8 0L16 6V18H9V12H7V18H0Z"
           }
@@ -57,16 +57,16 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  LeaderboardIcon: ({ color, isSelected, ...props }) => {
+  LeaderboardIcon: ({ color, active, ...props }) => {
     return (
       <Icon
-        color={isSelected ? "primary.500" : "black"}
+        color={active ? "primary.500" : "black"}
         viewBox="0 0 20 18"
         {...props}
       >
         <path
           d={
-            isSelected
+            active
               ? "M0 18V6H5.5V18H0ZM7.25 18V0H12.75V18H7.25ZM14.5 18V8H20V18H14.5Z"
               : "M2 16H6V8H2V16ZM8 16H12V2H8V16ZM14 16H18V10H14V16ZM0 18V6H6V0H14V8H20V18H0Z"
           }
@@ -75,7 +75,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  WatchIcon: ({ color, isSelected, ...props }) => {
+  WatchIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 20 16" color={color} {...props}>
         <path
@@ -85,7 +85,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  ProfileIcon: ({ color, isSelected, ...props }) => {
+  ProfileIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 24 24" color={color} {...props}>
         <path
@@ -95,7 +95,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  LogoutIcon: ({ color, isSelected, ...props }) => {
+  LogoutIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 21 20" color={color} {...props}>
         <path
@@ -105,7 +105,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  ThumbsUpIcon: ({ color, isSelected, ...props }) => {
+  ThumbsUpIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="-4 -4 28 28" fill="currentColor" color={color} {...props}>
         <path
@@ -115,7 +115,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  ThumbsUpIconFilled: ({ color, isSelected, ...props }) => {
+  ThumbsUpIconFilled: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="-4 -4 28 28" fill="currentColor" color={color} {...props}>
         <path
@@ -125,7 +125,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  TakeAQuizIcon: ({ ...props }) => {
+  TakeAQuizIcon: ({ active, ...props }) => {
     return (
       <Text fontSize="1em" {...props}>
         Take a Quiz
@@ -133,7 +133,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
     );
   },
 
-  CloseIcon: ({ color, isSelected, ...props }) => {
+  CloseIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 14 14" fill="currentColor" color={color} {...props}>
         <path
@@ -143,7 +143,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  BackIcon: ({ color, width = "32px", height = "32px", ...props }) => {
+  BackIcon: ({ color, width = "32px", height = "32px", active, ...props }) => {
     return (
       <Icon
         viewBox="0 0 32 32"
@@ -157,7 +157,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  ReplayIcon: ({ color, ...props }) => {
+  ReplayIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 33 32" fill="currentColor" color={color} {...props}>
         <path
@@ -167,7 +167,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  CoinIcon: ({ color, ...props }) => {
+  CoinIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 24 26" fill="none" color={color} {...props}>
         <g filter="url(#filter0_d_1375_5746)">
@@ -248,7 +248,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  QuizIcon: ({ color, isSelected, ...props }) => {
+  QuizIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 21 20" color={color} {...props}>
         <path
@@ -258,7 +258,7 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
-  WatchVideoIcon: ({ color, isSelected, ...props }) => {
+  WatchVideoIcon: ({ color, active, ...props }) => {
     return (
       <Icon viewBox="0 0 21 20" color={color} {...props}>
         <path
@@ -284,7 +284,7 @@ const IconByName: React.FC<IconProps> = ({
   name,
   color,
   onClick,
-  isSelected,
+  active,
   ...props
 }) => {
   const Component = iconsMap[name];
@@ -298,13 +298,13 @@ const IconByName: React.FC<IconProps> = ({
         {...props}
       >
         {Component ? (
-          <Component isSelected={isSelected} name={name} color={color} />
+          <Component active={active} name={name} color={color} {...props} />
         ) : null}
       </Button>
     );
   }
   return Component ? (
-    <Component isSelected={isSelected} name={name} color={color} {...props} />
+    <Component active={active} name={name} color={color} {...props} />
   ) : null;
 };
 

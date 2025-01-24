@@ -25,7 +25,7 @@ interface CustomInputProps {
   showClearIcon?: boolean;
   value?: string | undefined;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  isBackButton: boolean;
+  isBackButton?: () => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -105,7 +105,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
               cursor="pointer"
               width="8.71px"
               height="15.8px"
-              onClick={() => navigate("/home")}
+              onClick={() => isBackButton?.()}
             />
           </InputLeftElement>
         )}

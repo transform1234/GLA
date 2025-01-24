@@ -69,7 +69,8 @@ const Header: React.FC<HeaderProps> = ({
   const [ref, setRef] = useState<HTMLInputElement | null>(null);
   const RECENT_SEARCH_KEY = "recentSearches";
   const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
-
+  const headerParams = new URLSearchParams(location.search);
+  const from = headerParams.get("from");
   useEffect(() => {
     if (ref) {
       ref.value = searchTerm || "";
@@ -134,9 +135,17 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleRecentSearchClick = (search: string) => {
-    console.log("Navigating to search with:", search);
     navigate(`/search?search=${encodeURIComponent(search.trim())}`);
   };
+
+  const handleBackNavigation = () => {
+    if (from) {
+      navigate(`/${from}`);
+    } else {
+      navigate("/home");
+    }
+  };
+  
 
   return (
     <VStack
@@ -218,7 +227,7 @@ const Header: React.FC<HeaderProps> = ({
               cursor="pointer"
               width="2em"
               height="2em"
-              onClick={() => navigate("/home")}
+              onClick={handleBackNavigation}
             />
             <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
               {t("HOME_WATCH")}
@@ -346,7 +355,7 @@ const Header: React.FC<HeaderProps> = ({
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={true}
+          isBackButton={handleBackNavigation} 
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions || []}
@@ -366,7 +375,7 @@ const Header: React.FC<HeaderProps> = ({
             placeholder={t("HOME_SEARCH")}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={true}
+            isBackButton={handleBackNavigation}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions}

@@ -60,20 +60,9 @@ const Header: React.FC<HeaderProps> = ({
   const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
   const isLeaderboardPage = location.pathname === "/leaderboard";
-  const [value, setSelectedView] = useState("School");
-  const [ref, setRef] = useState<HTMLInputElement | null>(null);
-  const RECENT_SEARCH_KEY = "recentSearches";
   const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (ref) {
-      ref.value = searchTerm || "";
-    }
-  }, [ref, searchTerm]);
-
   const debouncedSearch = debounce((value: string) => {
     const trimmedValue = value.trim();
-    if (!trimmedValue) return;
     onSearchChange?.(trimmedValue);
   }, 1000);
 
@@ -187,7 +176,7 @@ const Header: React.FC<HeaderProps> = ({
               cursor="pointer"
             >
               <Text fontSize="14px" color="black">
-                {selectedView || value || "Select"}{" "}
+                {selectedView || "School" || "Select"}{" "}
               </Text>
               <IconByName
                 name="TriangleDownIcon"
@@ -333,7 +322,7 @@ const Header: React.FC<HeaderProps> = ({
         transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
       >
         <CustomInputWithDropdown
-          getInputRef={(e) => setRef(e)}
+          value={searchTerm || ""}
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
@@ -353,7 +342,7 @@ const Header: React.FC<HeaderProps> = ({
         !isSearchPage &&
         !isLeaderboardPage && (
           <CustomInputWithDropdown
-            getInputRef={(e) => setRef(e)}
+            value={searchTerm || ""}
             placeholder={t("HOME_SEARCH")}
             icon={searchIcon}
             showClearIcon={true}

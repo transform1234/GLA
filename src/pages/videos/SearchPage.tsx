@@ -45,10 +45,13 @@ const SearchPage: React.FC = () => {
 
   const fetchData = async (search: any) => {
     const query = getParameter("search");
+    const searchParams = new URLSearchParams(location.search);
+    const subject = searchParams.get("subject");
+
     const payload = {
       searchQuery: search || "",
       programId: localStorage.getItem("programID"),
-      subject: localStorage.getItem("subject"),
+      subject: subject ,
       limit: 500,
       isTelemetryEnabled: search === query ? false : true,
     };

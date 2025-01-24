@@ -27,8 +27,14 @@ const subjectImages: { [key: string]: string } = {
 };
 
 const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
-  const subjectImage = item.subject && subjectImages[item.subject] ? subjectImages[item.subject] : defaultImage;
-  const imageSrc = item.thumbnailUrl && item.thumbnailUrl.trim() !== "" ? item.thumbnailUrl : subjectImage;
+  const subjectImage =
+    item.subject && subjectImages[item.subject]
+      ? subjectImages[item.subject]
+      : defaultImage;
+  const imageSrc =
+    item.thumbnailUrl && item.thumbnailUrl.trim() !== ""
+      ? item.thumbnailUrl
+      : subjectImage;
 
   return (
     <Box position="relative">
@@ -52,7 +58,14 @@ const ContentCard: React.FC<ContentCardProps> = memo(({ item }) => {
         width="100%"
         bg="linear-gradient(to top, rgba(0, 0, 0, 1), transparent)"
       >
-        <Text color="white" fontSize="sm" py={1} textAlign="left">
+        <Text
+          noOfLines={3}
+          color="white"
+          fontSize="sm"
+          py={1}
+          textAlign="left"
+          as={"div"}
+        >
           {item.name}
         </Text>
         {Array.isArray(item.category)
@@ -112,7 +125,8 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
         bgColor: "yellow.lightYellow",
       };
     } else if (
-      (!item.lesson_questionset || item.lesson_questionset_status === "pending") &&
+      (!item.lesson_questionset ||
+        item.lesson_questionset_status === "pending") &&
       item.lesson_status === "completed"
     ) {
       return {
@@ -130,18 +144,17 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
         text: "Watch Video",
         iconName: {
           name: "WatchVideoIcon",
-          color:"yellow.500",
+          color: "yellow.500",
           width: "20px",
           height: "20px",
         },
         bgColor: "yellow.lightYellow",
       };
-    }
-    else if (
+    } else if (
       item.lesson_questionset_status === "completed" &&
       item.lesson_status === "completed"
     ) {
-      return  {
+      return {
         text: "Completed",
         iconName: {
           name: "CheckIcon",
@@ -157,28 +170,35 @@ const BadgeWithDetails: React.FC<BadgeWithDetailsProps> = ({ item }) => {
   if (!badgeDetails) return null;
 
   return (
-        <Badge
-          position="absolute"
-          top="12px"
-          left="12px"
-          borderRadius="4px"
-          padding="2px 6px"
-          bg={badgeDetails.bgColor}
+    <Badge
+      position="absolute"
+      top="12px"
+      left="12px"
+      borderRadius="4px"
+      padding="2px 6px"
+      bg={badgeDetails.bgColor}
+      color="white"
+    >
+      <HStack spacing={1} alignItems="center">
+        <IconByName
+          alt={badgeDetails?.text}
+          cursor="pointer"
+          color="white"
+          width="16px"
+          height="12px"
+          top="8px"
+          left="9px"
+          {...badgeDetails.iconName}
+        />
+        <Text
+          lineHeight="26.07px"
+          fontWeight="700"
+          fontSize="12px"
           color="white"
         >
-          <HStack spacing={1} alignItems="center">
-          <IconByName
-             alt={badgeDetails?.text}
-             cursor="pointer"
-             color="white"
-             width="16px"
-             height="12px"
-             top="8px"
-             left="9px"
-             {...badgeDetails.iconName}
-      />
-            <Text lineHeight="26.07px" fontWeight="700" fontSize="12px" color="white" >{badgeDetails.text}</Text>
-          </HStack>
-        </Badge>
+          {badgeDetails.text}
+        </Text>
+      </HStack>
+    </Badge>
   );
 };

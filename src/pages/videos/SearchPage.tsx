@@ -38,7 +38,7 @@ const SearchPage: React.FC = () => {
   }, [location.search]);
 
   useEffect(() => {
-    if (searchTerm) {
+    if (searchTerm || searchTerm === "") {
       fetchData(searchTerm);
     }
   }, [searchTerm]);

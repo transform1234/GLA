@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
-  InputGroup,
-  Input,
-  InputRightElement,
+  Flex,
   Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
   List,
   ListItem,
-  Flex,
   Text,
-  InputLeftElement,
 } from "@chakra-ui/react";
-import close from "../../../assets/icons/close.svg";
-import { useNavigate } from "react-router-dom";
-import backIcon from "../../../assets/icons/arrow_back_ios.svg";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import IconByName from "../icons/Icon";
 
 interface CustomInputProps {
   getInputRef?: (ref: HTMLInputElement | null) => void;
@@ -29,7 +28,7 @@ interface CustomInputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-} 
+}
 
 const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   placeholder = "Search...",
@@ -43,7 +42,7 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   onChange,
   getInputRef,
   onFocus,
-  onBlur
+  onBlur,
 }) => {
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -53,9 +52,18 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
   const [inputValue, setInputValue] = useState(value || "");
 
   useEffect(() => {
-    setShowDropdown(suggestions.length > 0);
-    setFilteredSuggestions(suggestions);
-  }, [value, suggestions]);
+    setInputValue(value || "");
+  }, [value]);
+
+  useEffect(() => {
+    if (inputValue) {
+      setShowDropdown(suggestions.length > 0);
+      setFilteredSuggestions(suggestions);
+    } else {
+      setShowDropdown(false);
+      setFilteredSuggestions([]);
+    }
+  }, [inputValue, suggestions]);
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
@@ -89,9 +97,9 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
       inputElement.value = "";
     }
     setInputValue("");
-    onChange?.({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
-    setFilteredSuggestions([]);
-    setShowDropdown(false);
+    onChange?.({
+      target: { value: "" },
+    } as React.ChangeEvent<HTMLInputElement>);
   };
 
   return (
@@ -99,12 +107,10 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
       <InputGroup>
         {isBackButton && (
           <InputLeftElement>
-            <Image
-              src={backIcon}
-              alt="Back"
-              cursor="pointer"
-              width="8.71px"
-              height="15.8px"
+            <IconByName
+              boxSize={6}
+              name="ChevronLeftIcon"
+              color={"primary.500"}
               onClick={() => isBackButton?.()}
             />
           </InputLeftElement>
@@ -112,11 +118,10 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
         <Input
           type="text"
           placeholder={placeholder}
-          value={inputValue || value} 
+          value={inputValue}
           onChange={handleInputChange}
           borderWidth="2px"
           borderRadius="8px"
-          height="46px"
           bg="white"
           onKeyDown={onKeyDown}
           pl={isBackButton ? "45px" : "16px"}
@@ -125,22 +130,13 @@ const CustomInputWithDropdown: React.FC<CustomInputProps> = ({
         />
         <InputRightElement>
           {inputValue && showClearIcon ? (
-            <Image
-              src={close}
-              alt="close"
-              cursor="pointer"
+            <IconByName
+              color={"primary.500"}
               onClick={handleClear}
+              name="CloseIcon"
             />
           ) : (
-            <Image
-              src={icon}
-              alt="Search"
-              style={{
-                width: "20px",
-                height: "20px",
-                filter: `invert(27%) sepia(84%) saturate(2448%) hue-rotate(165deg) brightness(95%) contrast(92%)`,
-              }}
-            />
+            <IconByName name="SearchIcon" color={"primary.500"} />
           )}
         </InputRightElement>
       </InputGroup>

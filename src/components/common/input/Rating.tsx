@@ -49,7 +49,7 @@ const StarRating: React.FC<StarRatingProps> = ({
     <HStack
       width={"80%"}
       mx={"auto"}
-      my={4}
+      my={1}
       justifyContent={"space-evenly"}
       {...hStackProps}
     >
@@ -62,7 +62,8 @@ const StarRating: React.FC<StarRatingProps> = ({
         >
           <IconByName
             isDisabled
-            name={"StarIcon"}
+            name={"KidStarIcon"}
+            boxSize={"24px"}
             color={index < rating ? "yellow.500" : "gray.300"}
             {...iconProps}
           />

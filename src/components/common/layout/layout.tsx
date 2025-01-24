@@ -152,7 +152,7 @@ const Layout: React.FC<Props> = ({
         onClose={cancel}
         title={modalContent.title}
         showIcon={true}
-        maxWidth="380px"
+        maxWidth="350px"
         height="182px"
         footerContent={
           <PrimaryButton
@@ -162,11 +162,11 @@ const Layout: React.FC<Props> = ({
             }}
             width="100%"
             color="white"
-            bg="primary.500"
             fontFamily="Inter"
             fontWeight="700"
             fontSize="16px"
             lineHeight="24px"
+            p="0"
           >
             {t("POPUP_LOGOUT")}
           </PrimaryButton>

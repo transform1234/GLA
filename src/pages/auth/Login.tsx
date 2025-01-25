@@ -25,6 +25,8 @@ import PopupModal from "../../components/common/PopupModal";
 import CustomHeading from "../../components/common/typography/Heading";
 import { fetchToken } from "../../services/auth/auth";
 import fieldConfig from "../../utils/constants/fieldConfig";
+
+// conflict resolved
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -43,9 +45,7 @@ export default function Login() {
     labels: [] as { code: string; translationKey: string }[],
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   const { t } = useTranslation();
-
   const state = import.meta.env.VITE_APP_STATE;
 
   const getModalExample = (type: "username" | "password") => {
@@ -69,12 +69,6 @@ export default function Login() {
     });
     onOpen();
   };
-
-  const userName = localStorage.getItem("name");
-  const grade = localStorage.getItem("grade");
-  const medium = localStorage.getItem("medium");
-  const id = localStorage.getItem("id");
-  const board = localStorage.getItem("board");
 
   const validate = () => {
     let arr: { username?: string; password?: string } = {};
@@ -143,7 +137,7 @@ export default function Login() {
           </Box>
 
           {/* Centered content */}
-          <Center height={"100vh"}>
+          <Center height={`calc(100vh - ${456 + 66}px)`} mt="66px">
             <VStack width={"100%"} p="4" spacing={4}>
               <Box p="4">
                 <Image
@@ -154,18 +148,34 @@ export default function Login() {
                   transform="scale(0.9)"
                 />
               </Box>
-              <VStack width={"100%"} align={"center"} spacing={6}>
-                <CustomHeading
-                  fontFamily="Bebas Neue"
-                  fontSize="24px"
-                  lineHeight="28px"
-                  fontWeight="400"
-                  title={t("LOGIN_TO_YOUR_ACCOUNT")}
-                  color="black"
-                />
-
+            </VStack>
+          </Center>
+          <VStack
+            width={"100%"}
+            align={"center"}
+            spacing={6}
+            p="4"
+            pb="40px"
+            pt="37px"
+          >
+            <CustomHeading
+              fontFamily="Bebas Neue"
+              fontSize="24px"
+              lineHeight="28px"
+              fontWeight="400"
+              title={t("LOGIN_TO_YOUR_ACCOUNT")}
+              color="black"
+            />
+            <VStack width={"100%"} align={"center"} spacing={"46px"}>
+              <VStack width={"100%"} align={"center"} spacing={"33px"}>
                 <FormControl isInvalid={!!errors.username}>
-                  <FormLabel>
+                  <FormLabel
+                    m="0"
+                    mb="2"
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
                     {t("LOGIN_USERNAME")}
                     <Link
                       onClick={() =>
@@ -191,7 +201,13 @@ export default function Login() {
                 </FormControl>
 
                 <FormControl isInvalid={!!errors.password}>
-                  <FormLabel>
+                  <FormLabel
+                    m="0"
+                    mb="2"
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
                     {t("LOGIN_PASSWORD")}
                     <Link
                       onClick={() =>
@@ -207,6 +223,7 @@ export default function Login() {
                       {t("LOGIN_FORGOT_PASSWORD")}
                     </Link>
                   </FormLabel>
+
                   <CustomInput
                     placeholder={t("LOGIN_ENTER_PASSWORD")}
                     value={password}
@@ -216,134 +233,135 @@ export default function Login() {
                     errorMessage={errors.password}
                   />
                 </FormControl>
-
-                <PrimaryButton
-                  width={"100%"}
-                  onClick={handleLogin}
-                  height="56px"
-                  disabled={isLoginDisabled}
-                >
-                  {t("LOGIN")}
-                </PrimaryButton>
-
-                {errors.alert && (
-                  <Alert status="error" mt={4}>
-                    <AlertIcon />
-                    <AlertTitle>{errors.alert}</AlertTitle>
-                  </Alert>
-                )}
               </VStack>
 
-              <PopupModal
-                isOpen={isOpen}
-                onClose={onClose}
-                title={modalContent.title}
-                showIcon={true}
-                maxWidth="380px"
-                height="460px"
-                footerContent={
-                  <PrimaryButton onClick={onClose} height="56px">
-                    <Text
-                      lineHeight="24px"
-                      fontSize="16px"
-                      fontWeight="700"
-                      color="white"
-                    >
-                      {" "}
-                      {t("POPUP_UNDERSTOOD")}
-                    </Text>
-                  </PrimaryButton>
-                }
+              <PrimaryButton
+                width={"100%"}
+                onClick={handleLogin}
+                height="56px"
+                disabled={isLoginDisabled}
+                p={0}
               >
-                <CustomHeading
-                  fontSize="14px"
-                  lineHeight="21px"
-                  fontWeight="400"
-                  fontFamily="Inter"
-                  title={modalContent.message}
-                  color="textSecondary"
-                />
-
-                <Box display="flex" justifyContent="center" mt={4}>
-                  {modalContent.labels?.map((item: any) => (
-                    <Box
-                      key={item}
-                      p="5px 10px"
-                      bg="backgroundGrey"
-                      fontWeight="bold"
-                      fontSize="14px"
-                    >
-                      {item.code}
-                    </Box>
-                  ))}
-                </Box>
-
-                <Box color="textPrimary" textAlign="left" mt={4}>
-                  {modalContent.labels?.map((labelItem: any) => (
-                    <CustomHeading
-                      key={labelItem.code}
-                      paddingLeft="28px"
-                      color="textSecondary"
-                      title=""
-                    >
-                      <Text as="strong" fontWeight="700">
-                        {labelItem.code}:
-                      </Text>
-                      <Text as="span" color="textSecondary">
-                        {t(labelItem.translationKey)}
-                      </Text>
-                    </CustomHeading>
-                  ))}
-                </Box>
-
-                {modalContent.example && (
-                  <Box>
-                    <CustomHeading
-                      marginTop="10px"
-                      fontSize="12px"
-                      padding="10px"
-                      gap="10px"
-                      borderRadius="4px"
-                      minHeight="68px"
-                      minWidth="333px"
-                      color="textSecondary"
-                      bg="backgroundHighlight"
-                      title=""
-                    >
-                      <Text
-                        as="strong"
-                        variant="italicText"
-                        lineHeight="16px"
-                        fontSize="12px"
-                        fontWeight="700"
-                      >
-                        {t("POPUP_EXAMPLE")}:
-                      </Text>{" "}
-                      <Text
-                        as="span"
-                        variant="italicText"
-                        lineHeight="16px"
-                        fontSize="12px"
-                        fontWeight="700"
-                        color="textSecondary"
-                      >
-                        {modalContent.example}
-                        <Text
-                          variant="italicText"
-                          as="span"
-                          fontWeight="700"
-                          fontSize="12px"
-                          wordBreak="break-word"
-                        >
-                          "ANKU30121988"{" "}
-                        </Text>
-                      </Text>
-                    </CustomHeading>
-                  </Box>
-                )}
-              </PopupModal>
+                {t("LOGIN")}
+              </PrimaryButton>
             </VStack>
-          </Center>
+
+            {errors.alert && (
+              <Alert status="error" mt={4}>
+                <AlertIcon />
+                <AlertTitle>{errors.alert}</AlertTitle>
+              </Alert>
+            )}
+          </VStack>
+
+          <PopupModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title={modalContent.title}
+            showIcon={true}
+            maxWidth="380px"
+            height="460px"
+            footerContent={
+              <PrimaryButton onClick={onClose} height="56px">
+                <Text
+                  lineHeight="24px"
+                  fontSize="16px"
+                  fontWeight="700"
+                  color="white"
+                >
+                  {" "}
+                  {t("POPUP_UNDERSTOOD")}
+                </Text>
+              </PrimaryButton>
+            }
+          >
+            <CustomHeading
+              fontSize="14px"
+              lineHeight="21px"
+              fontWeight="400"
+              fontFamily="Inter"
+              title={modalContent.message}
+              color="textSecondary"
+            />
+
+            <Box display="flex" justifyContent="center" mt={4}>
+              {modalContent.labels?.map((item: any) => (
+                <Box
+                  key={item}
+                  p="5px 10px"
+                  bg="backgroundGrey"
+                  fontWeight="bold"
+                  fontSize="14px"
+                >
+                  {item.code}
+                </Box>
+              ))}
+            </Box>
+
+            <Box color="textPrimary" textAlign="left" mt={4}>
+              {modalContent.labels?.map((labelItem: any) => (
+                <CustomHeading
+                  key={labelItem.code}
+                  paddingLeft="28px"
+                  color="textSecondary"
+                  title=""
+                >
+                  <Text as="strong" fontWeight="700">
+                    {labelItem.code}:
+                  </Text>
+                  <Text as="span" color="textSecondary">
+                    {t(labelItem.translationKey)}
+                  </Text>
+                </CustomHeading>
+              ))}
+            </Box>
+
+            {modalContent.example && (
+              <Box>
+                <CustomHeading
+                  marginTop="10px"
+                  fontSize="12px"
+                  padding="10px"
+                  gap="10px"
+                  borderRadius="4px"
+                  minHeight="68px"
+                  minWidth="333px"
+                  color="textSecondary"
+                  bg="backgroundHighlight"
+                  title=""
+                >
+                  <Text
+                    as="strong"
+                    variant="italicText"
+                    lineHeight="16px"
+                    fontSize="12px"
+                    fontWeight="700"
+                  >
+                    {t("POPUP_EXAMPLE")}:
+                  </Text>{" "}
+                  <Text
+                    as="span"
+                    variant="italicText"
+                    lineHeight="16px"
+                    fontSize="12px"
+                    fontWeight="700"
+                    color="textSecondary"
+                  >
+                    {modalContent.example}
+                    <Text
+                      variant="italicText"
+                      as="span"
+                      fontWeight="700"
+                      fontSize="12px"
+                      wordBreak="break-word"
+                    >
+                      "ANKU30121988"{" "}
+                    </Text>
+                  </Text>
+                </CustomHeading>
+              </Box>
+            )}
+          </PopupModal>
         </Box>
       </Center>
     </Layout>

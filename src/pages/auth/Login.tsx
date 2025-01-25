@@ -25,6 +25,8 @@ import PopupModal from "../../components/common/PopupModal";
 import CustomHeading from "../../components/common/typography/Heading";
 import { fetchToken } from "../../services/auth/auth";
 import fieldConfig from "../../utils/constants/fieldConfig";
+
+// conflict resolved
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

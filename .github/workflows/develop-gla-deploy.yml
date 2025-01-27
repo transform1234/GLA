@@ -69,27 +69,12 @@ jobs:
           cd /home/prasad/gla-player-dist/
           ./deploy.sh
           ENDSSH
-      # - name: Copy Package
-      #   run: |
-      #     sh ./scripts/pack-prod-build.sh
-      #     rsync shiksha-ui.tar ${{ secrets.USERNAME_GLA_DEV }}@${{ secrets.HOST_DNS_GLA_DEV }}:/var/www/alt-gla-dev.uniteframework.io/shiksha-ui.tar
 
-      # - name: Deploy
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.HOST_DNS_GLA_DEV }}
-      #     username: ${{ secrets.USERNAME_GLA_DEV }}
-      #     key: ${{ secrets.EC2_SSH_KEY_GLA_DEV }}
-      #     script: |
-      #       cd /var/www/alt-gla-dev.uniteframework.io/public
-      #       rm -rf *
-      #       cp ../shiksha-ui.tar ./
-      #       tar -xvf shiksha-ui.tar .
 
-  #     - name: Notify on Slack channel
-  #       uses: iRoachie/slack-github-actions@v2.3.2
-  #       env:
-  #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_NEWALTV1_URL }}
-  #       with:
-  #         status: ${{ job.status }}
-  #       if: ${{ always() }}
+      - name: Notify on Slack channel
+        uses: iRoachie/slack-github-actions@v2.3.2
+        env:
+           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+           status: ${{ job.status }}
+        if: ${{ always() }}

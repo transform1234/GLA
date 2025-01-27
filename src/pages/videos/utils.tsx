@@ -1,4 +1,7 @@
-import React, { ReactElement } from "react";
+import { getSid } from "../../services/utilService";
+const VITE_APP_ID = import.meta.env.VITE_APP_ID;
+const VITE_APP_VER = import.meta.env.VITE_APP_VER;
+const VITE_APP_PID = import.meta.env.VITE_APP_PID;
 
 export const getTrackData = (data: any) => {
   let scoreDetails: any;
@@ -121,15 +124,14 @@ export const handleEvent = ({ data }: any) => {
       );
     }
   }
-
   if (telemetry?.eid === "ASSESS") {
     const edata = telemetry?.edata;
     const sectionName = data?.children?.find(
       (e: any) => e?.identifier === telemetry?.edata?.item?.sectionId
     )?.name;
 
-    if (trackData.find((e: any) => e?.item?.id === edata?.item?.id)) {
-      const filterData = trackData.filter(
+    if (trackData?.find((e: any) => e?.item?.id === edata?.item?.id)) {
+      const filterData = trackData?.filter(
         (e: any) => e?.item?.id !== edata?.item?.id
       );
       trackData = [
@@ -141,7 +143,7 @@ export const handleEvent = ({ data }: any) => {
       ];
     } else {
       trackData = [
-        ...trackData,
+        ...(trackData || []),
         {
           ...edata,
           sectionName,
@@ -216,4 +218,63 @@ export const customLog = (...data: any) => {
   if (localStorage.getItem("log") === "true") {
     console.log(...data);
   }
+};
+
+export const updateCdataTag = (data: any[]) => {
+  const playerContext = getPlayerTelemetryContext();
+  return {
+    ...playerContext,
+    cdata: [...playerContext.cdata, ...data],
+    tags: [...playerContext.tags, ...data],
+  };
+};
+
+export const getPlayerTelemetryContext = () => {
+  return {
+    sid: getSid(),
+    uid: localStorage.getItem("id"),
+    did: localStorage.getItem("did"), // send for ifram data
+    cdata: [
+      {
+        id: localStorage.getItem("grade"),
+        type: "grade",
+      },
+      {
+        id: localStorage.getItem("medium"),
+        type: "medium",
+      },
+      {
+        id: localStorage.getItem("board"),
+        type: "board",
+      },
+      {
+        id: localStorage.getItem("subject"),
+        type: "subject",
+      },
+    ],
+    tags: [
+      {
+        id: localStorage.getItem("grade"),
+        type: "grade",
+      },
+      {
+        id: localStorage.getItem("medium"),
+        type: "medium",
+      },
+      {
+        id: localStorage.getItem("board"),
+        type: "board",
+      },
+      {
+        id: localStorage.getItem("subject"),
+        type: "subject",
+      },
+    ],
+    pdata: {
+      // optional
+      id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"
+      ver: VITE_APP_VER, // Version of the Application
+      pid: VITE_APP_PID, // Optional. In case the component is distributed, then which instance of that component
+    },
+  };
 };

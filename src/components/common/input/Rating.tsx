@@ -55,13 +55,13 @@ const StarRating: React.FC<StarRatingProps> = ({
     >
       {[...Array(totalStars)].map((_, index) => (
         <Box
-          key={_}
+          key={`key-${index}`}
           onClick={() => handleStarClick(index)}
           justifyContent={"center"}
           alignItems={"center"}
+          cursor="pointer"
         >
           <IconByName
-            isDisabled
             name={"KidStarIcon"}
             boxSize={"24px"}
             color={index < rating ? "yellow.500" : "gray.300"}

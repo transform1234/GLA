@@ -9,6 +9,7 @@ import Loading from "../../components/common/Loading";
 import { fetchSearchResults } from "../../services/content";
 import { getSubjectList } from "../../services/home";
 import { impression } from "../../services/telemetry";
+import BottomComponent from "../../components/common/layout/BottomComponent";
 
 type Filter = {
   searchTerm: string;
@@ -141,12 +142,20 @@ const Watch = (prop: any) => {
         onSearchChange: handleSearchChange,
         onSubjectSelect: handleSelectSubject,
         points: prop?.authUser?.points,
-        keyDownSearchFilter: { from : "watch" , subject : JSON.parse(localStorage.getItem("watchFilter") || "{}").subject },
+        keyDownSearchFilter: {
+          from: "watch",
+          subject: JSON.parse(localStorage.getItem("watchFilter") || "{}")
+            .subject,
+        },
         bottomComponent: (
           <BottomComponent
-            subjects={subjects}
-            selectedSubject={filter.subject || ""}
-            onSelectSubject={handleSelectSubject}
+            items={[
+              { subject: "all", value: "" },
+              ...subjects.map((e: any) => ({ ...e, value: e.subject })),
+            ]}
+            selectedItem={filter.subject || ""}
+            labelKey="subject"
+            onSelectItem={handleSelectSubject}
           />
         ),
       }}
@@ -186,67 +195,3 @@ const Watch = (prop: any) => {
 };
 
 export default Watch;
-
-interface BottomComponentProps {
-  subjects: Array<any>;
-  selectedSubject: string | null;
-  onSelectSubject: (subject: string) => void;
-}
-
-const BottomComponent: React.FC<BottomComponentProps> = ({
-  subjects,
-  selectedSubject,
-  onSelectSubject,
-}) => {
-  return (
-    <HStack
-      pt={5}
-      gap={2}
-      overflowX="auto"
-      sx={{
-        "::-webkit-scrollbar": {
-          width: "0",
-        },
-      }}
-    >
-      {/* Default ALL Subject Tag */}
-      <Box
-        bg={selectedSubject === "" ? "primary.500" : "#E3F9FF33"}
-        borderColor={selectedSubject === "" ? "none" : "white"}
-        border={selectedSubject === "" ? "none" : "1px solid"}
-        color="white"
-        fontFamily="Inter"
-        fontWeight="700"
-        cursor="pointer"
-        px="10px"
-        py="7px"
-        whiteSpace="nowrap"
-        rounded={8}
-        onClick={() => onSelectSubject("")}
-      >
-        ALL
-      </Box>
-
-      {subjects &&
-        subjects.map((sub: any) => (
-          <Box
-            key={sub.subject}
-            bg={sub.subject === selectedSubject ? "primary.500" : "#E3F9FF33"}
-            borderColor={sub.subject === selectedSubject ? "none" : "white"}
-            border={sub.subject === selectedSubject ? "none" : "1px solid"}
-            color="white"
-            fontFamily="Inter"
-            fontWeight="700"
-            cursor="pointer"
-            px="10px"
-            py="7px"
-            whiteSpace="nowrap"
-            rounded={8}
-            onClick={() => onSelectSubject(sub.subject)}
-          >
-            {sub.subject}
-          </Box>
-        ))}
-    </HStack>
-  );
-};

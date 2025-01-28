@@ -7,6 +7,8 @@ interface LoadingComponentProps {
   message?: string; // Optional prop for custom loading message
   showSpinner?: boolean; // Optional prop to handle spinner visibility
   onBackClick?: () => void; // Optional prop to handle back button click
+  width?: string | number; // Optional prop for custom width
+  height?: string | number; // Optional prop for custom height
 }
 
 const Loading: React.FC<LoadingComponentProps> = ({

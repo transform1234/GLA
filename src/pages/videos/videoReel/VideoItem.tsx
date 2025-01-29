@@ -11,6 +11,7 @@ import VideoEnd from "./VideoEnd";
 
 const VideoItem: React.FC<{
   programID: string | undefined;
+  subject: string;
   id: string;
   qml_id: string;
   isVisible: boolean;
@@ -22,6 +23,7 @@ const VideoItem: React.FC<{
 }> = memo(
   ({
     id,
+    subject,
     qml_id,
     isVisible,
     adapter,
@@ -43,7 +45,6 @@ const VideoItem: React.FC<{
     });
     const [lessonQml, setLessonQml] = useState<{
       mimeType: string;
-      subject?: string | [];
     }>({ mimeType: "" });
     const [heightPerItem, setHeightPerItem] = useState<{
       width: number;
@@ -60,7 +61,6 @@ const VideoItem: React.FC<{
     useEffect(() => {
       if (!isVisible) return;
       const inti = async () => {
-        console.log(!localStorage.getItem("videoReelIntro"));
         setVideoReelIntro(!localStorage.getItem("videoReelIntro"));
         setIsLoading(true);
         if (adapter) {
@@ -166,12 +166,14 @@ const VideoItem: React.FC<{
                 width,
                 height,
                 adapter,
+                subject,
               }}
             />
             <AssessmentPlayer
               {...{
                 qml_id,
                 videoEndId,
+                subject,
                 lessonQml,
                 heightPerItem,
                 setHeightPerItem,

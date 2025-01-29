@@ -9,7 +9,7 @@ const TELEMETRYBATCH = import.meta.env.VITE_TELEMETRYBATCH || 20;
 
 interface ContentPlayerProps {
   video_id?: string;
-  lesson?: { mimeType: string };
+  lesson?: { mimeType: string; subject?: string | string[] };
   thumbnailUrl?: string;
   qml_id?: string;
   videoEndId?: { id?: string };
@@ -61,6 +61,10 @@ const ContentPlayer: React.FC<ContentPlayerProps> = ({
             public_url: VITE_PLAYER_URL,
             adapter: adapter || "",
             playerContext: updateCdataTag([
+              {
+                id: lesson?.subject,
+                type: "subject",
+              },
               {
                 id: qml_id,
                 type: "question_set",

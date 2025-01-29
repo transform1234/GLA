@@ -1,7 +1,6 @@
-import { Alert, AlertIcon, AlertTitle, Box, Center } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { debounce } from "lodash"; // remove uniqueId
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FixedSizeList as List } from "react-window";
 import CoinPopover from "../../components/common/cards/CoinPopover";
@@ -10,10 +9,7 @@ import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import Loading from "../../components/common/Loading";
 import * as content from "../../services/content";
 import { callBatch } from "../../services/telemetry";
-import { customLog, handleEvent, updateCdataTag } from "./utils";
-import AssessmentPlayer from "./videoReelComponent/AssessmentPlayer";
-import ContentPlayer from "./videoReelComponent/ContentPlayer";
-import CustomSkeleton from "./videoReelComponent/CustomSkeleton";
+import { customLog, handleEvent } from "./utils";
 import { TopIcon } from "./videoReelComponent/TopIcon";
 import VideoItem from "./videoReelComponent/VideoItem";
 const TELEMETRYBATCH = import.meta.env.VITE_TELEMETRYBATCH || 20;

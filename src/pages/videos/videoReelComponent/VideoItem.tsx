@@ -49,7 +49,6 @@ const VideoItem: React.FC<{
       width: number;
       height: number;
     }>({ width: 0, height: 0 });
-    const subjectRef = useRef<HTMLDivElement>(null);
     const handleVideoIntro = (e: boolean) => {
       setVideoReelIntro(e);
       localStorage.setItem("videoReelIntro", "true");

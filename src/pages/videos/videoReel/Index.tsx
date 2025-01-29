@@ -100,12 +100,19 @@ const VideoReel: React.FC<{
     };
   }, [visibleIndex, videos?.length]);
 
+  const decunsingFunction = debounce(async () => {
+    if (telemetryListRef.current.length >= TELEMETRYBATCH) {
+      await callReaminigTelemetry(
+        telemetryListRef?.current || [],
+        "Call the telemetry API based on batch length"
+      );
+      telemetryListRef.current = [];
+    }
+  }, 300);
+
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
-    if (
-      data?.data?.iframeId &&
-      telemetryListRef.current.length < TELEMETRYBATCH
-    ) {
+    if (data?.data?.iframeId) {
       telemetryListRef.current = [...telemetryListRef.current, data?.data];
       customLog(
         telemetryListRef.current,
@@ -113,16 +120,7 @@ const VideoReel: React.FC<{
         data?.data?.iframeId &&
           telemetryListRef.current.length >= TELEMETRYBATCH
       );
-    }
-    if (
-      data?.data?.iframeId &&
-      telemetryListRef.current.length >= TELEMETRYBATCH
-    ) {
-      await callReaminigTelemetry(
-        telemetryListRef?.current || [],
-        "Call the telemetry API based on batch length"
-      );
-      telemetryListRef.current = [];
+      await decunsingFunction();
     }
 
     if (!result || !result?.type) return;

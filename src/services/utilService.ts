@@ -14,6 +14,9 @@ export function uniqueId(length = 32) {
 }
 
 export function getSid() {
+  if (!localStorage.getItem("token")) {
+    return "";
+  }
   const tokenDecoded: any = jwtDecode(localStorage.getItem("token") || "");
   const date = new Date(
     Date.now() + new Date().getTimezoneOffset() * 60 * 1000

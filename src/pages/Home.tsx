@@ -229,7 +229,11 @@ export default function Homepage(props: any) {
         progress: progress,
         recentSearch: recentSearch,
         points: authUser?.points,
-        keyDownSearchFilter: { from : "home" , subject : localStorage.getItem("subject") || ""}
+        keyDownSearchFilter: {
+          from: "home",
+          subject: localStorage.getItem("subject") || "",
+        },
+        userInfo: true,
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">

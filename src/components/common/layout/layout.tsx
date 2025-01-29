@@ -38,6 +38,17 @@ interface Props {
       from: string;
       subject: string;
     };
+    userInfo?: boolean;
+    backIconAndHeading?: {
+      icon: boolean;
+      heading: string;
+      backTo: string;
+    };
+    isLeaderBoardFilters?: {
+      icon: boolean;
+      heading: string;
+      backTo: string;
+    };
   };
 }
 

@@ -51,7 +51,7 @@ const SearchPage: React.FC = () => {
     const payload = {
       searchQuery: search || "",
       programId: localStorage.getItem("programID"),
-      subject: subject ,
+      subject: subject,
       limit: 500,
       isTelemetryEnabled: search === query ? false : true,
     };
@@ -81,6 +81,7 @@ const SearchPage: React.FC = () => {
       _header={{
         searchTerm: searchTerm,
         onSearchChange: setSearchTerm,
+        userInfo: false,
       }}
     >
       {loading && <Loading />}

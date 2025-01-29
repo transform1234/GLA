@@ -191,6 +191,12 @@ const LeaderboardScreen: React.FC = (props: any) => {
         ),
         onFilterClick: () => handleCollapseToggle("view"),
         selectedView: filter?.type,
+        userInfo: false,
+        isLeaderBoardFilters: {
+          icon: true,
+          heading: t("LEADERBOARD"),
+          backTo: "home",
+        },
       }}
     >
       {activeCollapse !== "none" && (

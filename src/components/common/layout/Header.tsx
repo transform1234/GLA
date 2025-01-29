@@ -7,7 +7,6 @@ import {
   HStack,
   Image,
   Progress,
-  Spacer,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -41,6 +40,17 @@ interface HeaderProps {
     from: string;
     subject: string;
   };
+  userInfo?: boolean;
+  backIconAndHeading?: {
+    icon: boolean;
+    heading: string;
+    backTo: string;
+  };
+  isLeaderBoardFilters?: {
+    icon: boolean;
+    heading: string;
+    backTo: string;
+  };
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -56,6 +66,9 @@ const Header: React.FC<HeaderProps> = ({
   recentSearch = [],
   width,
   keyDownSearchFilter,
+  userInfo,
+  backIconAndHeading,
+  isLeaderBoardFilters,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -64,9 +77,6 @@ const Header: React.FC<HeaderProps> = ({
   const headerParams = new URLSearchParams(location.search);
   const from = headerParams.get("from");
   const navigate = useNavigate();
-  const isWatchPage = location.pathname === "/watch";
-  const isSearchPage = location.pathname === "/search";
-  const isLeaderboardPage = location.pathname === "/leaderboard";
   const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
   const debouncedSearch = debounce((value: string) => {
     const trimmedValue = value.trim();
@@ -129,13 +139,14 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleBackNavigation = () => {
-    if (from) {
+    if (backIconAndHeading?.backTo) {
+      navigate(`/${backIconAndHeading?.backTo}`);
+    } else if (from) {
       navigate(`/${from}`);
     } else {
       navigate("/home");
     }
   };
-  
 
   return (
     <VStack
@@ -149,7 +160,7 @@ const Header: React.FC<HeaderProps> = ({
       align={"stretch"}
       width={width}
     >
-      {isLeaderboardPage && (
+      {isLeaderBoardFilters && (
         <HStack alignItems="center" justifyContent={"space-between"} mb={4}>
           {/* Back Icon */}
           <HStack spacing={2}>
@@ -158,7 +169,7 @@ const Header: React.FC<HeaderProps> = ({
               color="white"
               alt="Back"
               cursor="pointer"
-              onClick={() => navigate("/home")}
+              onClick={handleBackNavigation}
             />
 
             <Text
@@ -168,7 +179,7 @@ const Header: React.FC<HeaderProps> = ({
               color="white"
               fontFamily="Bebas Neue"
             >
-              {t("LEADERBOARD")}
+              {isLeaderBoardFilters?.heading}
             </Text>
           </HStack>
           <HStack spacing={2}>
@@ -207,26 +218,30 @@ const Header: React.FC<HeaderProps> = ({
         </HStack>
       )}
 
-      {isWatchPage && (
+      {backIconAndHeading && (
         <HStack justifyContent={"space-between"}>
           <HStack>
-            <IconByName
-              name={"BackIcon"}
-              color="white"
-              alt="Back"
-              cursor="pointer"
-              width="2em"
-              height="2em"
-              onClick={handleBackNavigation}
-            />
-            <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
-              {t("HOME_WATCH")}
-            </Text>
+            {backIconAndHeading.icon && (
+              <IconByName
+                name={"BackIcon"}
+                color="white"
+                alt="Back"
+                cursor="pointer"
+                width="2em"
+                height="2em"
+                onClick={handleBackNavigation}
+              />
+            )}
+            {backIconAndHeading.heading && (
+              <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
+                {backIconAndHeading.heading}
+              </Text>
+            )}
           </HStack>
           {points && <CoinPopover points={points} />}
         </HStack>
       )}
-      {!isWatchPage && !isSearchPage && !isLeaderboardPage && (
+      {userInfo && (
         <VStack align={"stretch"} spacing={3}>
           <HStack justifyContent="space-between" alignItems="center" w="100%">
             {/* Left-hand side: Palooza logo */}
@@ -235,7 +250,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Right-hand side: SearchIcon and NotificationIcon */}
             <HStack spacing={4}>
               {points && <CoinPopover points={points} />}
-              {isScrolled && progress !== "" && (
+              {progress && isScrolled && progress !== "" && (
                 <CircularProgress
                   value={Math.round(Number(progress) || 0)}
                   color="progressBarGreen.500"
@@ -258,7 +273,7 @@ const Header: React.FC<HeaderProps> = ({
                   boxSize="1.5rem"
                   onClick={() => navigate("/home")}
                 /> */}
-              {isScrolled && !isOpen && (
+              {onSearchChange && isScrolled && !isOpen && (
                 <IconByName
                   name={"SearchIcon"}
                   minW="24px"
@@ -297,7 +312,7 @@ const Header: React.FC<HeaderProps> = ({
                   textTransform="capitalize"
                 />
               </VStack>
-              {progress !== "" && (
+              {progress && progress !== "" && (
                 <Box w={"100%"} flex={15} rounded={"8"} p="2.5" bg={"#355F6A"}>
                   <HStack align={"center"}>
                     <VStack align={"stretch"} w={"100%"}>
@@ -337,7 +352,7 @@ const Header: React.FC<HeaderProps> = ({
         </VStack>
       )}
       <Collapse
-        in={isOpen || isWatchPage || isSearchPage}
+        in={isOpen}
         transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
       >
         <CustomInputWithDropdown
@@ -345,7 +360,7 @@ const Header: React.FC<HeaderProps> = ({
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={handleBackNavigation} 
+          isBackButton={handleBackNavigation}
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions || []}
@@ -355,25 +370,21 @@ const Header: React.FC<HeaderProps> = ({
         />
       </Collapse>
 
-      {!isOpen &&
-        !isScrolled &&
-        !isWatchPage &&
-        !isSearchPage &&
-        !isLeaderboardPage && (
-          <CustomInputWithDropdown
-            value={searchTerm || ""}
-            placeholder={t("HOME_SEARCH")}
-            icon={searchIcon}
-            showClearIcon={true}
-            isBackButton={handleBackNavigation}
-            onChange={handleSearchChange}
-            onKeyDown={handleKeyDown}
-            suggestions={suggestions}
-            onSuggestionClick={onSuggestionClick}
-            onFocus={(e) => handleInputFocus("input")}
-            onBlur={(e) => handleInputBlur("input")}
-          />
-        )}
+      {!isOpen && !isScrolled && onSearchChange && (
+        <CustomInputWithDropdown
+          value={searchTerm || ""}
+          placeholder={t("HOME_SEARCH")}
+          icon={searchIcon}
+          showClearIcon={true}
+          isBackButton={handleBackNavigation}
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
+          suggestions={suggestions}
+          onSuggestionClick={onSuggestionClick}
+          onFocus={(e) => handleInputFocus("input")}
+          onBlur={(e) => handleInputBlur("input")}
+        />
+      )}
       {isInputFocused.length > 0 &&
         suggestions?.length === 0 &&
         !isScrolled && (

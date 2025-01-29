@@ -2,7 +2,7 @@ import { getSid } from "../../services/utilService";
 const VITE_APP_ID = import.meta.env.VITE_APP_ID;
 const VITE_APP_VER = import.meta.env.VITE_APP_VER;
 const VITE_APP_PID = import.meta.env.VITE_APP_PID;
-
+import isMobile from "is-mobile";
 export const getTrackData = (data: any) => {
   let scoreDetails: any;
   if (
@@ -230,46 +230,34 @@ export const updateCdataTag = (data: any[]) => {
 };
 
 export const getPlayerTelemetryContext = () => {
+  const data = [
+    {
+      id: localStorage.getItem("grade"),
+      type: "grade",
+    },
+    {
+      id: localStorage.getItem("medium"),
+      type: "medium",
+    },
+    {
+      id: localStorage.getItem("board"),
+      type: "board",
+    },
+    {
+      id: isMobile() ? "mobile" : "web",
+      type: "device_type",
+    },
+    {
+      id: navigator.userAgent,
+      type: "user_agent",
+    },
+  ];
   return {
     sid: getSid(),
     uid: localStorage.getItem("id"),
     did: localStorage.getItem("did"), // send for ifram data
-    cdata: [
-      {
-        id: localStorage.getItem("grade"),
-        type: "grade",
-      },
-      {
-        id: localStorage.getItem("medium"),
-        type: "medium",
-      },
-      {
-        id: localStorage.getItem("board"),
-        type: "board",
-      },
-      {
-        id: localStorage.getItem("subject"),
-        type: "subject",
-      },
-    ],
-    tags: [
-      {
-        id: localStorage.getItem("grade"),
-        type: "grade",
-      },
-      {
-        id: localStorage.getItem("medium"),
-        type: "medium",
-      },
-      {
-        id: localStorage.getItem("board"),
-        type: "board",
-      },
-      {
-        id: localStorage.getItem("subject"),
-        type: "subject",
-      },
-    ],
+    cdata: data,
+    tags: data,
     pdata: {
       // optional
       id: VITE_APP_ID, // Producer ID. For ex: For sunbird it would be "portal" or "genie"

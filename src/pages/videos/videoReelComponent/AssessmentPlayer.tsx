@@ -310,6 +310,10 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
               playerContext={updateCdataTag(
                 [
                   {
+                    id: lessonQml?.subject,
+                    type: "subject",
+                  },
+                  {
                     id: qml_id,
                     type: "learning_content",
                   },

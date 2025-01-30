@@ -44,6 +44,8 @@ interface HeaderProps {
   isShowBackButton?: boolean;
   headingTitle?: string;
   rightComponent?: React.ReactNode;
+  logoutPopup?: () => void;
+  setModalContent?: any;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -63,6 +65,8 @@ const Header: React.FC<HeaderProps> = ({
   isShowBackButton,
   headingTitle,
   rightComponent,
+  logoutPopup,
+  setModalContent,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -152,8 +156,9 @@ const Header: React.FC<HeaderProps> = ({
       align={"stretch"}
       width={width}
     >
+      {/* right component */}
       {rightComponent && rightComponent}
-
+      {/* header */}
       <HStack justifyContent={"space-between"}>
         <HStack>
           {isShowBackButton && (
@@ -173,8 +178,9 @@ const Header: React.FC<HeaderProps> = ({
             </Text>
           )}
         </HStack>
-        {points && <CoinPopover points={points} />}
+        {!userInfo && points && <CoinPopover points={points} />}
       </HStack>
+      {/* user info */}
       {userInfo && (
         <VStack align={"stretch"} spacing={3}>
           <HStack justifyContent="space-between" alignItems="center" w="100%">
@@ -281,10 +287,27 @@ const Header: React.FC<HeaderProps> = ({
                   </HStack>
                 </Box>
               )}
+              <IconByName
+                alignSelf="flex-end"
+                name={"LogoutIcon"}
+                minW="24px"
+                height="24px"
+                cursor="pointer"
+                color="white"
+                onClick={() => {
+                  logoutPopup?.();
+                  setModalContent((e: any) => ({
+                    ...e,
+                    message: "Are you sure you want to logout?",
+                  }));
+                }}
+              />
             </HStack>
           </Collapse>
         </VStack>
       )}
+
+      {/* collapsed search */}
       <Collapse
         in={isOpen}
         transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
@@ -304,6 +327,7 @@ const Header: React.FC<HeaderProps> = ({
         />
       </Collapse>
 
+      {/* search input */}
       {!isOpen && !isScrolled && onSearchChange && (
         <CustomInputWithDropdown
           value={searchTerm || ""}
@@ -319,6 +343,8 @@ const Header: React.FC<HeaderProps> = ({
           onBlur={(e) => handleInputBlur("input")}
         />
       )}
+
+      {/* resent search */}
       {isInputFocused.length > 0 &&
         suggestions?.length === 0 &&
         !isScrolled && (
@@ -377,6 +403,8 @@ const Header: React.FC<HeaderProps> = ({
             </Flex>
           </Box>
         )}
+
+      {/* Bottom Component */}
       {bottomComponent && bottomComponent}
     </VStack>
   );

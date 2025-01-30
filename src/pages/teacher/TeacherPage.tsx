@@ -1,5 +1,5 @@
-import { Text, VStack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Center, VStack } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { impression } from "../../services/telemetry";
@@ -15,12 +15,12 @@ export default function TeacherHomepage(props: any) {
   const navigate = useNavigate();
   const { authUser } = props;
   const [subjectsByClass, setSubjectsByClass] = useState<any>([]);
-
-  const fetchTeacherDataForClasses = async () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const fetchTeacherDataForClasses = React.useCallback(async () => {
     try {
       const result = await checkUserDetails();
       if (!result) {
-        console.log("No class details found.");
+        setError("No class details found.");
         return;
       }
 
@@ -39,30 +39,12 @@ export default function TeacherHomepage(props: any) {
           };
 
           const data = await getTeacherData(payload);
-          const classCompletionPercentage =
-            data?.classCompletionPercentage || "0.00";
-          const subjects =
-            data?.subjectResults?.map((assoc: any) => ({
-              subject: assoc?.subject || "No Subject",
-              averageCompletionPercentage:
-                assoc?.data?.averageCompletionPercentage || "0%",
-            })) || [];
-
-          const totalProgress = subjects.reduce(
-            (sum: any, subj: any) =>
-              sum + parseFloat(subj.averageCompletionPercentage),
-            0
-          );
-          const overallProgress = subjects.length
-            ? `${(totalProgress / subjects.length).toFixed(2)}%`
-            : "0%";
 
           // Create class object
           const classObj = {
+            ...data,
+            subjects: data?.subjectResults || [],
             title: `Class ${classDetail?.Group?.grade}`,
-            classCompletionPercentage,
-            overallProgress,
-            subjectList: subjects,
             groupId: classDetail?.Group?.groupId,
             schoolUdise: classDetail?.School?.udiseCode,
             grade: String(classDetail?.Group?.grade),
@@ -74,10 +56,12 @@ export default function TeacherHomepage(props: any) {
         })
       );
       setSubjectsByClass(classDataArray);
-    } catch (error) {
-      console.error("Error fetching teacher data for classes:", error);
+    } catch (error: any) {
+      setError(`Error fetching teacher data for classes:${error?.message}`);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [authUser]);
 
   useEffect(() => {
     fetchTeacherDataForClasses();
@@ -110,38 +94,39 @@ export default function TeacherHomepage(props: any) {
       _header={{
         userInfo: true,
       }}
+      loading={loading}
     >
-      <VStack spacing={10} align={"stretch"} px="4">
-        {error ? (
-          <Text color="red.500" fontSize="xl" textAlign="center" mt="10">
+      {error ? (
+        <Center h="calc(100vh - 123px)">
+          <CustomHeading color="red.500" textAlign="center">
             {error}
-          </Text>
-        ) : (
-          <>
-            <VStack pt="6" spacing={4}>
-              <CustomHeading
-                textAlign="center"
-                lineHeight="20px"
-                fontFamily="Inter"
-                variant="h2"
-                fontSize="20px"
-                fontWeight="500"
-                title={t("TEACHER_PAGE_VIEW_YOUR_IMPACT")}
-                color="textPrimary"
-              />
-            </VStack>
+          </CustomHeading>
+        </Center>
+      ) : (
+        <VStack spacing={10} align={"stretch"} px="4">
+          <VStack pt="6" spacing={4}>
+            <CustomHeading
+              textAlign="center"
+              lineHeight="20px"
+              fontFamily="Inter"
+              variant="h2"
+              fontSize="20px"
+              fontWeight="500"
+              title={t("TEACHER_PAGE_VIEW_YOUR_IMPACT")}
+              color="textPrimary"
+            />
+          </VStack>
 
-            {subjectsByClass?.map((group: any, index: any) => (
-              <ClassCard
-                key={group.groupId}
-                title={true}
-                data={group}
-                onClick={() => handleCardClick(group)}
-              />
-            ))}
-          </>
-        )}
-      </VStack>
+          {subjectsByClass?.map((group: any) => (
+            <ClassCard
+              key={group.groupId}
+              title={true}
+              data={group}
+              onClick={() => handleCardClick(group)}
+            />
+          ))}
+        </VStack>
+      )}
     </Layout>
   );
 }

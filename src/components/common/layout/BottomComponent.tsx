@@ -19,7 +19,7 @@ const BottomComponent: React.FC<BottomComponentProps> = memo(
   }) => {
     return (
       <HStack
-        pt={5}
+        pt={4}
         gap={2}
         overflowX="auto"
         sx={{

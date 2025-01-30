@@ -165,7 +165,7 @@ export const getTeacherData = async (payload: any) => {
     };
 
     const response = await fetch(
-      `${import.meta.env.VITE_API_AUTH_URL}${URL.CLASS_PROGRESS}`,
+      `${import.meta.env.VITE_API_AUTH_URL}${URL.PROGRESS}`,
       {
         method: "POST",
         headers: headers,

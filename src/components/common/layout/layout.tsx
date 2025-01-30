@@ -60,7 +60,7 @@ const Layout: React.FC<Props> = ({
   const footerRef = React.useRef<any>(null);
   const headerRef = React.useRef<any>(null);
 
-  const [modalContent] = useState({
+  const [modalContent, setModalContent] = useState({
     title: `${t("POPUP_CONFIRM_LOGOUT")}`,
     message: `${t("POPUP_CONFIRM_MSG")}`,
   });
@@ -135,7 +135,10 @@ const Layout: React.FC<Props> = ({
         >
           {isHeaderVisible && (
             <Box ref={headerRef}>
-              <Header {...{ width }} {..._header} />
+              <Header
+                {...{ width, logoutPopup: onOpen, setModalContent }}
+                {..._header}
+              />
             </Box>
           )}
           {children}

@@ -43,28 +43,10 @@ export default function ClassDetails(props: any) {
   const [selectedView, setSelectedView] = useState<string>("A-Z");
   const [radioSelection, setRadioSelection] = useState(selectedView);
   const navigate = useNavigate();
-  const students = [
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-    { name: "Anish", rate: "82%" },
-    { name: "Chandan Tiwari", rate: "82%" },
-  ];
+  const [students, setstudents] = useState<Array<{
+    completionPercentage: string;
+    username: string;
+  }> | null>(null);
 
   useEffect(() => {
     const fetchProgramId = async () => {
@@ -78,16 +60,15 @@ export default function ClassDetails(props: any) {
         };
 
         let data = await getTeacherData(payload);
-        const subjects =
-          data?.subjectResults?.map((assoc: any) => ({
-            subject: assoc?.subject || "No Subject",
-            averageCompletionPercentage:
-              assoc?.data?.averageCompletionPercentage || "0%",
-          })) || [];
+        let students = await getTeacherData({
+          ...payload,
+          studentProgress: "true",
+        });
+        setstudents(students?.classResults || []);
 
         const classObj = {
-          classCompletionPercentage: data?.classCompletionPercentage,
-          subjectList: subjects,
+          ...data,
+          subjects: data?.subjectResults || [],
         };
         setClassDetails(classObj);
       } catch (error) {
@@ -126,6 +107,7 @@ export default function ClassDetails(props: any) {
       setActiveCollapse("none");
     }
   };
+
   return (
     <Layout
       isFooterVisible={false}
@@ -230,10 +212,10 @@ export default function ClassDetails(props: any) {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {students.map((student, index) => (
+                  {students?.map((student, index) => (
                     <Tr key={index}>
-                      <Td>{student.name}</Td>
-                      <Td isNumeric>{student.rate}</Td>
+                      <Td>{student?.username}</Td>
+                      <Td isNumeric>{student?.completionPercentage}</Td>
                     </Tr>
                   ))}
                 </Tbody>

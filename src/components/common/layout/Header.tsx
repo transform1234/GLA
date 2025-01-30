@@ -37,6 +37,10 @@ interface HeaderProps {
   points?: number;
   recentSearch?: string[];
   width?: number;
+  keyDownSearchFilter?: {
+    from: string;
+    subject: string;
+  };
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -51,29 +55,21 @@ const Header: React.FC<HeaderProps> = ({
   points,
   recentSearch = [],
   width,
+  keyDownSearchFilter,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const headerParams = new URLSearchParams(location.search);
+  const from = headerParams.get("from");
   const navigate = useNavigate();
   const isWatchPage = location.pathname === "/watch";
   const isSearchPage = location.pathname === "/search";
   const isLeaderboardPage = location.pathname === "/leaderboard";
-  const [value, setSelectedView] = useState("School");
-  const [ref, setRef] = useState<HTMLInputElement | null>(null);
-  const RECENT_SEARCH_KEY = "recentSearches";
   const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (ref) {
-      ref.value = searchTerm || "";
-    }
-  }, [ref, searchTerm]);
-
   const debouncedSearch = debounce((value: string) => {
     const trimmedValue = value.trim();
-    if (!trimmedValue) return;
     onSearchChange?.(trimmedValue);
   }, 1000);
 
@@ -85,7 +81,11 @@ const Header: React.FC<HeaderProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value; // Type assertion here
     if (e.key === "Enter" && value.trim()) {
-      navigate(`/search?search=${encodeURIComponent(value.trim())}`);
+      const queryParams = new URLSearchParams({
+        search: value.trim(),
+        ...keyDownSearchFilter,
+      });
+      navigate(`/search?${queryParams.toString()}`);
     }
   };
 
@@ -125,9 +125,17 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleRecentSearchClick = (search: string) => {
-    console.log("Navigating to search with:", search);
     navigate(`/search?search=${encodeURIComponent(search.trim())}`);
   };
+
+  const handleBackNavigation = () => {
+    if (from) {
+      navigate(`/${from}`);
+    } else {
+      navigate("/home");
+    }
+  };
+  
 
   return (
     <VStack
@@ -187,7 +195,7 @@ const Header: React.FC<HeaderProps> = ({
               cursor="pointer"
             >
               <Text fontSize="14px" color="black">
-                {selectedView || value || "Select"}{" "}
+                {selectedView || "School" || "Select"}{" "}
               </Text>
               <IconByName
                 name="TriangleDownIcon"
@@ -209,7 +217,7 @@ const Header: React.FC<HeaderProps> = ({
               cursor="pointer"
               width="2em"
               height="2em"
-              onClick={() => navigate("/home")}
+              onClick={handleBackNavigation}
             />
             <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
               {t("HOME_WATCH")}
@@ -333,11 +341,11 @@ const Header: React.FC<HeaderProps> = ({
         transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
       >
         <CustomInputWithDropdown
-          getInputRef={(e) => setRef(e)}
+          value={searchTerm || ""}
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={true}
+          isBackButton={handleBackNavigation} 
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions || []}
@@ -353,11 +361,11 @@ const Header: React.FC<HeaderProps> = ({
         !isSearchPage &&
         !isLeaderboardPage && (
           <CustomInputWithDropdown
-            getInputRef={(e) => setRef(e)}
+            value={searchTerm || ""}
             placeholder={t("HOME_SEARCH")}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={true}
+            isBackButton={handleBackNavigation}
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions}

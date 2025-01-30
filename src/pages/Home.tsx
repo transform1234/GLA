@@ -65,7 +65,7 @@ export default function Homepage(props: any) {
 
   useEffect(() => {
     const fetchProgramId = async () => {
-      if (!authUser?.Student?.School) {
+      if (!authUser?.GroupMemberships?.[0]?.School) {
         setError(t("NO_SCHOOL_FOUND"));
         return;
       }
@@ -137,17 +137,20 @@ export default function Homepage(props: any) {
 
         if (response?.paginatedData?.length) {
           setRecentSearch((prev: any) => {
-            const updatedSearches = [
-              searchTerm,
-              ...prev.filter((term: any) => term !== searchTerm),
-            ];
-            const limitedSearches = updatedSearches.slice(0, 5); // Keep the recent searches limited to 5
+            if (searchTerm) {
+              const updatedSearches = [
+                searchTerm,
+                ...prev.filter((term: any) => term !== searchTerm),
+              ];
+              const limitedSearches = updatedSearches.slice(0, 5); // Keep the recent searches limited to 5
 
-            localStorage.setItem(
-              RECENT_SEARCH_KEY,
-              JSON.stringify(limitedSearches)
-            );
-            return limitedSearches;
+              localStorage.setItem(
+                RECENT_SEARCH_KEY,
+                JSON.stringify(limitedSearches)
+              );
+              return limitedSearches;
+            }
+            return prev;
           });
         }
       } else {
@@ -164,8 +167,10 @@ export default function Homepage(props: any) {
   };
 
   useEffect(() => {
-    if (searchTerm || searchTerm == "") {
+    if (searchTerm) {
       getVideos();
+    } else {
+      setSuggestions([]);
     }
   }, [searchTerm]);
 
@@ -224,6 +229,7 @@ export default function Homepage(props: any) {
         progress: progress,
         recentSearch: recentSearch,
         points: authUser?.points,
+        keyDownSearchFilter: { from : "home" , subject : localStorage.getItem("subject") || ""}
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">
@@ -342,7 +348,7 @@ export default function Homepage(props: any) {
             </Text>
             <Image src={arrow} alt="Arrow" boxSize="12px" />
           </HStack> */}
-              <VStack spacing={10} align={"stretch"} px="4">
+              <VStack spacing={10} align={"stretch"}>
                 <Box>
                   {videos?.length === 0 ? (
                     <Text color="red.500" fontSize="xl" textAlign="center">

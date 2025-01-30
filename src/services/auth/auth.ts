@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import URL from "../../utils/constants/url-constants.json";
 import { getProgramId } from "../home";
 import { end, start } from "../telemetry";
+import { updateCdataTag } from "../../pages/videos/utils";
 const VITE_APP_SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
 
 export const fetchToken = async (username: string, password: string) => {
@@ -30,7 +31,7 @@ export const fetchToken = async (username: string, password: string) => {
   const authUser = await checkUserDetails();
   const { grade, medium, board } =
     authUser?.data?.GroupMemberships?.[0]?.Group || {};
-  const { udiseCode } = authUser?.data?.Student?.School || {};
+  const { udiseCode } = authUser?.data?.GroupMemberships?.[0]?.School || {};
   localStorage.setItem("id", authUser?.data?.userId);
   localStorage.setItem("name", authUser?.data?.name);
   localStorage.setItem("grade", grade);
@@ -41,18 +42,6 @@ export const fetchToken = async (username: string, password: string) => {
   const programID = await getProgramId();
   localStorage.setItem("program", programID?.programId);
   const contextData = [
-    {
-      id: grade,
-      type: "grade",
-    },
-    {
-      id: medium,
-      type: "medium",
-    },
-    {
-      id: board,
-      type: "board",
-    },
     {
       id: username,
       type: "username",
@@ -67,18 +56,16 @@ export const fetchToken = async (username: string, password: string) => {
     },
   ];
 
-  const responseTelemetry = await start({
-    uid: tokenDecoded?.sub,
-    tags: contextData,
-    context: {
-      cdata: contextData,
-    },
+  const dataWithCdata = updateCdataTag(contextData);
+  const override = {
+    ...dataWithCdata,
     edata: {
       id: "login",
       type: "session",
       pageid: "login",
     },
-  });
+  };
+  const responseTelemetry = await start(override);
 
   if (!responseTelemetry.ok) {
     throw new Error("Failed to send telemetry");
@@ -92,21 +79,9 @@ export const logout = async () => {
   const authUser = await checkUserDetails();
   const { grade, medium, board } =
     authUser?.data?.GroupMemberships?.[0]?.Group || {};
-  const { udiseCode } = authUser?.data?.Student?.School || {};
+  const { udiseCode } = authUser?.data?.GroupMemberships?.[0]?.School || {};
   const programID = await getProgramId();
   const contextData = [
-    {
-      id: grade,
-      type: "grade",
-    },
-    {
-      id: medium,
-      type: "medium",
-    },
-    {
-      id: board,
-      type: "board",
-    },
     {
       id: authUser?.data?.username,
       type: "username",
@@ -123,19 +98,16 @@ export const logout = async () => {
   if (!token) {
     throw new Error("Token not available in localStorage");
   }
-  const tokenDecoded: any = jwtDecode(token);
-  const responseTelemetry = await end({
-    uid: tokenDecoded?.sub,
-    tags: contextData,
-    context: {
-      cdata: contextData,
-    },
+  const dataWithCdata = updateCdataTag(contextData);
+  const override = {
+    ...dataWithCdata,
     edata: {
       id: "logout",
       type: "session",
       pageid: "logout",
     },
-  });
+  };
+  const responseTelemetry = await end(override);
   if (!responseTelemetry.ok) {
     throw new Error("Failed to send telemetry");
   }

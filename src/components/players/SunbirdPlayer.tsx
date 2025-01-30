@@ -48,9 +48,6 @@ const SunbirdPlayer = ({
 }: SunbirdPlayerProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { mimeType } = props;
-  const typeMatch = mimeType?.match(/\/(.+)$/);
-  const fileType = typeMatch ? typeMatch[1] : "";
-  let trackData: any[] = [];
   const [url, setUrl] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 

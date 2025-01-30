@@ -188,3 +188,38 @@
 .video-js .vjs-play-progress:before {
   content: none !important;
 }
+
+.video-js {
+  position: relative;
+  display: block;
+  width: 100%; /* Ensure responsiveness */
+}
+
+.video-js::before,
+.video-js::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 128px; /* Increase for a larger gradient effect */
+  pointer-events: none;
+  z-index: 10; /* Ensure it's above the video */
+}
+
+.video-js::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.video-js::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0) 100%
+  );
+}

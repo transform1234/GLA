@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { impression } from "../../services/telemetry";
 import CustomHeading from "../../components/common/typography/Heading";
 import Layout from "../../components/common/layout/layout";
@@ -30,7 +30,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 import IconByName from "../../components/common/icons/Icon";
 import useDeviceSize from "../../components/common/layout/useDeviceSize";
 
-export default function ClassDetailsCard(props: any) {
+export default function ClassDetails(props: any) {
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const { authUser } = props;
@@ -42,7 +42,7 @@ export default function ClassDetailsCard(props: any) {
   const { width } = useDeviceSize();
   const [selectedView, setSelectedView] = useState<string>("A-Z");
   const [radioSelection, setRadioSelection] = useState(selectedView);
-
+  const navigate = useNavigate();
   const students = [
     { name: "Anish", rate: "82%" },
     { name: "Chandan Tiwari", rate: "82%" },
@@ -131,11 +131,9 @@ export default function ClassDetailsCard(props: any) {
       isFooterVisible={false}
       _header={{
         userInfo: false,
-        backIconAndHeading: {
-          icon: true,
-          heading: `CLASS ${grade}`,
-          backTo: "class",
-        },
+        isShowBackButton: true,
+        headingTitle: `CLASS ${grade}`,
+        onBack: () => navigate("/class"),
       }}
     >
       <VStack align={"stretch"}>

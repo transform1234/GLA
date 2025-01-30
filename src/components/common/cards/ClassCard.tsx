@@ -35,8 +35,8 @@ const ClassCard: React.FC<ClassCardProps> = memo(({ title, data, onClick }) => {
             {data?.title}
           </Text>
           <IconByName
-            boxSize={"12px"}
-            name={"ForwardBackIcon"}
+            boxSize={"20px"}
+            name={"ChevronRightIcon"}
             color={"primary.500"}
           />
         </HStack>

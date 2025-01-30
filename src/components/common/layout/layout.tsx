@@ -30,7 +30,6 @@ interface Props {
     onSubjectSelect?: (subject: string) => void;
     bottomComponent?: React.ReactNode;
     progress?: string;
-    onFilterClick?: (filter: string) => void;
     selectedView?: any;
     points?: number;
     recentSearch?: string[];
@@ -39,16 +38,10 @@ interface Props {
       subject: string;
     };
     userInfo?: boolean;
-    backIconAndHeading?: {
-      icon: boolean;
-      heading: string;
-      backTo: string;
-    };
-    isLeaderBoardFilters?: {
-      icon: boolean;
-      heading: string;
-      backTo: string;
-    };
+    onBack?: () => void;
+    isShowBackButton?: boolean;
+    headingTitle?: string;
+    rightComponent?: React.ReactNode;
   };
 }
 

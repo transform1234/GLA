@@ -29,6 +29,7 @@ import IconByName from "../../components/common/icons/Icon";
 import moment from "moment";
 import BottomComponent from "../../components/common/layout/BottomComponent";
 import Loading from "../../components/common/Loading";
+import { useNavigate } from "react-router-dom";
 interface UserData {
   rank: number;
   points: number;
@@ -64,6 +65,8 @@ const LeaderboardScreen: React.FC = (props: any) => {
   };
   const [bodyHeight, setBodyHeight] = useState<number>(0);
   const [hasMoreData, setHasMoreData] = useState(true);
+  const navigate = useNavigate();
+
   useEffect(() => {
     impression({
       edata: {
@@ -189,14 +192,21 @@ const LeaderboardScreen: React.FC = (props: any) => {
             }
           />
         ),
-        onFilterClick: () => handleCollapseToggle("view"),
         selectedView: filter?.type,
         userInfo: false,
-        isLeaderBoardFilters: {
-          icon: true,
-          heading: t("LEADERBOARD"),
-          backTo: "home",
-        },
+        rightComponent: (
+          <HeaderWithFilters
+            heading={t("LEADERBOARD")}
+            onBack={() => navigate("/home")}
+            onFilterClick={() => handleCollapseToggle("view")}
+            selectedView="Class"
+          />
+        ),
+        // isLeaderBoardFilters: {
+        //   icon: true,
+        //   heading: t("LEADERBOARD"),
+        //   backTo: "home",
+        // },
       }}
     >
       {activeCollapse !== "none" && (
@@ -691,5 +701,82 @@ const PopupCustom: React.FC<PopupProps> = ({
         </Button>
       </Box>
     </Collapse>
+  );
+};
+
+interface HeaderWithFiltersProps {
+  heading: string;
+  onBack?: () => void;
+  onFilterClick?: (type: string) => void;
+  selectedView?: string;
+  rightComponent?: React.ReactNode;
+}
+
+const HeaderWithFilters: React.FC<HeaderWithFiltersProps> = ({
+  heading,
+  onBack,
+  onFilterClick,
+  selectedView,
+  rightComponent,
+}) => {
+  return (
+    <HStack alignItems="center" justifyContent={"space-between"} mb={4}>
+      {/* Back Icon & Heading */}
+      <HStack spacing={2}>
+        <IconByName
+          name={"BackIcon"}
+          color="white"
+          alt="Back"
+          cursor="pointer"
+          onClick={onBack}
+        />
+        <Text
+          lineHeight="16px"
+          fontWeight="400"
+          fontSize="20px"
+          color="white"
+          fontFamily="Bebas Neue"
+        >
+          {heading}
+        </Text>
+      </HStack>
+
+      {/* Right Side (Customizable) */}
+      {rightComponent || (
+        <HStack spacing={2}>
+          <Text
+            color="white"
+            fontWeight="400"
+            fontSize="10px"
+            lineHeight="12.1px"
+            cursor="default"
+          >
+            VIEW
+          </Text>
+          <HStack
+            height={"38px"}
+            bg="white"
+            color="black"
+            padding="7px 6px 7px 10px"
+            borderRadius="8px"
+            border="1px solid borderGrey"
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            onClick={() => onFilterClick && onFilterClick("dropdown")}
+            cursor="pointer"
+          >
+            <Text fontSize="14px" color="black">
+              {selectedView || "School" || "Select"}{" "}
+            </Text>
+            <IconByName
+              name="TriangleDownIcon"
+              color="primary.500"
+              fontSize="10px"
+            />
+          </HStack>
+        </HStack>
+      )}
+    </HStack>
   );
 };

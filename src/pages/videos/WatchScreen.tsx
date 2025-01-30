@@ -159,11 +159,9 @@ const Watch = (prop: any) => {
           />
         ),
         userInfo: false,
-        backIconAndHeading: {
-          icon: true,
-          heading: t("HOME_WATCH"),
-          backTo: "class",
-        },
+        isShowBackButton: true,
+        headingTitle: t("HOME_WATCH"),
+        onBack: () => navigate("/home"),
       }}
       isFooterVisible={false}
       isHeaderVisible={true}

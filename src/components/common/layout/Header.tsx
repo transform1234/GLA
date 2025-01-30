@@ -31,7 +31,6 @@ interface HeaderProps {
   onSuggestionClick?: (suggestion: string) => void;
   bottomComponent?: React.ReactNode;
   progress?: string;
-  onFilterClick?: (filter: string) => void;
   selectedView?: any;
   points?: number;
   recentSearch?: string[];
@@ -41,16 +40,10 @@ interface HeaderProps {
     subject: string;
   };
   userInfo?: boolean;
-  backIconAndHeading?: {
-    icon: boolean;
-    heading: string;
-    backTo: string;
-  };
-  isLeaderBoardFilters?: {
-    icon: boolean;
-    heading: string;
-    backTo: string;
-  };
+  onBack?: () => void;
+  isShowBackButton?: boolean;
+  headingTitle?: string;
+  rightComponent?: React.ReactNode;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -60,15 +53,16 @@ const Header: React.FC<HeaderProps> = ({
   onSuggestionClick,
   bottomComponent,
   progress,
-  onFilterClick,
   selectedView,
   points,
   recentSearch = [],
   width,
   keyDownSearchFilter,
   userInfo,
-  backIconAndHeading,
-  isLeaderBoardFilters,
+  onBack,
+  isShowBackButton,
+  headingTitle,
+  rightComponent,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -139,9 +133,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleBackNavigation = () => {
-    if (backIconAndHeading?.backTo) {
-      navigate(`/${backIconAndHeading?.backTo}`);
-    } else if (from) {
+    if (from) {
       navigate(`/${from}`);
     } else {
       navigate("/home");
@@ -160,87 +152,29 @@ const Header: React.FC<HeaderProps> = ({
       align={"stretch"}
       width={width}
     >
-      {isLeaderBoardFilters && (
-        <HStack alignItems="center" justifyContent={"space-between"} mb={4}>
-          {/* Back Icon */}
-          <HStack spacing={2}>
+      {rightComponent && rightComponent}
+
+      <HStack justifyContent={"space-between"}>
+        <HStack>
+          {isShowBackButton && (
             <IconByName
               name={"BackIcon"}
               color="white"
               alt="Back"
               cursor="pointer"
-              onClick={handleBackNavigation}
+              width="2em"
+              height="2em"
+              onClick={onBack}
             />
-
-            <Text
-              lineHeight="16px"
-              fontWeight="400"
-              fontSize="20px"
-              color="white"
-              fontFamily="Bebas Neue"
-            >
-              {isLeaderBoardFilters?.heading}
+          )}
+          {headingTitle && (
+            <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
+              {headingTitle}
             </Text>
-          </HStack>
-          <HStack spacing={2}>
-            <Text
-              color="white"
-              fontWeight="400"
-              fontSize="10px"
-              lineHeight="12.1px"
-              cursor="default"
-            >
-              VIEW
-            </Text>
-            <HStack
-              height={"38px"}
-              bg="white"
-              color="black"
-              padding="7px 6px 7px 10px"
-              borderRadius="8px"
-              border="1px solid borderGrey"
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              onClick={() => onFilterClick && onFilterClick("dropdown")}
-              cursor="pointer"
-            >
-              <Text fontSize="14px" color="black">
-                {selectedView || "School" || "Select"}{" "}
-              </Text>
-              <IconByName
-                name="TriangleDownIcon"
-                color="primary.500"
-                fontSize="10px"
-              />
-            </HStack>
-          </HStack>
+          )}
         </HStack>
-      )}
-
-      {backIconAndHeading && (
-        <HStack justifyContent={"space-between"}>
-          <HStack>
-            {backIconAndHeading.icon && (
-              <IconByName
-                name={"BackIcon"}
-                color="white"
-                alt="Back"
-                cursor="pointer"
-                width="2em"
-                height="2em"
-                onClick={handleBackNavigation}
-              />
-            )}
-            {backIconAndHeading.heading && (
-              <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
-                {backIconAndHeading.heading}
-              </Text>
-            )}
-          </HStack>
-          {points && <CoinPopover points={points} />}
-        </HStack>
-      )}
+        {points && <CoinPopover points={points} />}
+      </HStack>
       {userInfo && (
         <VStack align={"stretch"} spacing={3}>
           <HStack justifyContent="space-between" alignItems="center" w="100%">

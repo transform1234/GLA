@@ -1,15 +1,15 @@
 import { lazy } from "react";
 
-const TeacherPage = lazy(() => import("../pages/teacher/TeacherPage"));
-const ClassDetailsCard = lazy(() => import("../pages/teacher/ClassDetails"));
+const TeacherHomepage = lazy(() => import("../pages/teacher/TeacherPage"));
+const ClassDetails = lazy(() => import("../pages/teacher/ClassDetails"));
 
 export default [
   {
-    path: "/class",
-    component: TeacherPage,
+    path: "/class/:board/:schoolUdise/:grade/:medium/:groupId",
+    component: ClassDetails,
   },
   {
-    path: "/class-details/:board/:schoolUdise/:grade/:medium/:groupId",
-    component: ClassDetailsCard,
+    path: "*",
+    component: TeacherHomepage,
   },
 ];

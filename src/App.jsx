@@ -30,7 +30,6 @@ function AppRouter() {
       const roles = tokenDecoded?.resource_access?.["hasura-app"]?.roles;
       if (authUser && Array.isArray(roles) && roles.includes("teacher")) {
         setRoutes(teacherAuthRoutes);
-        navigate("/class");
       } else if (authRoutes) {
         setRoutes(authRoutes);
       }

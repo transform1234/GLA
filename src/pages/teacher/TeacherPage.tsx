@@ -9,7 +9,7 @@ import ClassCard from "../../components/common/cards/ClassCard";
 import { getTeacherData } from "../../services/home";
 import { checkUserDetails } from "../../services/auth/auth";
 
-export default function TeacherPage(props: any) {
+export default function TeacherHomepage(props: any) {
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -86,8 +86,8 @@ export default function TeacherPage(props: any) {
   useEffect(() => {
     impression({
       edata: {
-        type: "TeacherPage",
-        pageid: "TeacherPage",
+        type: "TeacherHomepage",
+        pageid: "TeacherHomepage",
         uri: "/teacher",
         query: Object.fromEntries(
           new URLSearchParams(location.search).entries()
@@ -99,7 +99,7 @@ export default function TeacherPage(props: any) {
 
   const handleCardClick = (group: any) => {
     navigate(
-      `/class-details/${group.board}/${group.schoolUdise}/${group.grade}/${group.medium}/${group.groupId}`,
+      `/class/${group.board}/${group.schoolUdise}/${group.grade}/${group.medium}/${group.groupId}`,
       {}
     );
   };

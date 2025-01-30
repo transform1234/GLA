@@ -14,9 +14,10 @@ const TELEMETRYBATCH = import.meta.env.VITE_TELEMETRYBATCH || 20;
 
 interface AssessmentPlayerProps {
   qml_id: string;
+  subject: string;
   videoEndId: { qml_id?: string };
   adapter: string;
-  lessonQml: { subject?: string | string[]; mimeType: string };
+  lessonQml: { mimeType: string };
   heightPerItem: { width: number; height: number };
   setHeightPerItem: React.Dispatch<
     React.SetStateAction<{ width: number; height: number }>
@@ -35,6 +36,7 @@ interface AssessmentPlayerProps {
 
 const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
   qml_id,
+  subject,
   videoEndId,
   lessonQml,
   heightPerItem,
@@ -78,9 +80,7 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
   const handleRatingSubmit = useCallback(async () => {
     const result = await content.rateQuiz({
       programId: programID,
-      subject: Array.isArray(lessonQml?.subject)
-        ? (lessonQml.subject as string[])[0]
-        : lessonQml?.subject,
+      subject,
       userId: authUser.userId,
       assessmentId: videoEndId?.qml_id,
       rating: rating,
@@ -93,7 +93,7 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
   return (
     qml_id && (
       <VStack bg="red.100">
-        {lessonQml?.subject && (
+        {subject && (
           <HStack
             ref={subjectRef}
             spacing={1}
@@ -117,8 +117,8 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
             transition="right 0.5s,bottom 0.5s"
             top="auto"
           >
-            {Array.isArray(lessonQml?.subject) ? (
-              lessonQml.subject.map((sub) => (
+            {Array.isArray(subject) ? (
+              subject.map((sub) => (
                 <Badge
                   key={sub}
                   p="2px"
@@ -138,7 +138,7 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
                 color="#03627C"
                 bg="#03627C33"
               >
-                {lessonQml?.subject}
+                {subject}
               </Badge>
             )}
           </HStack>
@@ -310,7 +310,7 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
               playerContext={updateCdataTag(
                 [
                   {
-                    id: lessonQml?.subject,
+                    id: subject,
                     type: "subject",
                   },
                   {

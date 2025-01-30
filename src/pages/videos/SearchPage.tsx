@@ -13,7 +13,7 @@ const SearchPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [videos, setVideos] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string | undefined>();
 
   const getParameter = (key: string) => {
     const params = new URLSearchParams(location.search);
@@ -38,46 +38,43 @@ const SearchPage: React.FC = () => {
   }, [location.search]);
 
   useEffect(() => {
-    if (searchTerm || searchTerm === "") {
-      fetchData(searchTerm);
-    }
-  }, [searchTerm]);
+    if (searchTerm == undefined) return;
+    const fetchData = async () => {
+      setLoading(true);
 
-  const fetchData = async (search: any) => {
-    const query = getParameter("search");
-    const searchParams = new URLSearchParams(location.search);
-    const subject = searchParams.get("subject");
+      try {
+        const response = await fetchSearchResults({
+          searchQuery: searchTerm,
+          programId: localStorage.getItem("programID"),
+          subject: getParameter("subject"),
+          limit: 500,
+          isTelemetryEnabled: true,
+        });
 
-    const payload = {
-      searchQuery: search || "",
-      programId: localStorage.getItem("programID"),
-      subject: subject,
-      limit: 500,
-      isTelemetryEnabled: search === query ? false : true,
+        setVideos(response?.paginatedData);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setVideos([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    try {
-      const response = await fetchSearchResults(payload);
-      setVideos(response?.paginatedData);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-      setVideos([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchData();
+  }, [searchTerm]);
 
   const handleVideoClick = (video: any, index: number) => {
     navigate(
       `/videos?index=${encodeURIComponent(index)}&search=${encodeURIComponent(
-        searchTerm
+        searchTerm || ""
       )}&subject=${encodeURIComponent(video?.subject)}`
     );
   };
 
   return (
     <Layout
+      loading={loading}
       _header={{
         searchTerm: searchTerm,
         onSearchChange: setSearchTerm,

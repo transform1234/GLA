@@ -1,17 +1,17 @@
 import { Box } from "@chakra-ui/react";
 import { debounce } from "lodash"; // remove uniqueId
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FixedSizeList as List } from "react-window";
-import CoinPopover from "../../components/common/cards/CoinPopover";
-import Layout from "../../components/common/layout/layout";
-import useDeviceSize from "../../components/common/layout/useDeviceSize";
-import Loading from "../../components/common/Loading";
-import * as content from "../../services/content";
-import { callBatch } from "../../services/telemetry";
-import { customLog, handleEvent } from "./utils";
-import { TopIcon } from "./videoReelComponent/TopIcon";
-import VideoItem from "./videoReelComponent/VideoItem";
+import CoinPopover from "../../../components/common/cards/CoinPopover";
+import Layout from "../../../components/common/layout/layout";
+import useDeviceSize from "../../../components/common/layout/useDeviceSize";
+import Loading from "../../../components/common/Loading";
+import * as content from "../../../services/content";
+import { callBatch } from "../../../services/telemetry";
+import { customLog, handleEvent } from "../utils";
+import LikeButton from "./LikeButton";
+import { TopIcon } from "./TopIcon";
+import VideoList from "./VideoList";
 const TELEMETRYBATCH = import.meta.env.VITE_TELEMETRYBATCH || 20;
 
 /*
@@ -36,6 +36,7 @@ const VideoReel: React.FC<{
   const telemetryListRef = useRef<any[]>([]);
   const navigate = useNavigate();
   const [isIndexScroll, setIsIndexScroll] = useState(false);
+  const [coins, setCoins] = useState<number>(authUser.points || 0);
 
   const handleScroll = useCallback(
     debounce(async ({ scrollOffset }: { scrollOffset: number }) => {
@@ -99,12 +100,19 @@ const VideoReel: React.FC<{
     };
   }, [visibleIndex, videos?.length]);
 
+  const decunsingFunction = debounce(async () => {
+    if (telemetryListRef.current.length >= TELEMETRYBATCH) {
+      await callReaminigTelemetry(
+        telemetryListRef?.current || [],
+        "Call the telemetry API based on batch length"
+      );
+      telemetryListRef.current = [];
+    }
+  }, 300);
+
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
-    if (
-      data?.data?.iframeId &&
-      telemetryListRef.current.length < TELEMETRYBATCH
-    ) {
+    if (data?.data?.iframeId) {
       telemetryListRef.current = [...telemetryListRef.current, data?.data];
       customLog(
         telemetryListRef.current,
@@ -112,16 +120,7 @@ const VideoReel: React.FC<{
         data?.data?.iframeId &&
           telemetryListRef.current.length >= TELEMETRYBATCH
       );
-    }
-    if (
-      data?.data?.iframeId &&
-      telemetryListRef.current.length >= TELEMETRYBATCH
-    ) {
-      await callReaminigTelemetry(
-        telemetryListRef?.current || [],
-        "Call the telemetry API based on batch length"
-      );
-      telemetryListRef.current = [];
+      await decunsingFunction();
     }
 
     if (!result || !result?.type) return;
@@ -141,8 +140,7 @@ const VideoReel: React.FC<{
             ? videos?.[visibleIndex]?.lesson_questionset
             : videos?.[visibleIndex]?.contentId,
         programId: programID,
-        subject:
-          videos?.[visibleIndex]?.subject || localStorage.getItem("subject"),
+        subject: videos?.[visibleIndex]?.subject,
       };
       const retult1 = await content.addLessonTracking(player);
       if (retult1?.errorCode) {
@@ -191,6 +189,11 @@ const VideoReel: React.FC<{
           );
         }
       }
+      if (retult1?.assignRewardPoints?.lesson_completion) {
+        setCoins(
+          (e) => e + retult1?.assignRewardPoints?.lesson_completion?.points
+        );
+      }
       await callReaminigTelemetry(
         telemetryListRef?.current || [],
         "call telemetry api remaining before tracking"
@@ -236,118 +239,39 @@ const VideoReel: React.FC<{
           _hover={{ bg: "#FFFFFF26" }}
           _active={{ bg: "#FFFFFF26" }}
         />
-        {authUser?.points && (
-          <CoinPopover
-            points={authUser?.points}
-            _hstack={{
-              position: "absolute",
-              top: "16px",
-              right: "64px",
-              zIndex: "20",
-            }}
-          />
-        )}
+        <CoinPopover
+          points={coins}
+          _hstack={{
+            position: "absolute",
+            top: "16px",
+            right: "64px",
+            zIndex: "20",
+          }}
+        />
 
         <LikeButton
-          playerPayload={{
-            programId: programID,
-            subject:
-              videos?.[visibleIndex]?.subject ||
-              localStorage.getItem("subject"),
+          {...{
+            programId: programID || "",
+            subject: videos?.[visibleIndex]?.subject,
             contentId: videos?.[visibleIndex]?.contentId,
             userId: authUser?.userId,
           }}
         />
-        <List
-          overscanCount={1}
-          ref={listRef}
+        <VideoList
           width={width}
-          height={itemSize}
-          itemCount={videos.length}
           itemSize={itemSize}
-          scrollToIndex={visibleIndex}
-          onScroll={handleScroll}
-          style={{
-            scrollSnapType: "y mandatory",
-            overflowY: "scroll",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            scrollSnapStop: "always",
-            scrollBehavior: "smooth",
-            touchAction: "none",
-          }}
-          className="hide-scrollbar"
-        >
-          {({
-            index,
-            style,
-          }: {
-            index: number;
-            style: React.CSSProperties;
-          }) => (
-            <VideoItem
-              programID={programID}
-              id={videos?.[index]?.contentId}
-              qml_id={videos?.[index]?.lesson_questionset}
-              isVisible={isIndexScroll && index === visibleIndex}
-              refQml={qmlRef}
-              style={style}
-              adapter={videos?.[index]?.contentSource}
-              key={"VideoItem" + index}
-              authUser={authUser}
-              thumbnailUrl={videos?.[index]?.thumbnailUrl}
-            />
-          )}
-        </List>
+          videos={videos}
+          programID={programID}
+          authUser={authUser}
+          visibleIndex={visibleIndex}
+          isIndexScroll={isIndexScroll}
+          qmlRef={qmlRef}
+          listRef={listRef as React.RefObject<HTMLDivElement>}
+          handleScroll={handleScroll as unknown as () => void}
+        />
       </Box>
     </Layout>
   );
 };
 
 export default VideoReel;
-
-const LikeButton: React.FC<any> = ({ playerPayload }) => {
-  const [isLiked, setIsLiked] = useState(false);
-
-  useEffect(() => {
-    const fetchLikeStatus = async () => {
-      if (!playerPayload?.programId) return;
-      try {
-        if (playerPayload?.contentId) {
-          const response = await content.isContentLiked(playerPayload);
-          if (response && response[0]?.like !== undefined) {
-            setIsLiked(response[0]?.like || false);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching like status:", error);
-      }
-    };
-
-    fetchLikeStatus();
-  }, [playerPayload]);
-
-  const handleLikeToggle = async () => {
-    try {
-      const likeStatus = !isLiked;
-      const payloadWithLikeStatus = {
-        ...playerPayload,
-        like: likeStatus,
-      };
-      await content.contentLike(payloadWithLikeStatus);
-      setIsLiked(!isLiked);
-    } catch (error) {
-      console.error("Error toggling like status:", error);
-    }
-  };
-
-  return (
-    <TopIcon
-      onClick={handleLikeToggle}
-      icon={!isLiked ? "ThumbsUpIconFilled" : "ThumbsUpIcon"}
-      right="16px"
-      _hover={{ bg: "#FFFFFF26" }}
-      _active={{ bg: "#FFFFFF26" }}
-    />
-  );
-};

@@ -64,3 +64,10 @@ jobs:
           cd /home/prasad/dump/dump-palooza-jan-21/prasad/gla-player-dist
           ./deploy.sh
           ENDSSH
+      - name: Notify on Slack channel
+        uses: iRoachie/slack-github-actions@v2.3.2
+        env:
+         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+         status: ${{ job.status }}
+        if: ${{ always() }}

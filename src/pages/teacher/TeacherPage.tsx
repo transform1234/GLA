@@ -14,7 +14,7 @@ export default function TeacherHomepage(props: any) {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { authUser } = props;
-  const [subjectsByClass, setSubjectsByClass] = useState<any>([]);
+  const [classes, setClasses] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const fetchTeacherDataForClasses = React.useCallback(async () => {
     try {
@@ -55,7 +55,7 @@ export default function TeacherHomepage(props: any) {
           classDataArray.push(classObj);
         })
       );
-      setSubjectsByClass(classDataArray);
+      setClasses(classDataArray);
     } catch (error: any) {
       setError(`Error fetching teacher data for classes:${error?.message}`);
     } finally {
@@ -119,7 +119,7 @@ export default function TeacherHomepage(props: any) {
             />
           </VStack>
 
-          {subjectsByClass?.map((group: any) => (
+          {classes?.map((group: any) => (
             <ClassCard
               key={group.groupId}
               title={true}

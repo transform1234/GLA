@@ -81,9 +81,11 @@ export default function TeacherHomepage(props: any) {
     });
   }, []);
 
-  const handleCardClick = (group: any) => {
+  const handleCardClick = (group: any, subject?: any) => {
     navigate(
-      `/class/${group.board}/${group.schoolUdise}/${group.grade}/${group.medium}/${group.groupId}`,
+      subject
+        ? `/class/${group.board}/${group.schoolUdise}/${group.grade}/${group.medium}/${group.groupId}/${subject}`
+        : `/class/${group.board}/${group.schoolUdise}/${group.grade}/${group.medium}/${group.groupId}`,
       {}
     );
   };
@@ -123,6 +125,7 @@ export default function TeacherHomepage(props: any) {
               title={true}
               data={group}
               onClick={() => handleCardClick(group)}
+              subjectClick={(sub) => handleCardClick(group, sub)}
             />
           ))}
         </VStack>

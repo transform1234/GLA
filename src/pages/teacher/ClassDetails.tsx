@@ -34,7 +34,7 @@ export default function ClassDetails(props: any) {
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const { authUser } = props;
-  const { board, schoolUdise, grade, medium, groupId } = useParams();
+  const { board, schoolUdise, grade, medium, groupId, subject } = useParams();
   const [classDetails, setClassDetails] = useState<any>({});
   const [activeCollapse, setActiveCollapse] = useState<"sorting" | "none">(
     "none"
@@ -126,7 +126,12 @@ export default function ClassDetails(props: any) {
         ) : (
           <>
             <Box p={4}>
-              <ClassCard title={false} data={classDetails} />
+              <ClassCard
+                title={false}
+                data={classDetails}
+                subjectClick={() => {}}
+                selectedSubject={subject || "all"}
+              />
             </Box>
 
             <Box>

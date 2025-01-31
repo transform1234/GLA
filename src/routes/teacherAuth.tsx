@@ -9,6 +9,10 @@ export default [
     component: ClassDetails,
   },
   {
+    path: "/class/:board/:schoolUdise/:grade/:medium/:groupId/:subject",
+    component: ClassDetails,
+  },
+  {
     path: "*",
     component: TeacherHomepage,
   },

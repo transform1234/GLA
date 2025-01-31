@@ -7,6 +7,7 @@ import odia from "../../../assets/icons/odiya_icon.svg";
 import physics from "../../../assets/icons/physics_icon.svg";
 import IconByName from "../icons/Icon";
 import CustomHeading from "../typography/Heading";
+import { chunk } from "lodash";
 
 const subjectIcons = {
   science: { icon: physics, label: "Science" },
@@ -33,78 +34,55 @@ const SubjectGrid: React.FC<SubjectGridProps> = memo(
     isClickable,
     isAllSubjectPersentage,
   }) => {
+    const [subjectItems, setSubjects] = React.useState<Array<any>>([]);
     const handleSelectSubject = (subject: string) => {
       onSelectSubject?.(subject);
-      console.log(subject, "subject");
     };
-    console.log(selectedSubject);
+    React.useEffect(() => {
+      if (!subjects) return;
+      let newSubject = [...subjects];
+      if (isAllSubjectPersentage) {
+        newSubject = [
+          {
+            subject: "all",
+            percentage: isAllSubjectPersentage,
+            isClickable,
+          },
+          ...newSubject,
+        ];
+      }
+      const data = chunk(newSubject, 4);
+      setSubjects(data);
+    }, [subjects]);
+
     return (
-      <HStack w="100%" justifyContent="flex-start" spacing={4} flexWrap="wrap">
-        {isAllSubjectPersentage && (
-          <VStack
-            spacing={"2.5"}
-            p="2.5"
-            onClick={() => isClickable && handleSelectSubject("all")}
-            cursor={isClickable ? "pointer" : "default"}
-            rounded={"all" === selectedSubject ? "1rem" : "16px"}
-            bg={"all" === selectedSubject ? "primary.50" : "white"}
-            border={"all" === selectedSubject ? "3px solid" : "transparent"}
-            borderColor={
-              "all" === selectedSubject ? "primary.500" : "borderColor"
-            }
-            width="77px"
-            height="87px"
-            justifyContent="center"
-            alignItems="center"
+      <VStack w="100%" spacing={4}>
+        {subjectItems?.map((subject, index) => (
+          <HStack
+            key={`subject-${index}`}
+            w="100%"
+            // divider={<StackDivider borderColor="gray.200" margin="0" />}
+            justifyContent={"space-around"}
           >
-            <VStack spacing={1}>
-              <CustomHeading
-                marginBottom="0"
-                textAlign="center"
-                lineHeight="9px"
-                fontSize="12px"
-                fontWeight="700"
-                textTransform="uppercase"
-                title={
-                  subjectIcons[
-                    "all"?.toLowerCase() as keyof typeof subjectIcons
-                  ]?.label || "all"
-                }
-                color={"primary.500"}
-              />
-            </VStack>
-            {(typeof isAllSubjectPersentage === "string" &&
-              parseInt(isAllSubjectPersentage) < 100) ||
-            isAllSubjectPersentage < 100 ? (
-              <Progress
-                w={"100%"}
-                colorScheme="progressBarGreen"
-                bg="progressLightBG"
-                color={"white"}
-                size="xs"
-                value={isAllSubjectPersentage || 0}
-                rounded={"full"}
-                isAnimated
-              />
-            ) : (
-              <IconByName name="CheckCircleIcon" color="progressBarGreen.500" />
-            )}
-          </VStack>
-        )}
-        {subjects?.map(
-          (subjectRow: any, index: number) =>
-            subjectRow?.subject && (
-              <SubjectCard
-                {...{
-                  subjectRow,
-                  isClickable,
-                  selectedSubject,
-                  onSelectSubject: handleSelectSubject,
-                }}
-              />
-            )
-        )}
-      </HStack>
+            {subject &&
+              subject?.map(
+                (subjectRow: any, index: number) =>
+                  subjectRow?.subject && (
+                    <SubjectCard
+                      key={`subject-${index}1`}
+                      {...{
+                        percentage: subjectRow?.percentage || 0,
+                        subject: subjectRow?.subject,
+                        isClickable,
+                        selectedSubject: selectedSubject || undefined,
+                        onSelectSubject: handleSelectSubject,
+                      }}
+                    />
+                  )
+              )}
+          </HStack>
+        ))}
+      </VStack>
     );
   }
 );
@@ -112,14 +90,16 @@ const SubjectGrid: React.FC<SubjectGridProps> = memo(
 export default SubjectGrid;
 
 const SubjectCard = ({
-  subjectRow,
   isClickable,
+  percentage,
+  subject,
   selectedSubject,
   onSelectSubject,
 }: {
-  subjectRow: any;
-  isClickable: boolean;
-  selectedSubject: string;
+  percentage: number;
+  subject: string;
+  isClickable?: boolean;
+  selectedSubject?: string;
   onSelectSubject?: (subject: string) => void;
 }) => {
   const handleSelectSubject = (subject: string) => {
@@ -130,34 +110,32 @@ const SubjectCard = ({
 
   return (
     <VStack
-      bg={subjectRow?.subject === selectedSubject ? "primary.50" : "white"}
-      border={
-        subjectRow?.subject === selectedSubject ? "3px solid" : "transparent"
-      }
-      borderColor={
-        subjectRow?.subject === selectedSubject ? "primary.500" : "borderColor"
-      }
+      bg={subject === selectedSubject ? "primary.50" : "white"}
+      border={subject === selectedSubject ? "3px solid" : "transparent"}
+      borderColor={subject === selectedSubject ? "primary.500" : "borderColor"}
       width="77px"
       height="87px"
       justifyContent="center"
       alignItems="center"
-      key={`subject-${subjectRow?.subject}`}
+      key={`subject-${subject}`}
       spacing={"2.5"}
       p="2.5"
-      onClick={() => handleSelectSubject(subjectRow?.subject)}
+      onClick={() => handleSelectSubject(subject)}
       cursor={isClickable ? "pointer" : "default"}
-      rounded={subjectRow?.subject === selectedSubject ? "1rem" : "16px"}
+      rounded={subject === selectedSubject ? "1rem" : "16px"}
     >
       <VStack spacing={1}>
-        <Image
-          boxSize="32px"
-          src={
-            subjectIcons[
-              subjectRow?.subject?.toLowerCase() as keyof typeof subjectIcons
-            ]?.icon || kannada
-          }
-          alt={`${subjectRow?.subject} icon`}
-        />
+        {subjectIcons[subject?.toLowerCase() as keyof typeof subjectIcons]
+          ?.icon && (
+          <Image
+            boxSize="32px"
+            src={
+              subjectIcons[subject?.toLowerCase() as keyof typeof subjectIcons]
+                ?.icon || kannada
+            }
+            alt={`${subject} icon`}
+          />
+        )}
         <CustomHeading
           marginBottom="0"
           textAlign="center"
@@ -166,23 +144,21 @@ const SubjectCard = ({
           fontWeight="700"
           textTransform="uppercase"
           title={
-            subjectIcons[
-              subjectRow?.subject?.toLowerCase() as keyof typeof subjectIcons
-            ]?.label || subjectRow?.subject
+            subjectIcons[subject?.toLowerCase() as keyof typeof subjectIcons]
+              ?.label || subject
           }
           color={"primary.500"}
         />
       </VStack>
-      {(typeof subjectRow?.averageCompletionPercentage === "string" &&
-        parseInt(subjectRow?.averageCompletionPercentage) < 100) ||
-      subjectRow?.averageCompletionPercentage < 100 ? (
+      {(typeof percentage === "string" && parseInt(percentage) < 100) ||
+      percentage < 100 ? (
         <Progress
           w={"100%"}
           colorScheme="progressBarGreen"
           bg="progressLightBG"
           color={"white"}
           size="xs"
-          value={subjectRow?.averageCompletionPercentage || 0}
+          value={percentage || 0}
           rounded={"full"}
           isAnimated
         />

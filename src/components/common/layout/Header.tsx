@@ -41,6 +41,7 @@ interface HeaderProps {
     from: string;
     subject: string;
   };
+  isSearchBackButtonHidden?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -56,6 +57,7 @@ const Header: React.FC<HeaderProps> = ({
   recentSearch = [],
   width,
   keyDownSearchFilter,
+  isSearchBackButtonHidden,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -135,7 +137,6 @@ const Header: React.FC<HeaderProps> = ({
       navigate("/home");
     }
   };
-  
 
   return (
     <VStack
@@ -345,7 +346,9 @@ const Header: React.FC<HeaderProps> = ({
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={handleBackNavigation} 
+          isBackButton={
+            !isSearchBackButtonHidden ? handleBackNavigation : undefined
+          }
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions || []}
@@ -365,7 +368,9 @@ const Header: React.FC<HeaderProps> = ({
             placeholder={t("HOME_SEARCH")}
             icon={searchIcon}
             showClearIcon={true}
-            isBackButton={handleBackNavigation}
+            isBackButton={
+              !isSearchBackButtonHidden ? handleBackNavigation : undefined
+            }
             onChange={handleSearchChange}
             onKeyDown={handleKeyDown}
             suggestions={suggestions}
@@ -376,7 +381,8 @@ const Header: React.FC<HeaderProps> = ({
         )}
       {isInputFocused.length > 0 &&
         suggestions?.length === 0 &&
-        !isScrolled && (
+        !isScrolled &&
+        recentSearch.length > 0 && (
           <Box
             p="4"
             bg="white"

@@ -38,6 +38,7 @@ interface Props {
       from: string;
       subject: string;
     };
+    isSearchBackButtonHidden?: boolean;
   };
 }
 

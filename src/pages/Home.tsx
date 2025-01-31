@@ -32,6 +32,7 @@ const subjectIcons = {
   english: { icon: english, label: "English" },
   kannada: { icon: kannada, label: "Kannada" },
   odia: { icon: odia, label: "Odia" },
+  odiya: { icon: odia, label: "Odia" },
 };
 export default function Homepage(props: any) {
   const { t } = useTranslation();
@@ -229,7 +230,11 @@ export default function Homepage(props: any) {
         progress: progress,
         recentSearch: recentSearch,
         points: authUser?.points,
-        keyDownSearchFilter: { from : "home" , subject : localStorage.getItem("subject") || ""}
+        keyDownSearchFilter: {
+          from: "home",
+          subject: localStorage.getItem("subject") || "",
+        },
+        isSearchBackButtonHidden: true,
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">

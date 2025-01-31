@@ -1,5 +1,10 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
   Center,
   CircularProgress,
   IconButton,
@@ -134,7 +139,7 @@ const SunbirdPlayer = ({
   };
 
   // console.log(adapter);
-  if (url) {
+  if (false) {
     return (
       <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>
         {handleExitButton && (
@@ -198,9 +203,36 @@ const SunbirdPlayer = ({
     );
   } else {
     return (
-      <Text
-        {...(props?._vstack || {})}
-      >{`${mimeType} this mime type not compatible`}</Text>
+      // <Text {...(props?._vstack ?? {})} color="red.500">
+      //   {`${mimeType} this mime type is not compatible`}
+      // </Text>
+
+      <Box
+        {...(props?._vstack ?? {})}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <Alert
+          status="error"
+          borderRadius="8px"
+          boxShadow="md"
+          p={4}
+          maxW="400px"
+        >
+          <AlertIcon />
+          <Box>
+            <AlertTitle fontSize="14px" fontWeight="bold">
+              Something went wrong with ID
+            </AlertTitle>
+            <AlertDescription fontSize="12px">
+              We couldn't process your request. Please check the ID and try
+              again.
+            </AlertDescription>
+          </Box>
+        </Alert>
+      </Box>
     );
   }
 };

@@ -368,7 +368,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
                         color="textPrimary"
                         alt="close"
                         cursor="pointer"
-                        width="2em"
+                        width="1em"
                         height="2em"
                         onClick={() => handleCollapseToggle("history")}
                       />

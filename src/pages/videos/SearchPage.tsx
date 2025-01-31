@@ -78,6 +78,7 @@ const SearchPage: React.FC = () => {
       _header={{
         searchTerm: searchTerm,
         onSearchChange: setSearchTerm,
+        userInfo: false,
       }}
     >
       {loading && <Loading />}

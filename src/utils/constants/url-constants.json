@@ -9,9 +9,11 @@
   "ALT_PROGRAM_BMGS": "/api/v1/altprogram/bmgs",
   "USER_VALIDATION": "/api/v1/user/validateToken",
   "SEARCH": "/altprogramassociation/contentSearch",
-  "CONTENT_LIKE" : "/altprogramassociation/contentLike",
-  "CONTENT_IS_LIKED" : "/altprogramassociation/isContentLiked",
+  "CONTENT_LIKE": "/altprogramassociation/contentLike",
+  "CONTENT_IS_LIKED": "/altprogramassociation/isContentLiked",
   "LEADERBOARD_FILTER_LIST": "/api/v1/altprogramassociation/leaderBoardPoints",
   "LEADERBOARD_USER_DATA": "/api/v1/altprogramassociation/getUserPoints",
-  "RATE_QUIZ": "/altprogramassociation/rateQuiz"
+  "RATE_QUIZ": "/altprogramassociation/rateQuiz",
+  "CLASS_PROGRESS": "/api/v1/teacher/classProgress",
+  "PROGRESS": "/api/v1/teacher/progress"
 }

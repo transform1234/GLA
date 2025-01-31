@@ -27,6 +27,8 @@ import useDeviceSize from "../../components/common/layout/useDeviceSize";
 import { useTranslation } from "react-i18next";
 import IconByName from "../../components/common/icons/Icon";
 import moment from "moment";
+import BottomComponent from "../../components/common/layout/BottomComponent";
+import Loading from "../../components/common/Loading";
 interface UserData {
   rank: number;
   points: number;
@@ -38,19 +40,20 @@ const LeaderboardScreen: React.FC = (props: any) => {
   const [data, setData] = useState([]);
   const [coninsData, setCoinsData] = useState<any>();
   const [myData, setMyData] = useState<UserData>();
-  const [daysFilter, setDaysFilter] = useState([]);
-  const [filter, setFilter] = useState({ searchTerm: "", days: null });
   const { t } = useTranslation();
-  const [selectedView, setSelectedView] = useState<string>("School");
   const [activeCollapse, setActiveCollapse] = useState<
     "none" | "history" | "view"
   >("none");
-  const [radioSelection, setRadioSelection] = useState(selectedView);
-  const LeaderBoardFilter: any = [
-    { subject: "Last 7 Days", value: "last7days" },
-    { subject: "Last 30 Days", value: "last30days" },
-    { subject: "Today", value: "today" },
+  const daysFilter = [
+    { label: "Today", value: "today" },
+    { label: "Last 7 Days", value: "last7days" },
+    { label: "Last 30 Days", value: "last30days" },
+    { label: "All time", value: "allday" },
   ];
+  const [filter, setFilter] = useState<{ days: string; type: string }>({
+    days: "last7days",
+    type: "School",
+  });
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const isFetching = useRef(false);
@@ -60,7 +63,6 @@ const LeaderboardScreen: React.FC = (props: any) => {
     lesson_completion: { label: "Lesson Completion" },
   };
   const [bodyHeight, setBodyHeight] = useState<number>(0);
-  const groupId = props?.authUser?.GroupMemberships[0]?.Group?.groupId;
   const [hasMoreData, setHasMoreData] = useState(true);
   useEffect(() => {
     impression({
@@ -76,49 +78,39 @@ const LeaderboardScreen: React.FC = (props: any) => {
     });
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("dropdownFilter", selectedView);
-  }, [selectedView]);
-
   const handleCollapseToggle = (collapse: "history" | "view") => {
     setActiveCollapse((prevState) =>
       prevState === collapse ? "none" : collapse
     );
   };
 
-  useEffect(() => {
-    setDaysFilter(LeaderBoardFilter);
-    const localFilter = getLocalStorageFilter();
-    setFilter(localFilter || { searchTerm: "", days: null });
-  }, []);
-
   // Fetch user rank, coins, and history
-  const getAllData = async (subject: string, selectedView: any) => {
+  const getAllData = async () => {
     if (isLeaderBoardPoints.current) return;
     isLeaderBoardPoints.current = true;
     try {
-      let filters: { [key: string]: string | null } = {};
-      if (subject === "School") {
-        filters = {
-          schoolUdise: localStorage.getItem("school_udise") || "",
+      let newFilters: { [key: string]: string | null } = {};
+      if (filter?.type === "School") {
+        newFilters = {
+          schoolUdise:
+            props?.authUser?.GroupMemberships[0]?.School?.udiseCode || "" || "",
         };
-      } else if (subject === "Board") {
-        filters = {
-          board: localStorage.getItem("board") || "",
+      } else if (filter?.type === "Board") {
+        newFilters = {
+          board: props?.authUser?.GroupMemberships[0]?.Group?.board || "",
         };
-      } else if (subject === "Class") {
-        filters = {
-          groupId: groupId,
+      } else if (filter?.type === "Class") {
+        newFilters = {
+          groupId: props?.authUser?.GroupMemberships[0]?.Group?.groupId || "",
         };
       }
-
       const payloadData = {
-        filters: filters,
-        timeframe: selectedView,
+        filters: newFilters,
+        timeframe: filter?.days,
       };
-      const leaderboardData: any = await getLeaderboardFilter(payloadData);
-      setData(leaderboardData[0]);
-      setMyData(leaderboardData[1]);
+      const leaderboardData = await getLeaderboardFilter(payloadData);
+      setData(leaderboardData?.[0]);
+      setMyData(leaderboardData?.[1]);
     } catch (error) {
       console.error("Error making API call:", error);
     } finally {
@@ -128,11 +120,18 @@ const LeaderboardScreen: React.FC = (props: any) => {
 
   useEffect(() => {
     const fetchUserStats = async () => {
-      await getAllData("School", "allday");
+      setLoading(true);
+      try {
+        await getAllData();
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchUserStats();
-  }, []);
+  }, [JSON.stringify(filter)]);
 
   const fetchUserData = async (currentPage: number) => {
     if (isFetching.current) return;
@@ -140,7 +139,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
 
     try {
       const data: any = await getCurrentUserdetail(currentPage);
-  
+
       if (!data || !Array.isArray(data.points) || data.points.length === 0) {
         setHasMoreData(false);
         return;
@@ -167,34 +166,15 @@ const LeaderboardScreen: React.FC = (props: any) => {
     }
   };
 
-  const getLocalStorageFilter = () => {
-    const filterString = localStorage.getItem("watchFilter");
-    try {
-      return filterString
-        ? JSON.parse(filterString)
-        : { searchTerm: "", days: "" };
-    } catch (err) {
-      return { searchTerm: "", days: "" };
-    }
-  };
-
-  const handleSelectedViewChange = (newSelectedView: string) => {
-    setSelectedView(newSelectedView);
-  };
-
   const handleViewChange = (radioSelection: string) => {
-    if (radioSelection !== selectedView) {
-      setSelectedView(radioSelection);
-      setActiveCollapse("none");
-      setCoinsData({ points: [] });
-      handleSelectedViewChange(radioSelection);
-      getAllData(radioSelection, filter.days);
-      fetchUserData(1);
-      setPage(1);
-      setHasMoreData(true);
-    }
+    setActiveCollapse("none");
+    setCoinsData({ points: [] });
+    setFilter((prev: any) => ({ ...prev, type: radioSelection }));
+    fetchUserData(1);
+    setPage(1);
+    setHasMoreData(true);
   };
-  
+
   return (
     <Layout
       getHeight={({ bodyHeight: bHeight }) => setBodyHeight(bHeight)}
@@ -202,19 +182,15 @@ const LeaderboardScreen: React.FC = (props: any) => {
       _header={{
         bottomComponent: (
           <BottomComponent
-            daysFilter={daysFilter}
-            selectedFilter={filter.days || ""}
-            groupId={groupId}
-            onSelectFilter={(days) =>
+            selectedItem={filter.days || ""}
+            items={daysFilter}
+            onSelectItem={(days) =>
               setFilter((prev: any) => ({ ...prev, days }))
             }
-            selectedView={selectedView}
-            setData={setData}
-            setMyData={setMyData}
           />
         ),
         onFilterClick: () => handleCollapseToggle("view"),
-        selectedView: selectedView,
+        selectedView: filter?.type,
       }}
     >
       {activeCollapse !== "none" && (
@@ -229,72 +205,73 @@ const LeaderboardScreen: React.FC = (props: any) => {
           onClick={() => setActiveCollapse("none")}
         />
       )}
-
-      <TableContainer p="4" pb="80px" overflowY="auto" maxHeight={bodyHeight}>
-        <Table variant="simple" size="md">
-          <Thead position="sticky" top="0" zIndex="1" bg="white">
-            <Tr>
-              <Th color="textPrimary">
-                {t("LEADERBOARD_NAME")}
-              </Th>
-              <Th color="textPrimary" textAlign="center">
-                {t("LEADERBOARD_RANK")}
-              </Th>
-              <Th color="textPrimary" textAlign="right">
-                {t("LEADERBOARD_COINS")}
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data.map((item: any, index) => (
-              <Tr key={index}>
-                <Td p="2">
-                  <Text
-                    textTransform="capitalize"
-                    lineHeight="19.36px"
-                    fontWeight="400"
-                    fontSize="16px"
-                    color={"darkBlue.500"}
-                  >
-                    {item?.userId === localStorage.getItem("id")
-                      ? "You"
-                      : item?.name}
-                  </Text>
-                  <Text
-                    variant="italicText"
-                    fontWeight="400"
-                    fontSize="10px"
-                    lineHeight="12.1px"
-                    color="lightGrey"
-                  >
-                    {item?.className}
-                  </Text>
-                </Td>
-                <Td textAlign="center" p="2">
-                  <Text
-                    fontWeight="700"
-                    fontSize="14px"
-                    lineHeight="16.94px"
-                    textAlign="center"
-                  >
-                    {item?.rank}
-                  </Text>
-                </Td>
-                <Td textAlign="right" p="2">
-                  <Text
-                    fontWeight="700"
-                    fontSize="14px"
-                    lineHeight="16.94px"
-                    textAlign="right"
-                  >
-                    {item?.points}
-                  </Text>
-                </Td>
+      {loading ? (
+        <Loading width="100%" height={bodyHeight} />
+      ) : (
+        <TableContainer p="4" pb="80px" overflowY="auto" maxHeight={bodyHeight}>
+          <Table variant="simple" size="md">
+            <Thead position="sticky" top="0" zIndex="1" bg="white">
+              <Tr>
+                <Th color="textPrimary">{t("LEADERBOARD_NAME")}</Th>
+                <Th color="textPrimary" textAlign="center">
+                  {t("LEADERBOARD_RANK")}
+                </Th>
+                <Th color="textPrimary" textAlign="right">
+                  {t("LEADERBOARD_COINS")}
+                </Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+            </Thead>
+            <Tbody>
+              {data.map((item: any, index) => (
+                <Tr key={index}>
+                  <Td p="2">
+                    <Text
+                      textTransform="capitalize"
+                      lineHeight="19.36px"
+                      fontWeight="400"
+                      fontSize="16px"
+                      color={"darkBlue.500"}
+                    >
+                      {item?.userId === localStorage.getItem("id")
+                        ? "You"
+                        : item?.name}
+                    </Text>
+                    <Text
+                      variant="italicText"
+                      fontWeight="400"
+                      fontSize="10px"
+                      lineHeight="12.1px"
+                      color="lightGrey"
+                    >
+                      {item?.className}
+                    </Text>
+                  </Td>
+                  <Td textAlign="center" p="2">
+                    <Text
+                      fontWeight="700"
+                      fontSize="14px"
+                      lineHeight="16.94px"
+                      textAlign="center"
+                    >
+                      {item?.rank}
+                    </Text>
+                  </Td>
+                  <Td textAlign="right" p="2">
+                    <Text
+                      fontWeight="700"
+                      fontSize="14px"
+                      lineHeight="16.94px"
+                      textAlign="right"
+                    >
+                      {item?.points}
+                    </Text>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      )}
 
       {/* Sticky Footer */}
       <Box
@@ -467,92 +444,16 @@ const LeaderboardScreen: React.FC = (props: any) => {
             </Collapse>
           </Box>
         )}
-
-        <Collapse in={activeCollapse === "view"} animateOpacity>
-          <Box p="4" bg="white" borderRadius="8px" mt="2" width={width}>
-            <Flex alignItems="center" justifyContent="space-between">
-              <Text
-                fontFamily="Bebas Neue"
-                fontSize="24px"
-                lineHeight="28px"
-                fontWeight="400"
-                color="primary.500"
-                mb="8px"
-              >
-                {t("LEADERBOARD_VIEW")}
-              </Text>
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <IconByName
-                  name="CloseIcon"
-                  color="primary.500"
-                  alt="close"
-                  cursor="pointer"
-                  width="14px"
-                  height="14px"
-                  onClick={() => handleCollapseToggle("view")}
-                />
-              </Box>
-            </Flex>
-            <Text
-              mb="16px"
-              lineHeight="14px"
-              fontWeight="400"
-              fontSize="14px"
-              color="lightGrey"
-            >
-              {t("LEADERBOARD_HOW_YOU_STAND_WITH_OTHER")}
-            </Text>
-            <RadioGroup
-              value={radioSelection}
-              onChange={(value) => setRadioSelection(value)}
-              gap="8px"
-            >
-              <VStack align="stretch" gap="8px">
-                <Radio mt="16px" mb="16px" value="School">
-                  <Flex justify="space-between" width="100%">
-                    <Text
-                      fontWeight="400"
-                      fontSize="20px"
-                      lineHeight="16px"
-                      mr="2"
-                    >
-                      {t("LEADERBOARD_SCHOOL")}
-                    </Text>
-                    <Text
-                      fontWeight="400"
-                      fontSize="12px"
-                      lineHeight="16px"
-                      variant="italicText"
-                    >
-                      {t("LEADERBOARD_DEFAULT")}
-                    </Text>
-                  </Flex>
-                </Radio>
-
-                <Radio mb="16px" value="Class">
-                  <Text fontWeight="400" fontSize="20px" lineHeight="16px">
-                    {t("LEADERBOARD_CLASS")}
-                  </Text>
-                </Radio>
-                <Radio mb="16px" value="Board">
-                  <Text fontWeight="400" fontSize="20px" lineHeight="16px">
-                    {t("LEADERBOARD_BOARD")}
-                  </Text>
-                </Radio>
-              </VStack>
-            </RadioGroup>
-            <Button
-              mt="4"
-              colorScheme="blue"
-              isDisabled={radioSelection === selectedView}
-              onClick={() => handleViewChange(radioSelection)}
-              width="100%"
-            >
-              {t("LEADERBOARD_APPLY")}
-            </Button>
-          </Box>
-        </Collapse>
-
+        <PopupCustom
+          {...{
+            activeCollapse,
+            width,
+            defaultValue: filter?.type || "",
+            handleCollapseToggle,
+            handleViewChange,
+            t,
+          }}
+        />
         {activeCollapse === "none" && (
           <Box
             bg="yellow.500"
@@ -685,119 +586,104 @@ const LeaderboardScreen: React.FC = (props: any) => {
 
 export default LeaderboardScreen;
 
-interface BottomComponentProps {
-  daysFilter: Array<any>;
-  selectedFilter: string | null;
-  onSelectFilter: (subject: string) => void;
-  selectedView: string;
-  setData: (data: any) => void;
-  setMyData: (data: any) => void;
-  groupId: string;
+interface PopupProps {
+  activeCollapse: "history" | "view" | "none";
+  width: string | number;
+  defaultValue: string;
+  handleCollapseToggle: (collapse: "history" | "view") => void;
+  handleViewChange: (type: string) => void;
+  t: any;
 }
 
-const BottomComponent: React.FC<BottomComponentProps> = ({
-  daysFilter,
-  selectedFilter,
-  onSelectFilter,
-  selectedView,
-  setData,
-  setMyData,
-  groupId,
+const PopupCustom: React.FC<PopupProps> = ({
+  activeCollapse,
+  width,
+  defaultValue,
+  handleCollapseToggle,
+  handleViewChange,
+  t,
 }) => {
-  const handleFilterSelect = async (subject: string) => {
-    try {
-      let filters: { [key: string]: string | null } = {};
-
-      if (selectedView === "School") {
-        filters = {
-          schoolUdise: localStorage.getItem("school_udise") || "",
-        };
-      } else if (selectedView === "Board") {
-        filters = {
-          board: localStorage.getItem("board") || "",
-        };
-      } else if (selectedView === "Class") {
-        filters = {
-          groupId: groupId,
-        };
-      }
-
-      const payloadData = {
-        filters: filters,
-        timeframe: subject,
-      };
-      const leaderboardData: any = await getLeaderboardFilter(payloadData);
-
-      onSelectFilter(subject);
-      setData(leaderboardData[0]);
-      setMyData(leaderboardData[1]);
-    } catch (error) {
-      console.error("Error making API call:", error);
-    }
-  };
+  const [radioValue, setRadioValue] = useState(defaultValue || "School");
 
   return (
-    <HStack
-      gap={2}
-      overflowX="auto"
-      sx={{
-        "::-webkit-scrollbar": {
-          width: "0",
-          height: "0",
-        },
-      }}
-    >
-      <Box
-        bg={
-          selectedFilter === "" || "allday" === selectedFilter
-            ? "darkBlue.500"
-            : "transparent"
-        }
-        borderColor={
-          selectedFilter === "" || "allday" === selectedFilter
-            ? "primary.500"
-            : "white"
-        }
-        borderWidth={
-          selectedFilter === "" || "allday" === selectedFilter ? "1px" : "1px"
-        }
-        color="white"
-        fontFamily="Inter"
-        lineHeight="16.41px"
-        fontSize="14px"
-        fontWeight="500"
-        cursor="pointer"
-        px="10px"
-        py="7px"
-        whiteSpace="nowrap"
-        rounded={8}
-        onClick={() => handleFilterSelect("allday")}
-      >
-        All Time
-      </Box>
-
-      {daysFilter &&
-        daysFilter.map((sub: any) => (
-          <Box
-            key={sub.value}
-            bg={sub.value === selectedFilter ? "darkBlue.500" : "transparent"}
-            borderColor={sub.value === selectedFilter ? "primary.500" : "white"}
-            borderWidth={sub.value === selectedFilter ? "1px" : "1px"}
-            color="white"
-            fontFamily="Inter"
-            lineHeight="16.41px"
-            fontSize="14px"
-            fontWeight="500"
-            cursor="pointer"
-            px="10px"
-            py="7px"
-            whiteSpace="nowrap"
-            rounded={8}
-            onClick={() => handleFilterSelect(sub.value)}
+    <Collapse in={activeCollapse === "view"} animateOpacity>
+      <Box p="4" bg="white" borderRadius="8px" mt="2" width={width}>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Text
+            fontFamily="Bebas Neue"
+            fontSize="24px"
+            lineHeight="28px"
+            fontWeight="400"
+            color="primary.500"
+            mb="8px"
           >
-            {sub.subject}
+            {t("LEADERBOARD_VIEW")}
+          </Text>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <IconByName
+              name="CloseIcon"
+              color="primary.500"
+              alt="close"
+              cursor="pointer"
+              width="14px"
+              height="14px"
+              onClick={() => handleCollapseToggle("view")}
+            />
           </Box>
-        ))}
-    </HStack>
+        </Flex>
+        <Text
+          mb="16px"
+          lineHeight="14px"
+          fontWeight="400"
+          fontSize="14px"
+          color="lightGrey"
+        >
+          {t("LEADERBOARD_HOW_YOU_STAND_WITH_OTHER")}
+        </Text>
+        <RadioGroup
+          value={radioValue}
+          onChange={(value) => setRadioValue(value)}
+          gap="8px"
+        >
+          <VStack align="stretch" gap="8px">
+            <Radio mt="16px" mb="16px" value="School">
+              <Flex justify="space-between" width="100%">
+                <Text fontWeight="400" fontSize="20px" lineHeight="16px" mr="2">
+                  {t("LEADERBOARD_SCHOOL")}
+                </Text>
+                <Text
+                  fontWeight="400"
+                  fontSize="12px"
+                  lineHeight="16px"
+                  variant="italicText"
+                >
+                  {t("LEADERBOARD_DEFAULT")}
+                </Text>
+              </Flex>
+            </Radio>
+            <Radio mb="16px" value="Class">
+              <Text fontWeight="400" fontSize="20px" lineHeight="16px">
+                {t("LEADERBOARD_CLASS")}
+              </Text>
+            </Radio>
+            <Radio mb="16px" value="Board">
+              <Text fontWeight="400" fontSize="20px" lineHeight="16px">
+                {t("LEADERBOARD_BOARD")}
+              </Text>
+            </Radio>
+          </VStack>
+        </RadioGroup>
+        <Button
+          mt="4"
+          colorScheme="blue"
+          onClick={() => {
+            handleViewChange(radioValue);
+          }}
+          width="100%"
+        >
+          {t("LEADERBOARD_APPLY")}
+        </Button>
+      </Box>
+    </Collapse>
   );
 };

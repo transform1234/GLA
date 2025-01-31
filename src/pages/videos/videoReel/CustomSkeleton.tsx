@@ -31,17 +31,11 @@ const CustomSkeleton: React.FC<CustomSkeletonProps> = ({
         pt={"52px"}
         width="100%"
         height="100%"
+        overflow={"auto"}
         // justifyContent={"center"}
         // alignItems={"center"}
       >
-        <VStack
-          bg="white"
-          width="100%"
-          height="100%"
-          rounded={"16"}
-          p="4"
-          align={"flex-start"}
-        >
+        <VStack bg="white" width="100%" height="100%" rounded={"16"} p="4">
           <HStack
             justifyContent={"space-between"}
             w="100%"
@@ -65,63 +59,73 @@ const CustomSkeleton: React.FC<CustomSkeletonProps> = ({
               endColor={endColor}
             />
           </HStack>
-
-          <Skeleton
-            mt="2"
-            height="14px"
-            width="100%"
-            startColor={startColor}
-            endColor={endColor}
-          />
-          <Skeleton
-            height="14px"
-            width="80%"
-            startColor={startColor}
-            endColor={endColor}
-          />
-          <VStack w="100%" align={"center"}>
-            <HStack w="100%" align={"center"}>
-              <Skeleton
-                boxShadow="0px 4px 0px 0px #c5c5c5 !important"
-                border="1px solid #c5c5c5 !important"
-                borderRadius="4px"
-                height="50px"
-                flex={1}
-                startColor={startColor}
-                endColor={endColor}
-              />
-              <Skeleton
-                boxShadow="0px 4px 0px 0px #c5c5c5 !important"
-                border="1px solid #c5c5c5 !important"
-                borderRadius="4px"
-                height="50px"
-                flex={1}
-                startColor={startColor}
-                endColor={endColor}
-              />
-            </HStack>
-            <HStack w="100%" align={"center"}>
-              <Skeleton
-                boxShadow="0px 4px 0px 0px #c5c5c5 !important"
-                border="1px solid #c5c5c5 !important"
-                borderRadius="4px"
-                height="50px"
-                flex={1}
-                startColor={startColor}
-                endColor={endColor}
-              />
-              <Skeleton
-                boxShadow="0px 4px 0px 0px #c5c5c5 !important"
-                border="1px solid #c5c5c5 !important"
-                borderRadius="4px"
-                height="50px"
-                flex={1}
-                startColor={startColor}
-                endColor={endColor}
-              />
-            </HStack>
+          <VStack w="100%" align={"flex-start"}>
+            <Skeleton
+              mt="2"
+              height="14px"
+              width="100%"
+              startColor={startColor}
+              endColor={endColor}
+            />
+            <Skeleton
+              height="14px"
+              width="80%"
+              startColor={startColor}
+              endColor={endColor}
+            />
+            <VStack w="100%" align={"center"} overflow={"scroll"}>
+              <HStack w="100%" align={"center"}>
+                <Skeleton
+                  boxShadow="0px 4px 0px 0px #c5c5c5 !important"
+                  border="1px solid #c5c5c5 !important"
+                  borderRadius="4px"
+                  height="50px"
+                  flex={1}
+                  startColor={startColor}
+                  endColor={endColor}
+                />
+                <Skeleton
+                  boxShadow="0px 4px 0px 0px #c5c5c5 !important"
+                  border="1px solid #c5c5c5 !important"
+                  borderRadius="4px"
+                  height="50px"
+                  flex={1}
+                  startColor={startColor}
+                  endColor={endColor}
+                />
+              </HStack>
+              <HStack w="100%" align={"center"}>
+                <Skeleton
+                  boxShadow="0px 4px 0px 0px #c5c5c5 !important"
+                  border="1px solid #c5c5c5 !important"
+                  borderRadius="4px"
+                  height="50px"
+                  flex={1}
+                  startColor={startColor}
+                  endColor={endColor}
+                />
+                <Skeleton
+                  boxShadow="0px 4px 0px 0px #c5c5c5 !important"
+                  border="1px solid #c5c5c5 !important"
+                  borderRadius="4px"
+                  height="50px"
+                  flex={1}
+                  startColor={startColor}
+                  endColor={endColor}
+                />
+              </HStack>
+            </VStack>
           </VStack>
-          <HStack align={"center"} width={"100%"}>
+          <HStack
+            bg="white"
+            align={"center"}
+            position={"absolute"}
+            bottom={"0"}
+            width={"100%"}
+            p="4"
+            zIndex="5"
+            padding="0.5rem 1rem 0.5rem 1rem"
+          >
             <Box flex={1}>
               <Skeleton
                 width={"24px"}

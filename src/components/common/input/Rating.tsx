@@ -49,20 +49,21 @@ const StarRating: React.FC<StarRatingProps> = ({
     <HStack
       width={"80%"}
       mx={"auto"}
-      my={4}
+      my={1}
       justifyContent={"space-evenly"}
       {...hStackProps}
     >
       {[...Array(totalStars)].map((_, index) => (
         <Box
-          key={_}
+          key={`key-${index}`}
           onClick={() => handleStarClick(index)}
           justifyContent={"center"}
           alignItems={"center"}
+          cursor="pointer"
         >
           <IconByName
-            isDisabled
-            name={"StarIcon"}
+            name={"KidStarIcon"}
+            boxSize={"24px"}
             color={index < rating ? "yellow.500" : "gray.300"}
             {...iconProps}
           />

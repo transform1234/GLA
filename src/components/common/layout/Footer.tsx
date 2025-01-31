@@ -99,6 +99,7 @@ const Footer: React.FC<FooterProps> = ({
             }}
           >
             <Text
+              as={"div"}
               {...(item?.isOutOFBox && {
                 color: selected === index ? "primary.500" : "white",
               })}
@@ -136,7 +137,7 @@ const Footer: React.FC<FooterProps> = ({
                         disabled
                         height="24px"
                         width="24px"
-                        isSelected={selected === index}
+                        active={selected === index}
                         _icon={{
                           size: "24px",
                           color:

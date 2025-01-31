@@ -4,6 +4,8 @@ import "./index.css";
 import App from "./App.jsx";
 import "../i18n.js";
 import { registerSW } from "../registerServiceWorker.js";
+import { Provider } from "react-redux";
+import store from "./store/store";
 
 const sentryDsn = import.meta.env.VITE_APP_SENTRY_DSN;
 
@@ -23,7 +25,9 @@ const root = createRoot(container);
 
 root.render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </StrictMode>
 );
 

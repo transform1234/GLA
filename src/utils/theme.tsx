@@ -66,7 +66,8 @@ const customTheme = extendTheme({
       700: "#8c8900",
       800: "#565b00",
       900: "#483E09",
-      lightYellow: "#FFD50066"
+      lightYellow: "#FFD50066",
+      lightDark: "#E2BE05",
     },
     progressBarGreen: {
       500: "#00A745",
@@ -98,7 +99,7 @@ const customTheme = extendTheme({
     borderColor: "#00A745",
     borderGrey: "#C5C5C5",
     lightGrey: "#828282",
-    greenColor: "#219653"
+    greenColor: "#219653",
   },
   components: {
     Table: {
@@ -149,7 +150,7 @@ const customTheme = extendTheme({
         fontFamily: "Inter",
         fontSize: "12px",
         fontWeight: "600",
-        lineHeight: "16px",
+        lineHeight: "18px",
         color: "textPrimary",
       },
     },
@@ -167,11 +168,8 @@ const customTheme = extendTheme({
         fontFamily: "Inter",
         fontSize: "12px",
         fontWeight: "500",
-        lineHeight: "16px",
+        lineHeight: "18px",
         color: "primary.500",
-        float: "right",
-        padding: "4px",
-        mt: 1,
         borderRadius: "4px",
         textDecoration: "none",
         _hover: {

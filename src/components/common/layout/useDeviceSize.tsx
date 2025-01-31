@@ -1,3 +1,4 @@
+import { min } from "lodash";
 import { useState, useEffect } from "react";
 
 interface UseDeviceSizeProps {
@@ -23,10 +24,10 @@ function useDeviceSize({
     const handleResize = () => {
       setSize({
         width: maxWidth
-          ? Math.min(window.innerWidth, maxWidth)
+          ? min([window.innerWidth, maxWidth]) || 0
           : window.innerWidth,
         height: maxHeight
-          ? Math.min(window.innerHeight, maxHeight)
+          ? min([window.innerHeight, maxHeight]) || 0
           : window.innerHeight,
       });
     };

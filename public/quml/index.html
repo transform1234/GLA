@@ -57,7 +57,7 @@
       qumlPlayerElement.addEventListener("telemetryEvent", (event) => {
         if (
           event.detail.eid === "ASSESS" &&
-          event.detail.edata?.resvalues?.[0].label
+          event.detail.edata?.resvalues?.[0]?.label
         ) {
           const className =
             event.detail.edata.pass === "Yes" ? "correct" : "wrong";

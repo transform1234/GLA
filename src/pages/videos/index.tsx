@@ -3,25 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/common/Loading";
 import { fetchSearchResults } from "../../services/content";
-import { getProgramId, getSubjectList } from "../../services/home";
-import VideoReel from "./VideoReels";
-
-const getSubject = async () => {
-  if (!localStorage.getItem("subject")) {
-    const programData = await getProgramId();
-    if (programData) {
-      const res: any = await getSubjectList();
-      const subject = res?.[0]?.subject;
-      if (subject) {
-        localStorage.setItem("subject", subject);
-        return subject;
-      } else {
-        return null;
-      }
-    }
-  }
-  return localStorage.getItem("subject") || null;
-};
+import { getProgramId } from "../../services/home";
+import VideoReel from "./videoReel/Index";
 
 const App = (props: any) => {
   const navigate = useNavigate();
@@ -30,7 +13,7 @@ const App = (props: any) => {
   const query = new URLSearchParams(window.location.search);
   const index = query.get("index");
   const [programID, setProgramID] = useState<string>("");
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState<any>({});
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -63,9 +46,9 @@ const App = (props: any) => {
 
           if (result?.paginatedData?.length === 0) {
             setError(
-              `No content available for the subject: ${localStorage.getItem(
-                "subject"
-              )}.`
+              `No content available for the subject: ${
+                filter?.subject || localStorage.getItem("subject")
+              }.`
             );
           } else {
             setVideos(result?.paginatedData || []);

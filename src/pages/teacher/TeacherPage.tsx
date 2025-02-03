@@ -95,6 +95,7 @@ export default function TeacherHomepage(props: any) {
       isFooterVisible={false}
       _header={{
         userInfo: true,
+        isShowLogOutButton: true,
       }}
       loading={loading}
     >

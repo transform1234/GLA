@@ -3,7 +3,7 @@ import { Box, Center, useDisclosure } from "@chakra-ui/react";
 import Loading from "../Loading";
 import useDeviceSize from "./useDeviceSize";
 import Footer from "./Footer";
-import Header from "./Header";
+import Header, { HeaderProps } from "./Header";
 import PopupModal from "../PopupModal";
 import PrimaryButton from "../button/PrimaryButton";
 import { useTranslation } from "react-i18next";
@@ -22,27 +22,7 @@ interface Props {
     totalHeight: number;
     bodyHeight: number;
   }) => void;
-  _header?: {
-    suggestions?: string[];
-    searchTerm?: string;
-    onSearchChange?: (value: any) => void;
-    onSuggestionClick?: (suggestion: any) => void;
-    onSubjectSelect?: (subject: string) => void;
-    bottomComponent?: React.ReactNode;
-    progress?: string;
-    selectedView?: any;
-    points?: number;
-    recentSearch?: string[];
-    keyDownSearchFilter?: {
-      from: string;
-      subject: string;
-    };
-    userInfo?: boolean;
-    onBack?: () => void;
-    isShowBackButton?: boolean;
-    headingTitle?: string;
-    rightComponent?: React.ReactNode;
-  };
+  _header?: HeaderProps;
 }
 
 const Layout: React.FC<Props> = ({

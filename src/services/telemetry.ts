@@ -1,3 +1,4 @@
+import { updateCdataTag } from "../pages/videos/utils";
 import { getSid, uniqueId } from "./utilService"; // generate manually
 const VITE_TELEMETRY_BASE_URL = import.meta.env.VITE_TELEMETRY_BASE_URL;
 const VITE_TELEMETRY_END_POINT = import.meta.env.VITE_TELEMETRY_END_POINT;
@@ -12,18 +13,6 @@ import { merge } from "lodash";
 const getDefaultStartEvent = (props: Record<string, any> = {}) => {
   const cdataNew = [
     {
-      id: localStorage.getItem("grade") || "",
-      type: "grade",
-    },
-    {
-      id: localStorage.getItem("medium") || "",
-      type: "medium",
-    },
-    {
-      id: localStorage.getItem("board") || "",
-      type: "board",
-    },
-    {
       id: localStorage.getItem("username"),
       type: "username",
     },
@@ -36,6 +25,7 @@ const getDefaultStartEvent = (props: Record<string, any> = {}) => {
       type: "program",
     },
   ];
+  const updatedContext = updateCdataTag(cdataNew);
   const defaultEvent = {
     eid: "START",
     ets: Date.now(),

@@ -32,6 +32,7 @@ const subjectIcons = {
   english: { icon: english, label: "English" },
   kannada: { icon: kannada, label: "Kannada" },
   odia: { icon: odia, label: "Odia" },
+  odiya: { icon: odia, label: "Odia" },
 };
 export default function Homepage(props: any) {
   const { t } = useTranslation();
@@ -234,6 +235,7 @@ export default function Homepage(props: any) {
           subject: localStorage.getItem("subject") || "",
         },
         userInfo: true,
+        isSearchBackButtonHidden: true,
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">

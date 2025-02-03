@@ -288,6 +288,7 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
             </Box>
           ) : (
             <SunbirdPlayer
+              isAssessment
               LoaderComponent={({ display }: any) => (
                 <CustomSkeleton display={display} type="assessment" />
               )}

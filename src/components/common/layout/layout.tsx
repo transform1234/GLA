@@ -42,6 +42,7 @@ interface Props {
     isShowBackButton?: boolean;
     headingTitle?: string;
     rightComponent?: React.ReactNode;
+    isSearchBackButtonHidden?: boolean;
   };
 }
 

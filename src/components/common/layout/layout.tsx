@@ -22,7 +22,7 @@ interface Props {
     totalHeight: number;
     bodyHeight: number;
   }) => void;
-  _header?: HeaderProps;
+  _header?: HeaderProps; // custom header
 }
 
 const Layout: React.FC<Props> = ({

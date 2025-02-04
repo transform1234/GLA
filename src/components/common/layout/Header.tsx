@@ -323,7 +323,9 @@ const Header: React.FC<HeaderProps> = ({
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={handleBackNavigation}
+          isBackButton={
+            !isSearchBackButtonHidden ? handleBackNavigation : undefined
+          }
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions || []}
@@ -340,7 +342,9 @@ const Header: React.FC<HeaderProps> = ({
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={handleBackNavigation}
+          isBackButton={
+            !isSearchBackButtonHidden ? handleBackNavigation : undefined
+          }
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions}
@@ -353,7 +357,8 @@ const Header: React.FC<HeaderProps> = ({
       {/* resent search */}
       {isInputFocused.length > 0 &&
         suggestions?.length === 0 &&
-        !isScrolled && (
+        !isScrolled &&
+        recentSearch.length > 0 && (
           <Box
             p="4"
             bg="white"

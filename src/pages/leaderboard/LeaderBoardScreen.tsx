@@ -159,7 +159,7 @@ const LeaderboardScreen: React.FC = (props: any) => {
         />
       )}
 
-      {/* Sticky Footer */}
+      {/* Sticky UserCoinInfo Footer */}
       <UserCoinInfo
         activeCollapse={activeCollapse}
         myData={myData}

@@ -47,6 +47,7 @@ export interface HeaderProps {
   logoutPopup?: () => void;
   setModalContent?: any;
   isShowLogOutButton?: boolean;
+  bgc?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -56,7 +57,6 @@ const Header: React.FC<HeaderProps> = ({
   onSuggestionClick,
   bottomComponent,
   progress,
-  selectedView,
   points,
   recentSearch = [],
   width,
@@ -69,6 +69,7 @@ const Header: React.FC<HeaderProps> = ({
   logoutPopup,
   setModalContent,
   isShowLogOutButton = false,
+  bgc,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -149,6 +150,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <VStack
       backgroundImage={`url(${background})`}
+      backgroundColor={bgc || "tsSeaBlue40"}
       p="4"
       roundedBottom={"16px"}
       position={isScrolled ? "fixed" : "sticky"}

@@ -369,7 +369,7 @@ const IconByName: React.FC<IconProps> = ({
       <Button
         variant="link"
         _hover={{ borderColor: "transparent" }}
-        _focus={{ outline: "none" }}
+        _focus={{ outline: "none", boxShadow: "none" }}
         onClick={onClick}
         {...props}
       >

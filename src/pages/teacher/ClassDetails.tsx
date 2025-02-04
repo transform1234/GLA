@@ -16,6 +16,7 @@ export default function ClassDetails(props: any) {
   const [classDetails, setClassDetails] = useState<any>({});
   const navigate = useNavigate();
   const [selectedSubject, setSelectedSubject] = useState<any>(subject);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchProgramId = async () => {
@@ -36,6 +37,8 @@ export default function ClassDetails(props: any) {
       } catch (error) {
         console.error("Error fetching program data:", error);
         setError(t("An unexpected error occurred. Please try again later."));
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -58,8 +61,10 @@ export default function ClassDetails(props: any) {
 
   return (
     <Layout
+      loading={loading}
       isFooterVisible={false}
       _header={{
+        bgc: "green40",
         userInfo: false,
         isShowBackButton: true,
         headingTitle: `CLASS ${grade}`,

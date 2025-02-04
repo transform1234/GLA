@@ -122,7 +122,7 @@ const Layout: React.FC<Props> = ({
             </Box>
           )}
           {children}
-          {isFooterVisible && (
+          {isFooterVisible ? (
             <Box ref={footerRef}>
               <Box minH={"96px"} />
               <Footer
@@ -131,6 +131,8 @@ const Layout: React.FC<Props> = ({
                 onSelect={(index: number) => setSelectedIndex(index)}
               />
             </Box>
+          ) : (
+            <Box minH={"70px"} />
           )}
         </Box>
       )}

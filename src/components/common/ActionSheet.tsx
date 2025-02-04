@@ -15,16 +15,23 @@ type RectComponentProps = {
   onClose: () => void;
   headerComponent?: ReactNode;
   children?: ReactNode;
+  _props?: any;
+  _header?: any;
 };
 
 const ActionSheet: React.FC<RectComponentProps> = memo(
-  ({ isOpen, onClose, headerComponent, children }) => {
+  ({ isOpen, onClose, headerComponent, children, _props, _header }) => {
     const { width } = useDeviceSize();
 
     return (
       <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent roundedTop="16px" width={width} justifySelf="center">
+        <DrawerContent
+          roundedTop="16px"
+          {..._props}
+          width={width}
+          justifySelf="center"
+        >
           <IconByName
             name="CloseIcon"
             color="primary.500"
@@ -37,7 +44,9 @@ const ActionSheet: React.FC<RectComponentProps> = memo(
             top="8px"
             onClick={onClose}
           />
-          {headerComponent && <DrawerHeader>{headerComponent}</DrawerHeader>}
+          {headerComponent && (
+            <DrawerHeader {..._header}>{headerComponent}</DrawerHeader>
+          )}
           <DrawerBody p="0">{children}</DrawerBody>
         </DrawerContent>
       </Drawer>

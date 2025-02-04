@@ -62,7 +62,7 @@ const SubjectGrid: React.FC<SubjectGridProps> = memo(
             key={`subject-${index}`}
             w="100%"
             // divider={<StackDivider borderColor="gray.200" margin="0" />}
-            justifyContent={"space-around"}
+            justifyContent={subject.length < 4 ? "flex-start" : "space-around"}
           >
             {subject &&
               subject?.map(

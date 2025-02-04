@@ -26,9 +26,7 @@ export default function TeacherHomepage(props: any) {
 
       const groupMemberships = result?.data?.GroupMemberships || [];
 
-      const classDataArray: any[] = [];
-
-      await Promise.all(
+      const classDataArray = await Promise.all(
         groupMemberships.map(async (classDetail: any) => {
           const payload = {
             groupId: classDetail?.Group?.groupId,
@@ -52,7 +50,7 @@ export default function TeacherHomepage(props: any) {
             board: classDetail?.Group?.board,
           };
 
-          classDataArray.push(classObj);
+          return classObj;
         })
       );
       setClasses(classDataArray);
@@ -95,6 +93,8 @@ export default function TeacherHomepage(props: any) {
       isFooterVisible={false}
       _header={{
         userInfo: true,
+        isShowLogOutButton: true,
+        bgc: "green40",
       }}
       loading={loading}
     >
@@ -105,19 +105,18 @@ export default function TeacherHomepage(props: any) {
           </CustomHeading>
         </Center>
       ) : (
-        <VStack spacing={10} align={"stretch"} px="4">
-          <VStack pt="6" spacing={4}>
-            <CustomHeading
-              textAlign="center"
-              lineHeight="20px"
-              fontFamily="Inter"
-              variant="h2"
-              fontSize="20px"
-              fontWeight="500"
-              title={t("TEACHER_PAGE_VIEW_YOUR_IMPACT")}
-              color="textPrimary"
-            />
-          </VStack>
+        <VStack spacing={4} align={"stretch"} px="4" pb="8">
+          <CustomHeading
+            py="4"
+            textAlign="center"
+            lineHeight="20px"
+            fontFamily="Inter"
+            variant="h2"
+            fontSize="20px"
+            fontWeight="500"
+            title={t("TEACHER_PAGE_VIEW_YOUR_IMPACT")}
+            color="textPrimary"
+          />
 
           {classes?.map((group: any) => (
             <ClassCard

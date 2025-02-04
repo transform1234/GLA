@@ -30,12 +30,10 @@ const ClassCard: React.FC<ClassCardProps> = memo(
     };
     return (
       <Box
-        bg="#F2F2F2"
+        bg="backgroundGrey"
         borderRadius="16px"
         padding={4}
-        boxShadow="base"
-        marginBottom={4}
-        cursor="pointer"
+        boxShadow="0px 2px 4px rgba(0, 0, 0, 0.25)"
       >
         <Box onClick={onClick}>
           {/* Class Header */}

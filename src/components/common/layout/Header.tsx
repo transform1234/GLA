@@ -23,7 +23,7 @@ import CustomHeading from "../typography/Heading";
 import { debounce } from "lodash";
 import CoinPopover from "../cards/CoinPopover";
 
-interface HeaderProps {
+export interface HeaderProps {
   children?: React.ReactNode;
   suggestions?: string[];
   searchTerm?: string;
@@ -46,7 +46,8 @@ interface HeaderProps {
   rightComponent?: React.ReactNode;
   logoutPopup?: () => void;
   setModalContent?: any;
-  isSearchBackButtonHidden?: boolean;
+  isShowLogOutButton?: boolean;
+  bgc?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -56,7 +57,6 @@ const Header: React.FC<HeaderProps> = ({
   onSuggestionClick,
   bottomComponent,
   progress,
-  selectedView,
   points,
   recentSearch = [],
   width,
@@ -68,7 +68,8 @@ const Header: React.FC<HeaderProps> = ({
   rightComponent,
   logoutPopup,
   setModalContent,
-  isSearchBackButtonHidden,
+  isShowLogOutButton = false,
+  bgc,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -149,6 +150,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <VStack
       backgroundImage={`url(${background})`}
+      backgroundColor={bgc || "tsSeaBlue40"}
       p="4"
       roundedBottom={"16px"}
       position={isScrolled ? "fixed" : "sticky"}
@@ -289,21 +291,23 @@ const Header: React.FC<HeaderProps> = ({
                   </HStack>
                 </Box>
               )}
-              <IconByName
-                alignSelf="flex-end"
-                name={"LogoutIcon"}
-                minW="24px"
-                height="24px"
-                cursor="pointer"
-                color="white"
-                onClick={() => {
-                  logoutPopup?.();
-                  setModalContent((e: any) => ({
-                    ...e,
-                    message: "Are you sure you want to logout?",
-                  }));
-                }}
-              />
+              {isShowLogOutButton && (
+                <IconByName
+                  alignSelf="flex-end"
+                  name={"LogoutIcon"}
+                  minW="24px"
+                  height="24px"
+                  cursor="pointer"
+                  color="white"
+                  onClick={() => {
+                    logoutPopup?.();
+                    setModalContent((e: any) => ({
+                      ...e,
+                      message: "Are you sure you want to logout?",
+                    }));
+                  }}
+                />
+              )}
             </HStack>
           </Collapse>
         </VStack>

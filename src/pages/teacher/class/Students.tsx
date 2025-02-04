@@ -214,7 +214,7 @@ const Students: React.FC<payload> = (payload) => {
       <Table variant="simple">
         <Thead bg={"backgroundGrey"}>
           <Tr>
-            <Th>
+            <Th p="3">
               <Text
                 lineHeight="14.4px"
                 fontFamily="Bebas Neue"
@@ -224,7 +224,7 @@ const Students: React.FC<payload> = (payload) => {
                 {t("LEADERBOARD_NAME")}
               </Text>
             </Th>
-            <Th isNumeric>
+            <Th p="3" isNumeric>
               <Text
                 lineHeight="14.4px"
                 fontFamily="Bebas Neue"
@@ -238,9 +238,11 @@ const Students: React.FC<payload> = (payload) => {
         </Thead>
         <Tbody>
           {filterSubjects(students || []).map((student, index) => (
-            <Tr key={index} minH={"35px"}>
-              <Td>{student.username}</Td>
-              <Td isNumeric>{student.completionPercentage}</Td>
+            <Tr key={index}>
+              <Td p="2">{student.username}</Td>
+              <Td p="2" isNumeric>
+                {student.completionPercentage} %
+              </Td>
             </Tr>
           ))}
         </Tbody>

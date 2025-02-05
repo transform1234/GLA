@@ -39,7 +39,7 @@ export default function Homepage(props: any) {
   const [subjects, setSubjects] = useState<Array<any>>([]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState();
+  const [searchTerm, setSearchTerm] = useState<string>();
   const [videos, setVideos] = useState<any>();
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();

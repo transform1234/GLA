@@ -158,6 +158,10 @@ const Watch = (prop: any) => {
             onSelectItem={handleSelectSubject}
           />
         ),
+        userInfo: false,
+        isShowBackButton: true,
+        headingTitle: t("HOME_WATCH"),
+        onBack: () => navigate("/home"),
       }}
       isFooterVisible={false}
       isHeaderVisible={true}

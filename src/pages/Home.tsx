@@ -32,13 +32,14 @@ const subjectIcons = {
   english: { icon: english, label: "English" },
   kannada: { icon: kannada, label: "Kannada" },
   odia: { icon: odia, label: "Odia" },
+  odiya: { icon: odia, label: "Odia" },
 };
 export default function Homepage(props: any) {
   const { t } = useTranslation();
   const [subjects, setSubjects] = useState<Array<any>>([]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null); // set null
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState();
+  const [searchTerm, setSearchTerm] = useState<string>();
   const [videos, setVideos] = useState<any>();
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -229,7 +230,12 @@ export default function Homepage(props: any) {
         progress: progress,
         recentSearch: recentSearch,
         points: authUser?.points,
-        keyDownSearchFilter: { from : "home" , subject : localStorage.getItem("subject") || ""}
+        keyDownSearchFilter: {
+          from: "home",
+          subject: localStorage.getItem("subject") || "",
+        },
+        userInfo: true,
+        isSearchBackButtonHidden: true,
       }}
     >
       <VStack spacing={10} align={"stretch"} px="4">

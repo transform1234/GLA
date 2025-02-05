@@ -1,9 +1,12 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
   Center,
-  CircularProgress,
   IconButton,
-  Text,
   VStack,
 } from "@chakra-ui/react";
 import React, { useRef, useEffect, useState } from "react";
@@ -33,6 +36,7 @@ interface SunbirdPlayerProps {
   playerContext?: object;
   batchsize?: number;
   LoaderComponent?: any;
+  isAssessment?: boolean;
 }
 
 const SunbirdPlayer = ({
@@ -44,6 +48,7 @@ const SunbirdPlayer = ({
   forwardedRef,
   adapter,
   LoaderComponent,
+  isAssessment = false,
   ...props
 }: SunbirdPlayerProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -133,7 +138,6 @@ const SunbirdPlayer = ({
     setLoading(false);
   };
 
-  // console.log(adapter);
   if (url) {
     return (
       <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>
@@ -198,9 +202,33 @@ const SunbirdPlayer = ({
     );
   } else {
     return (
-      <Text
+      <Center
+        {...(isAssessment
+          ? { mt: "52px", bg: "white", height: height - 52, rounded: "16px" }
+          : { height })}
+        {...{ width, p: height ? "16px" : "" }}
         {...(props?._vstack || {})}
-      >{`${mimeType} this mime type not compatible`}</Text>
+        ref={setRefs}
+      >
+        <Alert
+          status="error"
+          borderRadius="8px"
+          boxShadow="md"
+          p={4}
+          display={height ? "flex" : "none"}
+        >
+          <AlertIcon />
+          <Box>
+            <AlertTitle fontSize="14px" fontWeight="bold">
+              Something went wrong with ID
+            </AlertTitle>
+            <AlertDescription fontSize="12px">
+              We couldn't process your request. Please check the ID and try
+              again.
+            </AlertDescription>
+          </Box>
+        </Alert>
+      </Center>
     );
   }
 };

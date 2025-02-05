@@ -3,7 +3,7 @@ import { Box, Center, useDisclosure } from "@chakra-ui/react";
 import Loading from "../Loading";
 import useDeviceSize from "./useDeviceSize";
 import Footer from "./Footer";
-import Header from "./Header";
+import Header, { HeaderProps } from "./Header";
 import PopupModal from "../PopupModal";
 import PrimaryButton from "../button/PrimaryButton";
 import { useTranslation } from "react-i18next";
@@ -22,23 +22,7 @@ interface Props {
     totalHeight: number;
     bodyHeight: number;
   }) => void;
-  _header?: {
-    suggestions?: string[];
-    searchTerm?: string;
-    onSearchChange?: (value: any) => void;
-    onSuggestionClick?: (suggestion: any) => void;
-    onSubjectSelect?: (subject: string) => void;
-    bottomComponent?: React.ReactNode;
-    progress?: string;
-    onFilterClick?: (filter: string) => void;
-    selectedView?: any;
-    points?: number;
-    recentSearch?: string[];
-    keyDownSearchFilter?: {
-      from: string;
-      subject: string;
-    };
-  };
+  _header?: HeaderProps; // custom header
 }
 
 const Layout: React.FC<Props> = ({
@@ -56,7 +40,7 @@ const Layout: React.FC<Props> = ({
   const footerRef = React.useRef<any>(null);
   const headerRef = React.useRef<any>(null);
 
-  const [modalContent] = useState({
+  const [modalContent, setModalContent] = useState({
     title: `${t("POPUP_CONFIRM_LOGOUT")}`,
     message: `${t("POPUP_CONFIRM_MSG")}`,
   });
@@ -131,11 +115,14 @@ const Layout: React.FC<Props> = ({
         >
           {isHeaderVisible && (
             <Box ref={headerRef}>
-              <Header {...{ width }} {..._header} />
+              <Header
+                {...{ width, logoutPopup: onOpen, setModalContent }}
+                {..._header}
+              />
             </Box>
           )}
           {children}
-          {isFooterVisible && (
+          {isFooterVisible ? (
             <Box ref={footerRef}>
               <Box minH={"96px"} />
               <Footer
@@ -144,6 +131,8 @@ const Layout: React.FC<Props> = ({
                 onSelect={(index: number) => setSelectedIndex(index)}
               />
             </Box>
+          ) : (
+            <Box minH={"70px"} />
           )}
         </Box>
       )}

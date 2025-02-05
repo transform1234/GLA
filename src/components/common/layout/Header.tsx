@@ -7,7 +7,6 @@ import {
   HStack,
   Image,
   Progress,
-  Spacer,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -24,15 +23,14 @@ import CustomHeading from "../typography/Heading";
 import { debounce } from "lodash";
 import CoinPopover from "../cards/CoinPopover";
 
-interface HeaderProps {
+export interface HeaderProps {
   children?: React.ReactNode;
   suggestions?: string[];
   searchTerm?: string;
   onSearchChange?: (value: string) => void;
-  onSuggestionClick?: (suggestion: string) => void;
+  onSuggestionClick?: () => void;
   bottomComponent?: React.ReactNode;
   progress?: string;
-  onFilterClick?: (filter: string) => void;
   selectedView?: any;
   points?: number;
   recentSearch?: string[];
@@ -41,6 +39,17 @@ interface HeaderProps {
     from: string;
     subject: string;
   };
+  userInfo?: boolean;
+  onBack?: () => void;
+  isShowBackButton?: boolean;
+  headingTitle?: string;
+  rightComponent?: React.ReactNode;
+  logoutPopup?: () => void;
+  setModalContent?: any;
+  isShowLogOutButton?: boolean;
+  bgc?: string;
+  isSearchBackButtonHidden?: boolean;
+  onSubjectSelect?: (subject: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -50,12 +59,20 @@ const Header: React.FC<HeaderProps> = ({
   onSuggestionClick,
   bottomComponent,
   progress,
-  onFilterClick,
-  selectedView,
   points,
   recentSearch = [],
   width,
   keyDownSearchFilter,
+  userInfo,
+  onBack,
+  isShowBackButton,
+  headingTitle,
+  rightComponent,
+  logoutPopup,
+  setModalContent,
+  isShowLogOutButton = false,
+  bgc,
+  isSearchBackButtonHidden,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -64,9 +81,6 @@ const Header: React.FC<HeaderProps> = ({
   const headerParams = new URLSearchParams(location.search);
   const from = headerParams.get("from");
   const navigate = useNavigate();
-  const isWatchPage = location.pathname === "/watch";
-  const isSearchPage = location.pathname === "/search";
-  const isLeaderboardPage = location.pathname === "/leaderboard";
   const [isInputFocused, setIsInputFocused] = useState<string[]>([]);
   const debouncedSearch = debounce((value: string) => {
     const trimmedValue = value.trim();
@@ -135,11 +149,11 @@ const Header: React.FC<HeaderProps> = ({
       navigate("/home");
     }
   };
-  
 
   return (
     <VStack
       backgroundImage={`url(${background})`}
+      backgroundColor={bgc || "tsSeaBlue40"}
       p="4"
       roundedBottom={"16px"}
       position={isScrolled ? "fixed" : "sticky"}
@@ -149,67 +163,12 @@ const Header: React.FC<HeaderProps> = ({
       align={"stretch"}
       width={width}
     >
-      {isLeaderboardPage && (
-        <HStack alignItems="center" justifyContent={"space-between"} mb={4}>
-          {/* Back Icon */}
-          <HStack spacing={2}>
-            <IconByName
-              name={"BackIcon"}
-              color="white"
-              alt="Back"
-              cursor="pointer"
-              onClick={() => navigate("/home")}
-            />
-
-            <Text
-              lineHeight="16px"
-              fontWeight="400"
-              fontSize="20px"
-              color="white"
-              fontFamily="Bebas Neue"
-            >
-              {t("LEADERBOARD")}
-            </Text>
-          </HStack>
-          <HStack spacing={2}>
-            <Text
-              color="white"
-              fontWeight="400"
-              fontSize="10px"
-              lineHeight="12.1px"
-              cursor="default"
-            >
-              VIEW
-            </Text>
-            <HStack
-              height={"38px"}
-              bg="white"
-              color="black"
-              padding="7px 6px 7px 10px"
-              borderRadius="8px"
-              border="1px solid borderGrey"
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              onClick={() => onFilterClick && onFilterClick("dropdown")}
-              cursor="pointer"
-            >
-              <Text fontSize="14px" color="black">
-                {selectedView || "School" || "Select"}{" "}
-              </Text>
-              <IconByName
-                name="TriangleDownIcon"
-                color="primary.500"
-                fontSize="10px"
-              />
-            </HStack>
-          </HStack>
-        </HStack>
-      )}
-
-      {isWatchPage && (
-        <HStack justifyContent={"space-between"}>
-          <HStack>
+      {/* right component */}
+      {rightComponent && rightComponent}
+      {/* header */}
+      <HStack justifyContent={"space-between"}>
+        <HStack>
+          {isShowBackButton && (
             <IconByName
               name={"BackIcon"}
               color="white"
@@ -217,16 +176,19 @@ const Header: React.FC<HeaderProps> = ({
               cursor="pointer"
               width="2em"
               height="2em"
-              onClick={handleBackNavigation}
+              onClick={onBack}
             />
+          )}
+          {headingTitle && (
             <Text fontSize="20px" color="white" fontFamily="Bebas Neue">
-              {t("HOME_WATCH")}
+              {headingTitle}
             </Text>
-          </HStack>
-          {points && <CoinPopover points={points} />}
+          )}
         </HStack>
-      )}
-      {!isWatchPage && !isSearchPage && !isLeaderboardPage && (
+        {!userInfo && points && <CoinPopover points={points} />}
+      </HStack>
+      {/* user info */}
+      {userInfo && (
         <VStack align={"stretch"} spacing={3}>
           <HStack justifyContent="space-between" alignItems="center" w="100%">
             {/* Left-hand side: Palooza logo */}
@@ -235,7 +197,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Right-hand side: SearchIcon and NotificationIcon */}
             <HStack spacing={4}>
               {points && <CoinPopover points={points} />}
-              {isScrolled && progress !== "" && (
+              {progress && isScrolled && progress !== "" && (
                 <CircularProgress
                   value={Math.round(Number(progress) || 0)}
                   color="progressBarGreen.500"
@@ -258,7 +220,7 @@ const Header: React.FC<HeaderProps> = ({
                   boxSize="1.5rem"
                   onClick={() => navigate("/home")}
                 /> */}
-              {isScrolled && !isOpen && (
+              {onSearchChange && isScrolled && !isOpen && (
                 <IconByName
                   name={"SearchIcon"}
                   minW="24px"
@@ -297,7 +259,7 @@ const Header: React.FC<HeaderProps> = ({
                   textTransform="capitalize"
                 />
               </VStack>
-              {progress !== "" && (
+              {progress && progress !== "" && (
                 <Box w={"100%"} flex={15} rounded={"8"} p="2.5" bg={"#355F6A"}>
                   <HStack align={"center"}>
                     <VStack align={"stretch"} w={"100%"}>
@@ -332,12 +294,31 @@ const Header: React.FC<HeaderProps> = ({
                   </HStack>
                 </Box>
               )}
+              {isShowLogOutButton && (
+                <IconByName
+                  alignSelf="flex-end"
+                  name={"LogoutIcon"}
+                  minW="24px"
+                  height="24px"
+                  cursor="pointer"
+                  color="white"
+                  onClick={() => {
+                    logoutPopup?.();
+                    setModalContent((e: any) => ({
+                      ...e,
+                      message: "Are you sure you want to logout?",
+                    }));
+                  }}
+                />
+              )}
             </HStack>
           </Collapse>
         </VStack>
       )}
+
+      {/* collapsed search */}
       <Collapse
-        in={isOpen || isWatchPage || isSearchPage}
+        in={isOpen}
         transition={{ enter: { duration: 0.2 }, exit: { duration: 0.2 } }}
       >
         <CustomInputWithDropdown
@@ -345,7 +326,9 @@ const Header: React.FC<HeaderProps> = ({
           placeholder={t("HOME_SEARCH")}
           icon={searchIcon}
           showClearIcon={true}
-          isBackButton={handleBackNavigation} 
+          isBackButton={
+            !isSearchBackButtonHidden ? handleBackNavigation : undefined
+          }
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           suggestions={suggestions || []}
@@ -355,28 +338,30 @@ const Header: React.FC<HeaderProps> = ({
         />
       </Collapse>
 
-      {!isOpen &&
-        !isScrolled &&
-        !isWatchPage &&
-        !isSearchPage &&
-        !isLeaderboardPage && (
-          <CustomInputWithDropdown
-            value={searchTerm || ""}
-            placeholder={t("HOME_SEARCH")}
-            icon={searchIcon}
-            showClearIcon={true}
-            isBackButton={handleBackNavigation}
-            onChange={handleSearchChange}
-            onKeyDown={handleKeyDown}
-            suggestions={suggestions}
-            onSuggestionClick={onSuggestionClick}
-            onFocus={(e) => handleInputFocus("input")}
-            onBlur={(e) => handleInputBlur("input")}
-          />
-        )}
+      {/* search input */}
+      {!isOpen && !isScrolled && onSearchChange && (
+        <CustomInputWithDropdown
+          value={searchTerm || ""}
+          placeholder={t("HOME_SEARCH")}
+          icon={searchIcon}
+          showClearIcon={true}
+          isBackButton={
+            !isSearchBackButtonHidden ? handleBackNavigation : undefined
+          }
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
+          suggestions={suggestions}
+          onSuggestionClick={onSuggestionClick}
+          onFocus={(e) => handleInputFocus("input")}
+          onBlur={(e) => handleInputBlur("input")}
+        />
+      )}
+
+      {/* resent search */}
       {isInputFocused.length > 0 &&
         suggestions?.length === 0 &&
-        !isScrolled && (
+        !isScrolled &&
+        recentSearch.length > 0 && (
           <Box
             p="4"
             bg="white"
@@ -432,6 +417,8 @@ const Header: React.FC<HeaderProps> = ({
             </Flex>
           </Box>
         )}
+
+      {/* Bottom Component */}
       {bottomComponent && bottomComponent}
     </VStack>
   );

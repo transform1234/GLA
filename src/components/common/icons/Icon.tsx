@@ -334,6 +334,16 @@ const iconsMap: Record<string, React.FC<IconProps>> = {
       </Icon>
     );
   },
+  SwapVertIcon: ({ color, active, ...props }) => {
+    return (
+      <Icon viewBox="0 0 12 16" color={color} {...props}>
+        <path
+          d="M3 8.75V3.36875L1.06875 5.3L0 4.25L3.75 0.5L7.5 4.25L6.43125 5.3L4.5 3.36875V8.75H3ZM8.25 15.5L4.5 11.75L5.56875 10.7L7.5 12.6313V7.25H9V12.6313L10.9312 10.7L12 11.75L8.25 15.5Z"
+          fill="currentColor"
+        />
+      </Icon>
+    );
+  },
   ChevronRightIcon,
   ChevronLeftIcon,
   ChevronUpIcon,
@@ -359,7 +369,7 @@ const IconByName: React.FC<IconProps> = ({
       <Button
         variant="link"
         _hover={{ borderColor: "transparent" }}
-        _focus={{ outline: "none" }}
+        _focus={{ outline: "none", boxShadow: "none" }}
         onClick={onClick}
         {...props}
       >

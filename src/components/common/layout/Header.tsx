@@ -28,7 +28,7 @@ export interface HeaderProps {
   suggestions?: string[];
   searchTerm?: string;
   onSearchChange?: (value: string) => void;
-  onSuggestionClick?: (suggestion: string) => void;
+  onSuggestionClick?: () => void;
   bottomComponent?: React.ReactNode;
   progress?: string;
   selectedView?: any;
@@ -48,6 +48,8 @@ export interface HeaderProps {
   setModalContent?: any;
   isShowLogOutButton?: boolean;
   bgc?: string;
+  isSearchBackButtonHidden?: boolean;
+  onSubjectSelect?: (subject: string) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -70,6 +72,7 @@ const Header: React.FC<HeaderProps> = ({
   setModalContent,
   isShowLogOutButton = false,
   bgc,
+  isSearchBackButtonHidden,
 }: HeaderProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);

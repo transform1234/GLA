@@ -103,6 +103,7 @@ const customTheme = extendTheme({
     tsSeaBlue20: "#03627C33",
     tsSeaBlue40: "#023B4A",
     green40: "#03570E",
+    blue40: "#343A8F",
   },
   components: {
     Table: {

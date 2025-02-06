@@ -14,6 +14,7 @@ import customTheme from "./utils/theme";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { checkUserDetails } from "./services/auth/auth";
 import teacherAuthRoutes from "./routes/teacherAuth";
+import schoolAdminAuth from "./routes/schoolAdminAuth";
 import { jwtDecode } from "jwt-decode";
 
 const theme = extendTheme(customTheme);
@@ -26,9 +27,19 @@ function AppRouter() {
   const navigate = useNavigate();
   useEffect(() => {
     if (token && token !== "not-logged-in") {
-      const tokenDecoded = jwtDecode(token);
-      const roles = tokenDecoded?.resource_access?.["hasura-app"]?.roles;
-      if (authUser && Array.isArray(roles) && roles.includes("teacher")) {
+      if (
+        authUser &&
+        Array.isArray(authUser?.Teachers) &&
+        authUser?.Teachers.some(
+          (teacher) => teacher.currentRole === "School_Admin"
+        )
+      ) {
+        setRoutes(schoolAdminAuth);
+      } else if (
+        authUser &&
+        Array.isArray(authUser?.Teachers) &&
+        authUser?.Teachers.some((teacher) => teacher.currentRole === "Teacher")
+      ) {
         setRoutes(teacherAuthRoutes);
       } else if (authRoutes) {
         setRoutes(authRoutes);

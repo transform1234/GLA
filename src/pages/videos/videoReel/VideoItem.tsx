@@ -76,6 +76,7 @@ const VideoItem: React.FC<{
               type: "assessment",
             });
             setLessonQml(qmlResult);
+            setIsLoading(false);
           }
           setPlayerContext(
             updateCdataTag([
@@ -172,6 +173,7 @@ const VideoItem: React.FC<{
             <AssessmentPlayer
               {...{
                 qml_id,
+                isLoading,
                 videoEndId,
                 subject,
                 lessonQml,

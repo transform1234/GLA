@@ -37,6 +37,7 @@ interface SunbirdPlayerProps {
   batchsize?: number;
   LoaderComponent?: any;
   isAssessment?: boolean;
+  isLoading?: boolean;
 }
 
 const SunbirdPlayer = ({
@@ -49,6 +50,7 @@ const SunbirdPlayer = ({
   adapter,
   LoaderComponent,
   isAssessment = false,
+  isLoading,
   ...props
 }: SunbirdPlayerProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -200,7 +202,7 @@ const SunbirdPlayer = ({
         />
       </VStack>
     );
-  } else {
+  } else if (isLoading && !url) {
     return (
       <Center
         {...(isAssessment

@@ -32,6 +32,7 @@ interface AssessmentPlayerProps {
   playerContext: any;
   width: number;
   height: number;
+  isLoading?: boolean;
 }
 
 const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
@@ -52,6 +53,7 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
   adapter,
   width,
   height,
+  isLoading,
 }) => {
   const [rating, setRating] = useState(0);
   const subjectRef = useRef<HTMLDivElement>(null);
@@ -289,6 +291,7 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
           ) : (
             <SunbirdPlayer
               isAssessment
+              isLoading={isLoading}
               LoaderComponent={({ display }: any) => (
                 <CustomSkeleton display={display} type="assessment" />
               )}

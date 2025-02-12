@@ -238,7 +238,7 @@
   .sections-score-count-info,
   .sections-score-count-sections {
     position: initial !important;
-    flex: 1 !important;
+    flex: auto !important;
     width: auto !important;
     padding: 0 !important;
   }
@@ -246,6 +246,7 @@
     font-size: 12px !important;
   }
   .scoreboard__header {
+    text-align: center !important;
     padding-bottom: 0.5rem !important;
   }
   .sb-btn-normal {

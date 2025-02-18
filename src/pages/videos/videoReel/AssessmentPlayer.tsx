@@ -177,8 +177,9 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
         {isQUMLLoading &&
           (videoEndId?.qml_id === qml_id ? (
             <Box
-              pt={"52px"}
-              bg={"transparent"}
+              // pt={"0px"}
+              // bg={"white"}
+              bg={"white"}
               {...heightPerItem}
               {...{
                 position: "absolute",
@@ -292,9 +293,9 @@ const AssessmentPlayer: React.FC<AssessmentPlayerProps> = ({
             <SunbirdPlayer
               isAssessment
               isLoading={isLoading}
-              LoaderComponent={({ display }: any) => (
-                <CustomSkeleton display={display} type="assessment" />
-              )}
+              // LoaderComponent={({ display }: any) => (
+              //   <CustomSkeleton display={display} type="assessment" />
+              // )}
               forwardedRef={isVisible ? refQml : null}
               style={{ border: "none", borderRadius: "16px" }}
               _vstack={{

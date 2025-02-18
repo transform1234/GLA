@@ -9,6 +9,7 @@ interface LoadingComponentProps {
   onBackClick?: () => void; // Optional prop to handle back button click
   width?: string | number; // Optional prop for custom width
   height?: string | number; // Optional prop for custom height
+  bg?: string; // Optional prop for custom background color
 }
 
 const Loading: React.FC<LoadingComponentProps> = ({

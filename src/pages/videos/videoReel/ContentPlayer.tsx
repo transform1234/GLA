@@ -4,6 +4,7 @@ import SunbirdPlayer from "../../../components/players/SunbirdPlayer";
 import CustomSkeleton from "./CustomSkeleton";
 import { updateCdataTag } from "../utils";
 import { Box } from "@chakra-ui/react";
+import Loading from "../../../components/common/Loading";
 const VITE_PLAYER_URL = import.meta.env.VITE_PLAYER_URL;
 const TELEMETRYBATCH = import.meta.env.VITE_TELEMETRYBATCH || 20;
 
@@ -47,7 +48,8 @@ const ContentPlayer: React.FC<ContentPlayerProps> = ({
       ) : (
         <SunbirdPlayer
           LoaderComponent={({ display }: any) => (
-            <CustomSkeleton display={display} />
+            // <CustomSkeleton display={display} />
+            <Loading bg="black" display={display} />
           )}
           {...{
             width: width || 0,

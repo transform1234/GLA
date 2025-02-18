@@ -13,7 +13,7 @@ import LikeButton from "./LikeButton";
 import { TopIcon } from "./TopIcon";
 import VideoList from "./VideoList";
 const TELEMETRYBATCH = import.meta.env.VITE_TELEMETRYBATCH || 20;
-
+import soundFile from "../../../assets/sounds/coinsEarnSound.mp3";
 /*
 Comment telemetry in all Sunbird players; to undo, find this function and uncomment.
 TelemetrySyncManager.syncFailedBatch();
@@ -110,6 +110,11 @@ const VideoReel: React.FC<{
     }
   }, 300);
 
+  const playSound = () => {
+    const audio = new Audio(soundFile);
+    audio.play().catch((error) => console.error("Audio play error:", error));
+  };
+
   const newHandleEvent = async (data: any) => {
     const result = handleEvent(data);
     if (data?.data?.iframeId) {
@@ -193,6 +198,7 @@ const VideoReel: React.FC<{
         setCoins(
           (e) => e + retult1?.assignRewardPoints?.lesson_completion?.points
         );
+        playSound();
       }
       await callReaminigTelemetry(
         telemetryListRef?.current || [],

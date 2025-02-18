@@ -8,6 +8,7 @@ import AssessmentPlayer from "./AssessmentPlayer";
 import ContentPlayer from "./ContentPlayer";
 import CustomSkeleton from "./CustomSkeleton";
 import VideoEnd from "./VideoEnd";
+import Loading from "../../../components/common/Loading";
 
 const VideoItem: React.FC<{
   programID: string | undefined;
@@ -194,7 +195,8 @@ const VideoItem: React.FC<{
             />
           </Box>
         ) : (
-          <CustomSkeleton />
+          <Loading bg="black" />
+          // <CustomSkeleton />
         )}
       </div>
     );

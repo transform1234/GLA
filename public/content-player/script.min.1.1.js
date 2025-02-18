@@ -72561,11 +72561,9 @@
           return (
             '<img src="' +
             n.config.bgImage +
-            '" class="gc-loader-img" onerror="this.style.display=\'none\'" /><P class="splashText" id="splashTextId"> Loading your content</p><div id="progressArea"><div id="progressBar"></div><p id="progressCount" class="font-lato gc-loader-prog"></p></div><a href="' +
+            '" class="gc-loader-img" onerror="this.style.display=\'none\'" /><a href="' +
             n.config.webLink +
-            '" target="_blank"><div id="splashScreen" class="splashScreen"> <img src="' +
-            n.config.icon +
-            '" class="splash-icon " onerror="this.style.display=\'none\'" /> <span>' +
+            '" target="_blank"><div id="splashScreen" class="splashScreen"><span>' +
             n.config.text +
             "</span> </div></a>"
           );

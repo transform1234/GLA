@@ -142,7 +142,12 @@ const SunbirdPlayer = ({
 
   if (url) {
     return (
-      <VStack {...{ width, height }} {...(props?._vstack || {})} ref={setRefs}>
+      <VStack
+        bg={loading ? "white" : "transparent"}
+        {...{ width, height }}
+        {...(props?._vstack || {})}
+        ref={setRefs}
+      >
         {handleExitButton && (
           <IconButton
             aria-label="Close"

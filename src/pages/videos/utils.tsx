@@ -163,7 +163,12 @@ export const handleEvent = ({ data }: any) => {
   ) {
     const edata = telemetry?.edata;
     trackData = { ...trackData, edata };
-  } else if (telemetry?.eid === "END") {
+  } else if (
+    telemetry?.eid === "END" &&
+    telemetry?.edata?.summary.find(
+      (e: any) => e.endpageseen && e.endpageseen === true
+    )?.endpageseen
+  ) {
     const summaryData = telemetry?.edata;
     if (summaryData?.summary && Array.isArray(summaryData?.summary)) {
       const score = summaryData.summary.find((e: any) => "score" in e);

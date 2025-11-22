@@ -58,30 +58,6 @@ const SunbirdPlayer = ({
   const [url, setUrl] = React.useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    if (iframeRef.current) {
-      // Go to first question directly instead of showing the question set introduction
-      setTimeout(() => {
-        if (
-          iframeRef.current &&
-          iframeRef.current.contentWindow &&
-          iframeRef.current.contentWindow.location.href.endsWith(
-            "quml/index.html"
-          )
-        ) {
-          const playButton: any =
-            iframeRef.current.contentWindow.document.querySelector(
-              ".quml-navigation__next"
-            );
-          if (playButton) {
-            playButton.click();
-            playButton.click();
-          }
-        }
-      }, 700);
-    }
-  }, [iframeRef.current]);
-
   React.useEffect(() => {
     if (mimeType === "application/pdf") {
       setUrl(`/pdf`);

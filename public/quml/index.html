@@ -142,6 +142,10 @@
       //     .classList.toggle("collapse-close");
       // };
       // myPlayer.appendChild(button);
+      const playButton = document.querySelector(".quml-navigation__previous");
+      if (playButton) {
+        playButton.click();
+      }
       const landscape = document.getElementsByClassName("main-container");
       const landscapeElement = landscape?.[0] ? landscape?.[0] : landscape;
 

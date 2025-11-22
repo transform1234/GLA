@@ -4,8 +4,8 @@ on:
     branches:
       - prod 
 jobs:
-  build:
-    name: Generate Build and Deploy to DEV
+  build
+    name: Generate Build and Deploy to PROD
     # environment: PROD
     runs-on: ubuntu-latest
     steps:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node Env
         uses: actions/setup-node@v3
         with:
-          node-version: 21.1.0
+          node-version: 20.0.0
       - name: Copy .env file
         env:
           ENV_FILE_CONTENT_NEW: ${{ secrets.ENV_PROD }}

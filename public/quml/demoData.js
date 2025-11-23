@@ -276,7 +276,22 @@ const playerConfig = {
     userData: metadata?.userData ? metadata?.userData : {},
     cdata: metadata?.playerContext?.cdata || [],
   },
-  metadata: metadata,
+  metadata: {
+    ...metadata,
+    showFeedback: metadata.showFeedback ? "Yes" : "No",
+    showTimer:
+      metadata.showTimer === "Yes" || metadata.showTimer === true
+        ? "Yes"
+        : "No",
+    showSolutions:
+      metadata.showSolutions === "Yes" || metadata.showSolutions === true
+        ? "Yes"
+        : "No",
+    showHints:
+      metadata.showHints === "Yes" || metadata.showHints === true
+        ? "Yes"
+        : "No",
+  },
   config: {
     traceId: "1234",
     sideMenu: {

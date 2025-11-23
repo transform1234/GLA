@@ -143,6 +143,10 @@
       // };
       // myPlayer.appendChild(button);
       const playButton = document.querySelector(".quml-navigation__previous");
+      const mainContainer = document.querySelector(".main-container");
+      if (mainContainer) {
+        mainContainer.style.height = playerConfig?.metadata?.height + "px";
+      }
       if (playButton) {
         playButton.click();
       }

@@ -150,10 +150,12 @@
       const landscapeElement = landscape?.[0] ? landscape?.[0] : landscape;
 
       function reportWindowSize() {
-        landscapeElement.setAttribute(
-          "style",
-          `height: ${window.innerHeight}px`
-        );
+        if (landscapeElement.length > 0) {
+          landscapeElement.setAttribute(
+            "style",
+            `height: ${window.innerHeight}px`
+          );
+        }
         // landscapeElement.setAttribute("width", window.innerWidth - "40");
       }
       reportWindowSize();

@@ -18,7 +18,9 @@ export const getOne = async ({ id, adapter, type, header }: IGetOneParams) => {
 
   try {
     const response = await fetch(
-      `${baseUrl}/course/${adapter}${URL.CONTENT_ID}?courseId=${id}&type=${type}`,
+      type === "assessment"
+        ? `https://interface.tekdinext.com/interface/v1/action/questionset/v2/hierarchy/${id}?mode=edit` // `https://interface.tekdinext.com/interface/v1/action/questionset/v2/hierarchy/${id}`,
+        : `${baseUrl}/course/${adapter}${URL.CONTENT_ID}?courseId=${id}&type=${type}`,
       {
         method: "GET",
         headers,
@@ -27,7 +29,7 @@ export const getOne = async ({ id, adapter, type, header }: IGetOneParams) => {
 
     if (response.ok) {
       const result = await response.json();
-      return result?.data || {};
+      return result?.data || result?.result?.questionset || {};
     } else {
       console.log("Failed to fetch data");
       return {};

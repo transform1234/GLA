@@ -166,6 +166,7 @@ const SunbirdPlayer = ({
           ref={iframeRef}
           name={JSON.stringify({
             ...props,
+            height: height,
             questionListUrl: `${baseUrl}/question/${adapter}/questionList`,
             // questionListUrl: `https://alt-dev.uniteframework.io/course/questionset`,
             // questionListUrl: `https://sunbirdsaas.com/api/question/v1/list`,

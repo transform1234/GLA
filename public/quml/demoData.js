@@ -276,7 +276,6 @@ const playerConfig = {
     userData: metadata?.userData ? metadata?.userData : {},
     cdata: metadata?.playerContext?.cdata || [],
   },
-  metadata,
   // metadata: {
   //   ...metadata,
   //   showFeedback: metadata.showFeedback ? "Yes" : "No",
@@ -294,6 +293,7 @@ const playerConfig = {
   //       : "No",
   //   maxScore: metadata.maxScore || 0,
   // },
+  metadata,
   config: {
     traceId: "1234",
     sideMenu: {
